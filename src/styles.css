@@ -1,13 +1,13 @@
 @property --val-a {
   syntax: "<number>";
   inherits: false;
-  initial-value: 0;
+  initial-value: -1;
 }
 
 @property --val-b {
   syntax: "<number>";
   inherits: false;
-  initial-value: 0;
+  initial-value: -1;
 }
 
 @property --result {
@@ -157,10 +157,8 @@
   --val-b: attr(data-b type(<number>));
   --result: calc(var(--val-a) + var(--val-b));
 
-  /* Route: valid numbers -> success, else -> error */
   animation: if(
-    style(--val-a >= 0): slide-to-outbound 1.5s ease-in-out forwards;
-    style(--val-b >= 0): slide-to-outbound 1.5s ease-in-out forwards;
+    style(--val-a >= 0) and style(--val-b >= 0): slide-to-outbound 1.5s ease-in-out forwards;
     else: drop-to-trash 1s ease-in forwards
   );
 }

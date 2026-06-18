@@ -26,12 +26,12 @@ function log(level, source, message, data) {
   logPanel.scrollTop = logPanel.scrollHeight;
 }
 
-let activeCount = 0;
 const inbound = document.getElementById("inbound");
 const aluLane = document.getElementById("alu-lane");
 
 function updateCounter() {
-  document.getElementById("status-counter").textContent = `active: ${activeCount}`;
+  const count = document.querySelectorAll(".request").length;
+  document.getElementById("status-counter").textContent = `active: ${count}`;
 }
 
 async function setup() {
@@ -89,11 +89,10 @@ async function setup() {
       });
 
       node.remove();
-      activeCount = Math.max(0, activeCount - 1);
       updateCounter();
     }, 3200);
 
-    node.addEventListener("animationend", () => {
+    node.addEventListener("animationend", (evt) => {
       if (finished) return;
       finished = true;
       clearTimeout(watchdog);
@@ -101,25 +100,31 @@ async function setup() {
       const style = getComputedStyle(node);
       const result = style.getPropertyValue("--result").trim();
 
-      log("INFO", "alu", `animation ended [id: ${request_id}]`, { result: result || "NaN" });
+      log("INFO", "alu", `animation ended [id: ${request_id}]`, {
+        animationName: evt.animationName,
+        result: result || "NaN"
+      });
+
+      let responseResult = result;
+      if (evt.animationName === "drop-to-trash") {
+        responseResult = "Error: negative input or constraint violation";
+      }
 
       emit("http-response", {
         request_id: request_id,
-        result: result || "NaN",
+        result: responseResult || "NaN",
       }).then(() => {
-        log("DEBUG", "sysbus", `response emitted [id: ${request_id}]`, { result: result || "NaN" });
+        log("DEBUG", "sysbus", `response emitted [id: ${request_id}]`, { result: responseResult || "NaN" });
       }).catch((err) => {
         log("ERROR", "sysbus", `failed to emit response [id: ${request_id}]`, { error: err });
       });
 
       node.remove();
-      activeCount = Math.max(0, activeCount - 1);
       updateCounter();
     });
 
     inbound.appendChild(node);
     log("DEBUG", "dom", `node appended to inbound [id: ${request_id}]`);
-    activeCount++;
     updateCounter();
 
     setTimeout(() => {

@@ -129,13 +129,8 @@ fn start_http_server(
                             } else if result == "disconnected" || result == "internal error" {
                                 send_response(request, 500, "internal error");
                             } else if let Ok(n) = result.parse::<f64>() {
-                                if n.is_finite() {
-                                    info!(request_id, status = 200, result = n, "responding OK");
-                                    send_response(request, 200, &n.to_string());
-                                } else {
-                                    warn!(request_id, status = 400, result = n, "NaN or infinite result");
-                                    send_response(request, 400, "NaN or infinite result");
-                                }
+                                info!(request_id, status = 200, result = n, "responding OK");
+                                send_response(request, 200, &n.to_string());
                             } else {
                                 warn!(request_id, status = 400, result, "non-numeric result");
                                 send_response(request, 400, &result);
