@@ -127,6 +127,13 @@ CSS cannot write to disk. MVP requires a synchronous syscall mechanism for persi
 
 Under no circumstances should business logic migrate to the system bus. If CSS lacks a capability (e.g., SHA-256 hashing), it must be provided as an external microservice call, not implemented in the bus layer. The bus remains a transparent conduit.
 
+### Directive E: Browser Compatibility & AI-Inspectability (Optional / Pending Review)
+
+To enable remote inspectability and allow multimodal AI models to verify application state visually using standard web browsers (e.g., via browser subagents), we can optionally migrate the system bus communication from Tauri IPC to a standard protocol (such as WebSockets or Server-Sent Events). This would host the motherboard UI as a platform-agnostic web app.
+
+> [!CAUTION]
+> **Strict Requirement:** Do NOT start this directive without explicit written confirmation and coordination from the USER. This is an optional exploratory feature.
+
 ---
 
 ## 4. Development Setup
