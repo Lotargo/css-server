@@ -63,6 +63,15 @@ fn send_response(
             .with_status_code(status)
             .with_header(
                 Header::from_bytes(&b"Content-Type"[..], &b"text/plain"[..]).unwrap(),
+            )
+            .with_header(
+                Header::from_bytes(&b"Access-Control-Allow-Origin"[..], &b"*"[..]).unwrap(),
+            )
+            .with_header(
+                Header::from_bytes(&b"Access-Control-Allow-Methods"[..], &b"POST, GET, OPTIONS"[..]).unwrap(),
+            )
+            .with_header(
+                Header::from_bytes(&b"Access-Control-Allow-Headers"[..], &b"Content-Type"[..]).unwrap(),
             ),
     );
     if let Err(e) = result {
@@ -91,6 +100,15 @@ fn start_http_server(
             let app_handle = app_handle.clone();
             let pending = pending.clone();
             let coordinator = coordinator.clone();
+
+            let method = request.method().to_string();
+            let url = request.url().to_string();
+
+            if method == "OPTIONS" {
+                debug!(method, url, "handling CORS preflight");
+                send_response(request, 204, "");
+                continue;
+            }
 
             // Check if queue is full immediately (avoid spawning thread if rejected with 429)
             {

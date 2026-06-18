@@ -187,6 +187,66 @@ async function setup() {
   });
 
   log("INFO", "sysbus", "listener established");
+
+  // Control Deck interaction
+  const dispatchBtn = document.getElementById("dispatch-btn");
+  const inputA = document.getElementById("input-a");
+  const inputB = document.getElementById("input-b");
+  const monitorResult = document.getElementById("monitor-result");
+
+  if (dispatchBtn && inputA && inputB && monitorResult) {
+    dispatchBtn.addEventListener("click", () => {
+      const aVal = parseFloat(inputA.value);
+      const bVal = parseFloat(inputB.value);
+
+      if (isNaN(aVal) || isNaN(bVal)) {
+        monitorResult.textContent = "ERR: INVALID INPUT";
+        monitorResult.className = "monitor-error";
+        return;
+      }
+
+      log("INFO", "controldeck", `dispatching manual calculation: ${aVal} + ${bVal}`);
+
+      // Disable UI during transaction
+      dispatchBtn.disabled = true;
+      inputA.disabled = true;
+      inputB.disabled = true;
+      
+      monitorResult.textContent = "DISPATCHING...";
+      monitorResult.className = "monitor-loading";
+
+      // Execute request directly through local system HTTP server port
+      fetch("http://localhost:8080/add", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ a: aVal, b: bVal })
+      })
+      .then(async (res) => {
+        const text = await res.text();
+        if (res.ok) {
+          monitorResult.textContent = text.trim();
+          monitorResult.className = "monitor-success";
+          log("INFO", "controldeck", `manual calculation resolved: ${text.trim()}`);
+        } else {
+          monitorResult.textContent = "ERR: " + text.trim().substring(0, 16).toUpperCase();
+          monitorResult.className = "monitor-error";
+          log("WARN", "controldeck", `manual calculation failed: ${text.trim()}`);
+        }
+      })
+      .catch((err) => {
+        monitorResult.textContent = "ERR: CONNECT FAIL";
+        monitorResult.className = "monitor-error";
+        log("ERROR", "controldeck", `failed to contact system bus: ${err.message}`);
+      })
+      .finally(() => {
+        dispatchBtn.disabled = false;
+        inputA.disabled = false;
+        inputB.disabled = false;
+      });
+    });
+  }
 }
 
 setup().catch((err) => {
