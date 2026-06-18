@@ -116,3 +116,37 @@ test('E2E-4: Concurrent request processing (5 requests parallel)', async () => {
     assert.strictEqual(res.body, String(idx + idx * 2));
   });
 });
+
+test('E2E-5: Backpressure rate limiting (HTTP 429)', async () => {
+  // Fire 10 concurrent requests.
+  // MAX_ACTIVE = 3, MAX_QUEUE = 5, total capacity = 8.
+  // 8 requests should resolve with 200, 2 should immediately fail with 429.
+  const requests = Array.from({ length: 10 }, (_, idx) => {
+    return fetch(SERVER_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ a: idx, b: 5 })
+    }).then(async res => {
+      return {
+        status: res.status,
+        body: (await res.text()).trim()
+      };
+    }).catch(err => {
+      return {
+        status: 0,
+        body: err.message
+      };
+    });
+  });
+
+  const responses = await Promise.all(requests);
+
+  const statuses = responses.map(r => r.status);
+  const count429 = statuses.filter(s => s === 429).length;
+  const count200 = statuses.filter(s => s === 200).length;
+
+  console.log(`E2E-5 responses: statuses = ${JSON.stringify(statuses)}`);
+
+  assert.strictEqual(count429, 2, 'Exactly 2 requests should be rejected with 429');
+  assert.strictEqual(count200, 8, 'Exactly 8 requests should resolve successfully with 200');
+});

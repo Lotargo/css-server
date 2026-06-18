@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::sync::mpsc::{channel, Sender};
-use std::sync::{Arc, Mutex};
+use std::sync::{Arc, Mutex, Condvar};
 use tauri::{AppHandle, Emitter, Listener};
 use tiny_http::{Header, Response, Server};
 use tracing::{debug, error, info, warn};
@@ -18,6 +18,25 @@ struct HttpRequestPayload {
 struct HttpResponsePayload {
     request_id: String,
     result: String,
+}
+
+struct RequestCoordinator {
+    active_count: usize,
+    queued_count: usize,
+}
+
+struct ActiveSlotGuard {
+    coordinator: Arc<(Mutex<RequestCoordinator>, Condvar)>,
+}
+
+impl Drop for ActiveSlotGuard {
+    fn drop(&mut self) {
+        let (lock, cvar) = &*self.coordinator;
+        let mut coord = lock.lock().unwrap();
+        coord.active_count -= 1;
+        cvar.notify_one();
+        debug!(active = coord.active_count, queued = coord.queued_count, "active slot released");
+    }
 }
 
 fn send_response(
@@ -40,6 +59,7 @@ fn send_response(
 fn start_http_server(
     app_handle: AppHandle,
     pending: Arc<Mutex<HashMap<String, Sender<String>>>>,
+    coordinator: Arc<(Mutex<RequestCoordinator>, Condvar)>,
 ) {
     std::thread::spawn(move || {
         let server = match Server::http("0.0.0.0:8080") {
@@ -56,7 +76,40 @@ fn start_http_server(
         for mut request in server.incoming_requests() {
             let app_handle = app_handle.clone();
             let pending = pending.clone();
+            let coordinator = coordinator.clone();
+
+            // Check if queue is full immediately (avoid spawning thread if rejected with 429)
+            {
+                let (lock, _cvar) = &*coordinator;
+                let mut coord = lock.lock().unwrap();
+                if coord.active_count >= 3 && coord.queued_count >= 5 {
+                    warn!("Rate limit exceeded (active={}, queued={}). Responding HTTP 429.", coord.active_count, coord.queued_count);
+                    send_response(request, 429, "Too Many Requests (Queue Full)");
+                    continue;
+                }
+                // Register in queue
+                coord.queued_count += 1;
+                debug!(active = coord.active_count, queued = coord.queued_count, "request added to backpressure queue");
+            }
+
+            let thread_coordinator = coordinator.clone();
             std::thread::spawn(move || {
+                // Wait in queue until active slot is available
+                {
+                    let (lock, cvar) = &*thread_coordinator;
+                    let mut coord = lock.lock().unwrap();
+                    while coord.active_count >= 3 {
+                        coord = cvar.wait(coord).unwrap();
+                    }
+                    // Transition from queued to active
+                    coord.queued_count -= 1;
+                    coord.active_count += 1;
+                    debug!(active = coord.active_count, queued = coord.queued_count, "request slot acquired, starting processing");
+                }
+
+                // Instantiate RAII slot guard to release slot automatically when thread exits
+                let _guard = ActiveSlotGuard { coordinator: thread_coordinator.clone() };
+
                 let method = request.method().to_string();
                 let url = request.url().to_string();
 
@@ -165,13 +218,22 @@ pub fn run() {
     let pending: Arc<Mutex<HashMap<String, Sender<String>>>> =
         Arc::new(Mutex::new(HashMap::new()));
 
+    let coordinator = Arc::new((
+        Mutex::new(RequestCoordinator {
+            active_count: 0,
+            queued_count: 0,
+        }),
+        Condvar::new(),
+    ));
+
     tauri::Builder::default()
         .plugin(tauri_plugin_opener::init())
         .setup(move |app| {
             let app_handle = app.handle().clone();
             let pending_clone = pending.clone();
+            let coordinator_clone = coordinator.clone();
 
-            start_http_server(app_handle, pending_clone);
+            start_http_server(app_handle, pending_clone, coordinator_clone);
 
             let pending_listener = pending.clone();
             app.listen("http-response", move |event| {
