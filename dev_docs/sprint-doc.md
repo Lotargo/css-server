@@ -9,7 +9,7 @@
 ## 1. Sprint Backlog
 
 ### Task 1: Dumb System Bus (Tauri / JS I/O Layer)
-**Status:** `[in progress]` **Priority:** P1
+**Status:** `[completed]` **Priority:** P1
 
 Implement a minimal HTTP server using Tauri (Rust) + WebView.
 
@@ -22,7 +22,7 @@ Implement a minimal HTTP server using Tauri (Rust) + WebView.
 - **Constraint:** No `if/else`, arithmetic (`+`, `-`, `*`, `/`), or data transformation in Rust/JS. Transport only.
 
 ### Task 2: Memory Layout (HTML Architecture)
-**Status:** `[pending]` **Priority:** P1
+**Status:** `[completed]` **Priority:** P1
 
 Define the visual "motherboard" layout.
 
@@ -31,7 +31,7 @@ Define the visual "motherboard" layout.
 - Each zone is a positioned container that nodes enter/exit via CSS transitions.
 
 ### Task 3: ALU and Router (CSS Logic Core)
-**Status:** `[pending]` **Priority:** P1
+**Status:** `[completed]` **Priority:** P1
 
 Implement backend business logic.
 
@@ -43,7 +43,7 @@ Implement backend business logic.
 - **Validation:** Use `if()` + `style()` to check for negative or NaN results. Route failures to the error zone.
 
 ### Task 4: Visualisation (Glass Box Animations)
-**Status:** `[pending]` **Priority:** P2
+**Status:** `[completed]` **Priority:** P2
 
 Animate the computation lifecycle.
 
@@ -56,12 +56,31 @@ Animate the computation lifecycle.
 
 ---
 
-## 2. Definition of Done
+## 2. Gate: Verification Required
+
+> **All items in this section must pass before any subsequent sprint or phase begins.
+> No exceptions.**
+
+### 2.1 Definition of Done
 
 1. `curl -X POST http://localhost:8080/add -d '{"a": 5, "b": 10}'` returns `15`.
 2. On-screen visual shows a block with values 5 and 10 moving left to right, merging, turning green, and vanishing.
 3. Invalid input (e.g., non-numeric values) is handled by CSS and returns HTTP 400.
 4. No memory leaks — all DOM nodes are removed after response dispatch.
+
+### 2.2 Verification Checklist
+
+Before marking this sprint as closed:
+
+- [ ] **E2E-1:** `curl -X POST http://localhost:8080/add -d '{"a":5,"b":10}'` returns `15`
+- [ ] **E2E-2:** `curl -X POST http://localhost:8080/add -d '{"a":-1,"b":5}'` returns HTTP 400 (negative input validation)
+- [ ] **E2E-3:** `curl -X POST http://localhost:8080/add -d '{"a":"x","b":10}'` returns HTTP 400 (non-numeric input)
+- [ ] **E2E-4:** Visual: grey block appears in INBOUND → moves to ALU → turns green and slides to OUTBOUND → disappears
+- [ ] **E2E-5:** Error visual: block appears → routes to ERROR zone with red animation
+- [ ] **E2E-6:** `window.__TAURI__.event` listener fires once per request (no duplicate events)
+- [ ] **MEM-1:** After 10 sequential requests, DOM contains no orphaned `.request` nodes
+- [ ] **BUS-1:** Rust HTTP thread contains zero `if/else` branches on business data (only request routing)
+- [ ] **BUS-2:** JS event handler contains zero arithmetic operations (`+`, `-`, `*`, `/`)
 
 ---
 
@@ -93,3 +112,36 @@ CSS cannot write to disk. MVP requires a synchronous syscall mechanism for persi
 ### Directive D: Bus Purity
 
 Under no circumstances should business logic migrate to the system bus. If CSS lacks a capability (e.g., SHA-256 hashing), it must be provided as an external microservice call, not implemented in the bus layer. The bus remains a transparent conduit.
+
+---
+
+## 4. Development Setup
+
+### First Build
+
+The initial `npm run tauri dev` compiles ~350 crate dependencies and takes 1.5–3 minutes depending on hardware. Subsequent incremental builds take 5–15 seconds.
+
+### Performance Optimisation
+
+**Windows Defender exclusion** (most impactful on Windows):
+
+```powershell
+Add-MpPreference -ExclusionPath "F:\projects\css-server\src-tauri\target"
+```
+
+**Cargo config** — `.cargo/config.toml` at project root already configured with:
+- `codegen-units = 256` — parallel codegen for faster debug builds
+- `incremental = true` — incremental compilation enabled
+
+**Quick compilation check** (faster than full build):
+
+```bash
+cd src-tauri && cargo check
+```
+
+### Prerequisites
+
+- Rust 1.70+ (stable), Node.js 18+
+- Windows: WebView2 (included with Edge/Windows 11)
+- Linux: `libwebkit2gtk-4.1` and related packages
+- macOS: included with system

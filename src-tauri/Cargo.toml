@@ -1,0 +1,21 @@
+[package]
+name = "css-server"
+version = "0.1.0"
+description = "CSS-Server: Glass Box Backend Architecture — PoC"
+authors = ["CSS-Server Team"]
+edition = "2021"
+
+[lib]
+name = "css_server_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = [] }
+tauri-plugin-opener = "2"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+tiny_http = "0.12"
+uuid = { version = "1", features = ["v4"] }

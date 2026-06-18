@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="styles.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CSS-Server — Glass Calculator</title>
+    <script type="module" src="/main.js" defer></script>
+  </head>
+  <body>
+    <div id="motherboard">
+      <div id="inbound" class="zone">
+        <h2>INBOUND</h2>
+      </div>
+      <div id="alu-lane" class="zone">
+        <h2>ALU</h2>
+        <div id="processor-core"></div>
+      </div>
+      <div id="outbound" class="zone">
+        <h2>OUTBOUND</h2>
+      </div>
+      <div id="error-zone" class="zone">
+        <h2>ERROR</h2>
+      </div>
+      <div id="status-bar">
+        <span>CSS-Server v0.1.0</span>
+        <span id="status-port">:8080</span>
+        <span id="status-counter">active: 0</span>
+      </div>
+    </div>
+  </body>
+</html>
