@@ -13,7 +13,7 @@
 #motherboard {
   display: grid;
   grid-template-columns: 1fr 2fr 1fr;
-  grid-template-rows: 1fr auto;
+  grid-template-rows: 1fr auto auto;
   gap: 8px;
   width: 100vw;
   height: 100vh;
@@ -61,6 +61,36 @@
   border-color: #9b2226;
   min-height: 100px;
 }
+
+#log-panel {
+  grid-column: 1 / -1;
+  grid-row: 3;
+  border-color: #444;
+  min-height: 120px;
+  max-height: 200px;
+  display: flex;
+  flex-direction: column;
+}
+
+#log-list {
+  flex: 1;
+  overflow-y: auto;
+  font-family: "Courier New", monospace;
+  font-size: 0.65rem;
+  line-height: 1.4;
+  padding: 4px 0;
+}
+
+.log-entry {
+  padding: 1px 4px;
+  white-space: pre;
+  border-bottom: 1px solid #1a1a1a;
+}
+
+.log-info    { color: #8ab4f8; }
+.log-debug   { color: #666; }
+.log-warn    { color: #f9c74f; }
+.log-error   { color: #e63946; background: #2a0a0a; }
 
 #status-bar {
   grid-column: 1 / -1;
