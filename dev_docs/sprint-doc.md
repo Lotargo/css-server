@@ -9,6 +9,7 @@
 ## 1. Sprint Backlog
 
 ### Task 1: Dumb System Bus (Tauri / JS I/O Layer)
+**Status:** `[in progress]` **Priority:** P1
 
 Implement a minimal HTTP server using Tauri (Rust) + WebView.
 
@@ -21,6 +22,7 @@ Implement a minimal HTTP server using Tauri (Rust) + WebView.
 - **Constraint:** No `if/else`, arithmetic (`+`, `-`, `*`, `/`), or data transformation in Rust/JS. Transport only.
 
 ### Task 2: Memory Layout (HTML Architecture)
+**Status:** `[pending]` **Priority:** P1
 
 Define the visual "motherboard" layout.
 
@@ -29,6 +31,7 @@ Define the visual "motherboard" layout.
 - Each zone is a positioned container that nodes enter/exit via CSS transitions.
 
 ### Task 3: ALU and Router (CSS Logic Core)
+**Status:** `[pending]` **Priority:** P1
 
 Implement backend business logic.
 
@@ -40,6 +43,7 @@ Implement backend business logic.
 - **Validation:** Use `if()` + `style()` to check for negative or NaN results. Route failures to the error zone.
 
 ### Task 4: Visualisation (Glass Box Animations)
+**Status:** `[pending]` **Priority:** P2
 
 Animate the computation lifecycle.
 
