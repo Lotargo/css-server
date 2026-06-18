@@ -72,15 +72,29 @@ Animate the computation lifecycle.
 
 Before marking this sprint as closed:
 
-- [ ] **E2E-1:** `curl -X POST http://localhost:8080/add -d '{"a":5,"b":10}'` returns `15`
-- [ ] **E2E-2:** `curl -X POST http://localhost:8080/add -d '{"a":-1,"b":5}'` returns HTTP 400 (negative input validation)
-- [ ] **E2E-3:** `curl -X POST http://localhost:8080/add -d '{"a":"x","b":10}'` returns HTTP 400 (non-numeric input)
-- [ ] **E2E-4:** Visual: grey block appears in INBOUND → moves to ALU → turns green and slides to OUTBOUND → disappears
-- [ ] **E2E-5:** Error visual: block appears → routes to ERROR zone with red animation
-- [ ] **E2E-6:** `window.__TAURI__.event` listener fires once per request (no duplicate events)
-- [ ] **MEM-1:** After 10 sequential requests, DOM contains no orphaned `.request` nodes
-- [ ] **BUS-1:** Rust HTTP thread contains zero `if/else` branches on business data (only request routing)
-- [ ] **BUS-2:** JS event handler contains zero arithmetic operations (`+`, `-`, `*`, `/`)
+- [❌] **E2E-1:** `curl -X POST http://localhost:8080/add -d '{"a":5,"b":10}'` returns `15`
+- [❌] **E2E-2:** `curl -X POST http://localhost:8080/add -d '{"a":-1,"b":5}'` returns HTTP 400 (negative input validation)
+- [❌] **E2E-3:** `curl -X POST http://localhost:8080/add -d '{"a":"x","b":10}'` returns HTTP 400 (non-numeric input)
+- [❌] **E2E-4:** Visual: grey block appears in INBOUND → moves to ALU → turns green and slides to OUTBOUND → disappears
+- [❌] **E2E-5:** Error visual: block appears → routes to ERROR zone with red animation
+- [❌] **E2E-6:** `window.__TAURI__.event` listener fires once per request (no duplicate events)
+- [❌] **MEM-1:** After 10 sequential requests, DOM contains no orphaned `.request` nodes
+- [❌] **BUS-1:** Rust HTTP thread contains zero `if/else` branches on business data (only request routing)
+- [❌] **BUS-2:** JS event handler contains zero arithmetic operations (`+`, `-`, `*`, `/`)
+
+### 2.3 Verification Findings
+
+**BLOCKER: CSS-compat (`E2E-1`–`E2E-6`, `MEM-1`)**
+CSS-фичи `attr(data-a type(<number>))` и `if()` в `animation` не поддерживаются WebView2. `--result` не вычисляется, анимация не играет, `animationend` не срабатывает → `http-response` никогда не отправляется → `rx.recv()` блокируется навсегда, сервер перестаёт отвечать.
+
+**BLOCKER: Sequential HTTP (`E2E-1`–`E2E-6`, `MEM-1`)**
+`tiny_http::Server::incoming_requests()` обрабатывает запросы последовательно. Если один запрос завис на `rx.recv()`, все последующие встают в очередь и никогда не получат ответа. Нужен `std::thread::spawn` на каждый запрос.
+
+**FINDING: BUS-1 violation (`lib.rs:117`)**
+`n.is_finite()` ветвится на значении результата (бизнес-данном), определяя 200 vs 400. Pre-existing issue.
+
+**FINDING: BUS-2 violation (`main.js:64,70`)**
+`activeCount - 1` и `activeCount++` — арифметика в bus-слое. Pre-existing issue.
 
 ---
 
