@@ -22,3 +22,37 @@
     content: attr(data-a) " + " attr(data-b);
   }
 }
+
+/* DB Write Queue: deep purple, pulsing, branching on database write outcomes */
+#db-write-queue .add-task {
+  position: relative;
+  margin: 40px auto 0;
+  background: #3c096c;
+  border: 1px solid #7b2cbf;
+  color: #e0aaff;
+  animation: pulse-db-write 1s infinite alternate ease-in-out;
+
+  &::before {
+    content: "DB WRITE...";
+  }
+
+  &[data-db-result="success"] {
+    background: #132a13;
+    border-color: #3f5e30;
+    color: #97a97c;
+    animation: slide-from-db-to-outbound 1.2s ease-in-out forwards;
+    &::before {
+      content: "DB SUCCESS";
+    }
+  }
+
+  &[data-db-result="error"] {
+    background: #5a1a1a;
+    border-color: #9b2226;
+    color: #ffb3b3;
+    animation: drop-to-trash 1.0s ease-in forwards;
+    &::before {
+      content: "DB ERROR";
+    }
+  }
+}

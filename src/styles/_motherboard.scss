@@ -1,6 +1,6 @@
 #motherboard {
   display: grid;
-  grid-template-columns: 1fr 2fr 1fr;
+  grid-template-columns: 1fr 2fr 2fr 1fr;
   grid-template-rows: 1fr auto auto;
   gap: 8px;
   width: 100vw;
@@ -37,8 +37,14 @@
   border-color: #2a6f97;
 }
 
-#outbound {
+#db-write-queue {
   grid-column: 3;
+  grid-row: 1;
+  border-color: #7b2cbf;
+}
+
+#outbound {
+  grid-column: 4;
   grid-row: 1;
   border-color: #2d6a4f;
 }

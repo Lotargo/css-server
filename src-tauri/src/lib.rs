@@ -20,6 +20,20 @@ struct HttpResponsePayload {
     result: String,
 }
 
+#[derive(Deserialize, Clone)]
+struct DbWriteRequestPayload {
+    request_id: String,
+    val_a: f64,
+    val_b: f64,
+    result: f64,
+}
+
+#[derive(Serialize, Clone)]
+struct DbWriteResponsePayload {
+    request_id: String,
+    status: String,
+}
+
 struct RequestCoordinator {
     active_count: usize,
     queued_count: usize,
@@ -215,6 +229,30 @@ pub fn run() {
 
     info!("CSS-Server starting");
 
+    let conn = match rusqlite::Connection::open("../css_server.db") {
+        Ok(c) => c,
+        Err(e) => {
+            error!(error = %e, "failed to open SQLite database");
+            panic!("database error: {}", e);
+        }
+    };
+
+    if let Err(e) = conn.execute(
+        "CREATE TABLE IF NOT EXISTS calculations (
+            id TEXT PRIMARY KEY,
+            val_a REAL,
+            val_b REAL,
+            result REAL,
+            timestamp TEXT DEFAULT CURRENT_TIMESTAMP
+        )",
+        [],
+    ) {
+        error!(error = %e, "failed to create calculations table");
+        panic!("database table creation error: {}", e);
+    }
+    
+    let db_conn = Arc::new(Mutex::new(conn));
+
     let pending: Arc<Mutex<HashMap<String, Sender<String>>>> =
         Arc::new(Mutex::new(HashMap::new()));
 
@@ -226,14 +264,53 @@ pub fn run() {
         Condvar::new(),
     ));
 
+    let db_conn_clone = db_conn.clone();
+
     tauri::Builder::default()
         .plugin(tauri_plugin_opener::init())
         .setup(move |app| {
             let app_handle = app.handle().clone();
             let pending_clone = pending.clone();
             let coordinator_clone = coordinator.clone();
+            let db_conn_setup = db_conn_clone.clone();
 
             start_http_server(app_handle, pending_clone, coordinator_clone);
+
+            let app_handle_db = app.handle().clone();
+            app.listen("db-write-request", move |event| {
+                match serde_json::from_str::<DbWriteRequestPayload>(event.payload()) {
+                    Ok(payload) => {
+                        debug!(request_id = %payload.request_id, val_a = payload.val_a, val_b = payload.val_b, result = payload.result, "db-write-request event received");
+                        let status = {
+                            let db = db_conn_setup.lock().unwrap();
+                            match db.execute(
+                                "INSERT OR REPLACE INTO calculations (id, val_a, val_b, result) VALUES (?1, ?2, ?3, ?4)",
+                                rusqlite::params![payload.request_id, payload.val_a, payload.val_b, payload.result],
+                            ) {
+                                Ok(_) => {
+                                    info!(request_id = %payload.request_id, "calculation saved to database");
+                                    "success".to_string()
+                                }
+                                Err(e) => {
+                                    error!(request_id = %payload.request_id, error = %e, "failed to write calculation to database");
+                                    "error".to_string()
+                                }
+                            }
+                        };
+
+                        let response_payload = DbWriteResponsePayload {
+                            request_id: payload.request_id.clone(),
+                            status,
+                        };
+                        if let Err(e) = app_handle_db.emit("db-write-response", response_payload) {
+                            error!(request_id = %payload.request_id, error = %e, "failed to emit db-write-response");
+                        }
+                    }
+                    Err(e) => {
+                        error!(error = %e, payload = %event.payload(), "failed to deserialize db-write-request event");
+                    }
+                }
+            });
 
             let pending_listener = pending.clone();
             app.listen("http-response", move |event| {

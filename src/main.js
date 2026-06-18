@@ -48,6 +48,16 @@ async function setup() {
 
   log("INFO", "sysbus", "listening for http-request events");
 
+  await listen("db-write-response", (event) => {
+    const { request_id, status } = event.payload;
+    log("INFO", "database", `db response received [id: ${request_id}], status: ${status}`);
+    const node = document.querySelector(`[data-request-id="${request_id}"]`);
+    if (node) {
+      node.dataset.dbResult = status;
+      log("DEBUG", "dom", `node data-db-result set to ${status} [id: ${request_id}]`);
+    }
+  });
+
   await listen("http-request", (event) => {
     const { request_id, a, b } = event.payload;
 
@@ -94,33 +104,74 @@ async function setup() {
 
     node.addEventListener("animationend", (evt) => {
       if (finished) return;
-      finished = true;
-      clearTimeout(watchdog);
 
-      const style = getComputedStyle(node);
-      const result = style.getPropertyValue("--result").trim();
+      log("DEBUG", "dom", `animation ended: ${evt.animationName} [id: ${request_id}]`);
 
-      log("INFO", "alu", `animation ended [id: ${request_id}]`, {
-        animationName: evt.animationName,
-        result: result || "NaN"
-      });
+      if (evt.animationName === "slide-to-db") {
+        log("INFO", "alu", `ALU calculation complete, routing to DB write [id: ${request_id}]`);
+        const style = getComputedStyle(node);
+        const result = style.getPropertyValue("--result").trim();
 
-      let responseResult = result;
-      if (evt.animationName === "drop-to-trash") {
-        responseResult = "Error: negative input or constraint violation";
+        // Move DOM node to DB write queue
+        const dbQueue = document.getElementById("db-write-queue");
+        if (dbQueue) {
+          dbQueue.appendChild(node);
+          log("DEBUG", "dom", `node appended to DB write queue [id: ${request_id}]`);
+        }
+
+        // Emit syscall request to Rust bus
+        emit("db-write-request", {
+          request_id: request_id,
+          val_a: parseFloat(node.dataset.a),
+          val_b: parseFloat(node.dataset.b),
+          result: parseFloat(result)
+        }).then(() => {
+          log("DEBUG", "sysbus", `db-write-request event emitted [id: ${request_id}]`);
+        }).catch((err) => {
+          log("ERROR", "sysbus", `failed to emit db-write-request [id: ${request_id}]`, { error: err });
+          node.dataset.dbResult = "error";
+        });
+        
+        return; // Wait for db-write-response to trigger next animation
       }
 
-      emit("http-response", {
-        request_id: request_id,
-        result: responseResult || "NaN",
-      }).then(() => {
-        log("DEBUG", "sysbus", `response emitted [id: ${request_id}]`, { result: responseResult || "NaN" });
-      }).catch((err) => {
-        log("ERROR", "sysbus", `failed to emit response [id: ${request_id}]`, { error: err });
-      });
+      if (evt.animationName === "slide-from-db-to-outbound" || evt.animationName === "drop-to-trash") {
+        finished = true;
+        clearTimeout(watchdog);
 
-      node.remove();
-      updateCounter();
+        const style = getComputedStyle(node);
+        const result = style.getPropertyValue("--result").trim();
+
+        let responseResult = result;
+        let responseStatus = 200;
+        
+        if (evt.animationName === "drop-to-trash") {
+          // Check if it failed due to database write error or negative input
+          if (node.dataset.dbResult === "error") {
+            responseResult = "Error: database persistent write failure";
+          } else {
+            responseResult = "Error: negative input or constraint violation";
+          }
+          responseStatus = 400;
+        }
+
+        log("INFO", "sysbus", `request final dispatch [id: ${request_id}]`, {
+          status: responseStatus,
+          result: responseResult
+        });
+
+        emit("http-response", {
+          request_id: request_id,
+          result: responseResult || "NaN",
+        }).then(() => {
+          log("DEBUG", "sysbus", `response emitted [id: ${request_id}]`);
+        }).catch((err) => {
+          log("ERROR", "sysbus", `failed to emit response [id: ${request_id}]`, { error: err });
+        });
+
+        node.remove();
+        updateCounter();
+      }
     });
 
     inbound.appendChild(node);

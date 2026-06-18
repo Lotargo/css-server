@@ -16,6 +16,12 @@
   initial-value: 0;
 }
 
+.add-task {
+  --val-a: attr(data-a type(<number>));
+  --val-b: attr(data-b type(<number>));
+  --result: calc(var(--val-a) + var(--val-b));
+}
+
 /* ALU lane: extract typed data and compute */
 #alu-lane .add-task {
   position: relative;
@@ -24,11 +30,7 @@
   border: 1px solid #2a6f97;
   color: #8ab4f8;
 
-  --val-a: attr(data-a type(<number>));
-  --val-b: attr(data-b type(<number>));
-  --result: calc(var(--val-a) + var(--val-b));
-
-  animation: #{"if(style(--val-a >= 0) and style(--val-b >= 0): slide-to-outbound 1.5s ease-in-out forwards; else: drop-to-trash 1s ease-in forwards)"};
+  animation: #{"if(style(--val-a >= 0) and style(--val-b >= 0): slide-to-db 1.2s ease-in-out forwards; else: drop-to-trash 1s ease-in forwards)"};
 
   &::before {
     content: "= " attr(data-a) " + " attr(data-b);

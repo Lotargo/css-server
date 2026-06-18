@@ -38,3 +38,50 @@
     opacity: 0.15;
   }
 }
+
+@keyframes slide-to-db {
+  0% {
+    background: #1e3a5f;
+    border-color: #2a6f97;
+    transform: translateX(0) scale(1);
+    opacity: 1;
+  }
+  100% {
+    background: #3c096c;
+    border-color: #7b2cbf;
+    transform: translateX(250px) scale(0.9);
+    opacity: 0.9;
+  }
+}
+
+@keyframes pulse-db-write {
+  0% {
+    box-shadow: 0 0 5px rgba(157, 78, 221, 0.4);
+    background: #3c096c;
+  }
+  100% {
+    box-shadow: 0 0 15px rgba(157, 78, 221, 0.8);
+    background: #5a189a;
+  }
+}
+
+@keyframes slide-from-db-to-outbound {
+  0% {
+    background: #3c096c;
+    border-color: #7b2cbf;
+    transform: translateX(0) scale(1);
+    opacity: 1;
+  }
+  60% {
+    background: #2d6a4f;
+    border-color: #40916c;
+    transform: translateX(80px) scale(1.1);
+    opacity: 1;
+  }
+  100% {
+    background: #2d6a4f;
+    border-color: #52b788;
+    transform: translateX(200px) scale(0.8);
+    opacity: 0.4;
+  }
+}

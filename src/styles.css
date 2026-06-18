@@ -12,7 +12,7 @@
 
 #motherboard {
   display: grid;
-  grid-template-columns: 1fr 2fr 1fr;
+  grid-template-columns: 1fr 2fr 2fr 1fr;
   grid-template-rows: 1fr auto auto;
   gap: 8px;
   width: 100vw;
@@ -48,8 +48,14 @@
   border-color: #2a6f97;
 }
 
-#outbound {
+#db-write-queue {
   grid-column: 3;
+  grid-row: 1;
+  border-color: #7b2cbf;
+}
+
+#outbound {
+  grid-column: 4;
   grid-row: 1;
   border-color: #2d6a4f;
 }
@@ -95,6 +101,37 @@
   content: attr(data-a) " + " attr(data-b);
 }
 
+/* DB Write Queue: deep purple, pulsing, branching on database write outcomes */
+#db-write-queue .add-task {
+  position: relative;
+  margin: 40px auto 0;
+  background: #3c096c;
+  border: 1px solid #7b2cbf;
+  color: #e0aaff;
+  animation: pulse-db-write 1s infinite alternate ease-in-out;
+}
+#db-write-queue .add-task::before {
+  content: "DB WRITE...";
+}
+#db-write-queue .add-task[data-db-result=success] {
+  background: #132a13;
+  border-color: #3f5e30;
+  color: #97a97c;
+  animation: slide-from-db-to-outbound 1.2s ease-in-out forwards;
+}
+#db-write-queue .add-task[data-db-result=success]::before {
+  content: "DB SUCCESS";
+}
+#db-write-queue .add-task[data-db-result=error] {
+  background: #5a1a1a;
+  border-color: #9b2226;
+  color: #ffb3b3;
+  animation: drop-to-trash 1s ease-in forwards;
+}
+#db-write-queue .add-task[data-db-result=error]::before {
+  content: "DB ERROR";
+}
+
 @property --val-a {
   syntax: "<number>";
   inherits: false;
@@ -110,6 +147,12 @@
   inherits: false;
   initial-value: 0;
 }
+.add-task {
+  --val-a: attr(data-a type(<number>));
+  --val-b: attr(data-b type(<number>));
+  --result: calc(var(--val-a) + var(--val-b));
+}
+
 /* ALU lane: extract typed data and compute */
 #alu-lane .add-task {
   position: relative;
@@ -117,10 +160,7 @@
   background: #1e3a5f;
   border: 1px solid #2a6f97;
   color: #8ab4f8;
-  --val-a: attr(data-a type(<number>));
-  --val-b: attr(data-b type(<number>));
-  --result: calc(var(--val-a) + var(--val-b));
-  animation: if(style(--val-a >= 0) and style(--val-b >= 0): slide-to-outbound 1.5s ease-in-out forwards; else: drop-to-trash 1s ease-in forwards);
+  animation: if(style(--val-a >= 0) and style(--val-b >= 0): slide-to-db 1.2s ease-in-out forwards; else: drop-to-trash 1s ease-in forwards);
 }
 #alu-lane .add-task::before {
   content: "= " attr(data-a) " + " attr(data-b);
@@ -163,6 +203,50 @@
     background: #9b2226;
     transform: translateY(140px) rotate(8deg);
     opacity: 0.15;
+  }
+}
+@keyframes slide-to-db {
+  0% {
+    background: #1e3a5f;
+    border-color: #2a6f97;
+    transform: translateX(0) scale(1);
+    opacity: 1;
+  }
+  100% {
+    background: #3c096c;
+    border-color: #7b2cbf;
+    transform: translateX(250px) scale(0.9);
+    opacity: 0.9;
+  }
+}
+@keyframes pulse-db-write {
+  0% {
+    box-shadow: 0 0 5px rgba(157, 78, 221, 0.4);
+    background: #3c096c;
+  }
+  100% {
+    box-shadow: 0 0 15px rgba(157, 78, 221, 0.8);
+    background: #5a189a;
+  }
+}
+@keyframes slide-from-db-to-outbound {
+  0% {
+    background: #3c096c;
+    border-color: #7b2cbf;
+    transform: translateX(0) scale(1);
+    opacity: 1;
+  }
+  60% {
+    background: #2d6a4f;
+    border-color: #40916c;
+    transform: translateX(80px) scale(1.1);
+    opacity: 1;
+  }
+  100% {
+    background: #2d6a4f;
+    border-color: #52b788;
+    transform: translateX(200px) scale(0.8);
+    opacity: 0.4;
   }
 }
 #log-panel {
