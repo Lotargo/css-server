@@ -54,87 +54,103 @@ fn start_http_server(
         };
 
         for mut request in server.incoming_requests() {
-            let method = request.method().to_string();
-            let url = request.url().to_string();
+            let app_handle = app_handle.clone();
+            let pending = pending.clone();
+            std::thread::spawn(move || {
+                let method = request.method().to_string();
+                let url = request.url().to_string();
 
-            if url == "/add" && method == "POST" {
-                debug!(method, url, "incoming request");
+                if url == "/add" && method == "POST" {
+                    debug!(method, url, "incoming request");
 
-                let mut body = String::new();
-                if let Err(e) = request.as_reader().read_to_string(&mut body) {
-                    warn!(error = %e, "failed to read request body");
-                    send_response(request, 400, "bad request");
-                    continue;
-                }
-                debug!(body_len = body.len(), "request body read");
+                    let mut body = String::new();
+                    if let Err(e) = request.as_reader().read_to_string(&mut body) {
+                        warn!(error = %e, "failed to read request body");
+                        send_response(request, 400, "bad request");
+                        return;
+                    }
+                    debug!(body_len = body.len(), "request body read");
 
-                let parsed: Result<serde_json::Value, _> = serde_json::from_str(&body);
-                match parsed {
-                    Ok(val) => {
-                        let a = val["a"].as_f64().unwrap_or(f64::NAN);
-                        let b = val["b"].as_f64().unwrap_or(f64::NAN);
-                        let request_id = Uuid::new_v4().to_string();
+                    let parsed: Result<serde_json::Value, _> = serde_json::from_str(&body);
+                    match parsed {
+                        Ok(val) => {
+                            let a = val["a"].as_f64().unwrap_or(f64::NAN);
+                            let b = val["b"].as_f64().unwrap_or(f64::NAN);
+                            let request_id = Uuid::new_v4().to_string();
 
-                        info!(request_id, a, b, "request parsed, dispatching to webview");
+                            info!(request_id, a, b, "request parsed, dispatching to webview");
 
-                        let (tx, rx) = channel::<String>();
-                        {
-                            let mut map = match pending.lock() {
-                                Ok(m) => m,
-                                Err(e) => {
-                                    error!(request_id, error = %e, "mutex poisoned");
-                                    send_response(request, 500, "internal error");
-                                    continue;
+                            let (tx, rx) = channel::<String>();
+                            {
+                                let mut map = match pending.lock() {
+                                    Ok(m) => m,
+                                    Err(e) => {
+                                        error!(request_id, error = %e, "mutex poisoned");
+                                        send_response(request, 500, "internal error");
+                                        return;
+                                    }
+                                };
+                                map.insert(request_id.clone(), tx);
+                            }
+
+                            let payload = HttpRequestPayload {
+                                request_id: request_id.clone(),
+                                a,
+                                b,
+                            };
+                            if let Err(e) = app_handle.emit("http-request", payload) {
+                                error!(request_id, error = %e, "failed to emit http-request event");
+                                let mut map = pending.lock().unwrap();
+                                map.remove(&request_id);
+                                send_response(request, 500, "internal error");
+                                return;
+                            }
+                            debug!(request_id, "event emitted, waiting for result");
+
+                            let timeout = std::time::Duration::from_secs(4);
+                            let result = match rx.recv_timeout(timeout) {
+                                Ok(r) => r,
+                                Err(std::sync::mpsc::RecvTimeoutError::Timeout) => {
+                                    warn!(request_id, "request timed out waiting for webview response");
+                                    if let Ok(mut map) = pending.lock() {
+                                        map.remove(&request_id);
+                                    }
+                                    "timeout".into()
+                                }
+                                Err(std::sync::mpsc::RecvTimeoutError::Disconnected) => {
+                                    warn!(request_id, "channel disconnected");
+                                    "disconnected".into()
                                 }
                             };
-                            map.insert(request_id.clone(), tx);
-                        }
+                            info!(request_id, result, "result received from webview");
 
-                        let payload = HttpRequestPayload {
-                            request_id: request_id.clone(),
-                            a,
-                            b,
-                        };
-                        if let Err(e) = app_handle.emit("http-request", payload) {
-                            error!(request_id, error = %e, "failed to emit http-request event");
-                            let mut map = pending.lock().unwrap();
-                            map.remove(&request_id);
-                            send_response(request, 500, "internal error");
-                            continue;
-                        }
-                        debug!(request_id, "event emitted, waiting for result");
-
-                        let result = match rx.recv() {
-                            Ok(r) => r,
-                            Err(e) => {
-                                warn!(request_id, error = %e, "channel recv failed, sender dropped");
-                                "internal error".into()
-                            }
-                        };
-                        info!(request_id, result, "result received from webview");
-
-                        if let Ok(n) = result.parse::<f64>() {
-                            if n.is_finite() {
-                                info!(request_id, status = 200, result = n, "responding OK");
-                                send_response(request, 200, &n.to_string());
+                            if result == "timeout" {
+                                send_response(request, 504, "CSS execution timeout (unsupported features or stuck animation)");
+                            } else if result == "disconnected" || result == "internal error" {
+                                send_response(request, 500, "internal error");
+                            } else if let Ok(n) = result.parse::<f64>() {
+                                if n.is_finite() {
+                                    info!(request_id, status = 200, result = n, "responding OK");
+                                    send_response(request, 200, &n.to_string());
+                                } else {
+                                    warn!(request_id, status = 400, result = n, "NaN or infinite result");
+                                    send_response(request, 400, "NaN or infinite result");
+                                }
                             } else {
-                                warn!(request_id, status = 400, result = n, "NaN or infinite result");
-                                send_response(request, 400, "NaN or infinite result");
+                                warn!(request_id, status = 400, result, "non-numeric result");
+                                send_response(request, 400, &result);
                             }
-                        } else {
-                            warn!(request_id, status = 400, result, "non-numeric result");
-                            send_response(request, 400, &result);
+                        }
+                        Err(e) => {
+                            warn!(error = %e, body, "invalid JSON");
+                            send_response(request, 400, "invalid JSON");
                         }
                     }
-                    Err(e) => {
-                        warn!(error = %e, body, "invalid JSON");
-                        send_response(request, 400, "invalid JSON");
-                    }
+                } else {
+                    debug!(method, url, "unhandled route");
+                    send_response(request, 404, "not found");
                 }
-            } else {
-                debug!(method, url, "unhandled route");
-                send_response(request, 404, "not found");
-            }
+            });
         }
     });
 }
@@ -188,6 +204,28 @@ pub fn run() {
                     Err(e) => {
                         error!(error = %e, payload = %event.payload(), "failed to deserialize http-response event");
                     }
+                }
+            });
+
+            app.listen("js-log", move |event| {
+                if let Ok(val) = serde_json::from_str::<serde_json::Value>(event.payload()) {
+                    let level = val["level"].as_str().unwrap_or("INFO");
+                    let source = val["source"].as_str().unwrap_or("js");
+                    let message = val["message"].as_str().unwrap_or("");
+                    let data_val = &val["data"];
+                    let data_str = if data_val.is_null() {
+                        "".to_string()
+                    } else {
+                        format!(" data={}", data_val)
+                    };
+                    match level {
+                        "ERROR" => error!(target: "css_server::webview", source, "{}{}", message, data_str),
+                        "WARN" => warn!(target: "css_server::webview", source, "{}{}", message, data_str),
+                        "DEBUG" => debug!(target: "css_server::webview", source, "{}{}", message, data_str),
+                        _ => info!(target: "css_server::webview", source, "{}{}", message, data_str),
+                    }
+                } else {
+                    info!(target: "css_server::webview", "raw: {}", event.payload());
                 }
             });
 
