@@ -10,6 +10,12 @@
   initial-value: -1;
 }
 
+@property --op {
+  syntax: "<custom-ident>";
+  inherits: false;
+  initial-value: add;
+}
+
 @property --result {
   syntax: "<number>";
   inherits: false;
@@ -22,10 +28,17 @@
   --result: calc(var(--val-a) + var(--val-b));
 }
 
+.math-task {
+  --val-a: attr(data-a type(<number>), 0);
+  --val-b: attr(data-b type(<number>), 0);
+  --op: attr(data-op type(<custom-ident>), add);
+  --result: #{"if(style(--op: sub): calc(var(--val-a) - var(--val-b)); style(--op: mul): calc(var(--val-a) * var(--val-b)); style(--op: div): calc(var(--val-a) / var(--val-b)); style(--op: inv): calc(1 / var(--val-a)); style(--op: sqr): calc(var(--val-a) * var(--val-a)); style(--op: sqrt): sqrt(var(--val-a)); style(--op: pct): calc(var(--val-a) * (var(--val-b) / 100)); else: calc(var(--val-a) + var(--val-b)))"};
+}
+
 /* ALU lane: extract typed data and compute */
 #alu-lane .add-task {
   position: relative;
-  margin: 40px auto 0;
+  margin: 12px auto 0;
   background: #1e3a5f;
   border: 1px solid #2a6f97;
   color: #8ab4f8;
@@ -34,5 +47,19 @@
 
   &::before {
     content: "= " attr(data-a) " + " attr(data-b);
+  }
+}
+
+#alu-lane .math-task {
+  position: relative;
+  margin: 12px auto 0;
+  background: #312e81;
+  border: 1px solid #4338ca;
+  color: #c7d2fe;
+
+  animation: slide-to-db 1.2s ease-in-out forwards;
+
+  &::before {
+    content: "= " attr(data-a) " " attr(data-op-symbol) " " attr(data-b);
   }
 }

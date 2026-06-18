@@ -5,53 +5,300 @@
     <link rel="stylesheet" href="styles.css" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>CSS-Server — Glass Calculator</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
     <script type="module" src="/main.js" defer></script>
   </head>
   <body>
-    <div id="motherboard">
-      <div id="inbound" class="zone">
-        <h2>INBOUND</h2>
-      </div>
-      <div id="alu-lane" class="zone">
-        <h2>ALU</h2>
-        <div id="processor-core"></div>
-      </div>
-      <div id="db-write-queue" class="zone">
-        <h2>DB WRITE QUEUE</h2>
-      </div>
-      <div id="outbound" class="zone">
-        <h2>OUTBOUND</h2>
-      </div>
-      <div id="control-deck" class="zone">
-        <h2>CONTROL DECK</h2>
-        <div class="deck-inputs">
-          <div class="input-group">
-            <label for="input-a">VAL A</label>
-            <input type="number" id="input-a" value="5" min="0" />
+    <div id="calculator-app">
+      <!-- Left Pane: Main Calculator -->
+      <div id="calculator-pane">
+        <!-- Navigation Drawer Overlay -->
+        <div id="drawer-overlay"></div>
+
+        <!-- Sliding Navigation Drawer -->
+        <div id="nav-drawer" class="scrollbar-custom">
+          <div class="drawer-section">
+            <h3>Калькулятор</h3>
+            <button class="drawer-item active" data-mode="standard">
+              <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" class="drawer-icon">
+                <rect x="4" y="2" width="16" height="20" rx="2" ry="2"></rect>
+                <line x1="8" y1="6" x2="16" y2="6"></line>
+                <line x1="16" y1="14" x2="16" y2="18"></line>
+                <line x1="16" y1="10" x2="16" y2="10"></line>
+                <line x1="12" y1="10" x2="12" y2="10"></line>
+                <line x1="8" y1="10" x2="8" y2="10"></line>
+                <line x1="12" y1="14" x2="12" y2="14"></line>
+                <line x1="8" y1="14" x2="8" y2="14"></line>
+                <line x1="12" y1="18" x2="12" y2="18"></line>
+                <line x1="8" y1="18" x2="8" y2="18"></line>
+              </svg>
+              <span>Обычный</span>
+            </button>
+            <button class="drawer-item" data-mode="scientific">
+              <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" class="drawer-icon">
+                <path d="M10 2v7.31L4.75 19.3a1 1 0 0 0 .88 1.47h12.74a1 1 0 0 0 .88-1.47L14 9.31V2z"></path>
+                <line x1="8.5" y1="2" x2="15.5" y2="2"></line>
+                <line x1="14" y1="9" x2="10" y2="9"></line>
+              </svg>
+              <span>Инженерный</span>
+            </button>
+            <button class="drawer-item" data-mode="graphing">
+              <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" class="drawer-icon">
+                <path d="M3 3v18h18"></path>
+                <path d="M18.7 8l-5.1 5.2-2.8-2.7L7 14.3"></path>
+              </svg>
+              <span>Построение графиков</span>
+            </button>
+            <button class="drawer-item" data-mode="programmer">
+              <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" class="drawer-icon">
+                <polyline points="16 18 22 12 16 6"></polyline>
+                <polyline points="8 6 2 12 8 18"></polyline>
+              </svg>
+              <span>Программист</span>
+            </button>
+            <button class="drawer-item" data-mode="date">
+              <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" class="drawer-icon">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                <line x1="16" y1="2" x2="16" y2="6"></line>
+                <line x1="8" y1="2" x2="8" y2="6"></line>
+                <line x1="3" y1="10" x2="21" y2="10"></line>
+              </svg>
+              <span>Вычисление даты</span>
+            </button>
           </div>
-          <div class="input-group">
-            <label for="input-b">VAL B</label>
-            <input type="number" id="input-b" value="10" min="0" />
+
+          <div class="drawer-section">
+            <h3>Преобразователь</h3>
+            <button class="drawer-item" data-mode="currency">
+              <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" class="drawer-icon">
+                <line x1="12" y1="1" x2="12" y2="23"></line>
+                <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+              </svg>
+              <span>Валюта</span>
+            </button>
+            <button class="drawer-item" data-mode="volume">
+              <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" class="drawer-icon">
+                <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                <line x1="12" y1="22.08" x2="12" y2="12"></line>
+              </svg>
+              <span>Объем</span>
+            </button>
+            <button class="drawer-item" data-mode="length">
+              <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" class="drawer-icon">
+                <path d="M5 3H19A2 2 0 0 1 21 5V19A2 2 0 0 1 19 21H5A2 2 0 0 1 3 19V5A2 2 0 0 1 5 3Z"></path>
+                <line x1="3" y1="8" x2="8" y2="8"></line>
+                <line x1="3" y1="12" x2="11" y2="12"></line>
+                <line x1="3" y1="16" x2="8" y2="16"></line>
+              </svg>
+              <span>Длина</span>
+            </button>
+          </div>
+
+          <div class="drawer-footer">
+            <button class="drawer-item" data-mode="settings">
+              <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" class="drawer-icon">
+                <circle cx="12" cy="12" r="3"></circle>
+                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+              </svg>
+              <span>Параметры</span>
+            </button>
           </div>
         </div>
-        <button id="dispatch-btn">DISPATCH TRANSACTION</button>
-        <div class="monitor-display">
-          <label>MONITOR OUT:</label>
-          <span id="monitor-result">READY</span>
+
+        <!-- Header with Hamburger and Mode -->
+        <header id="calc-header">
+          <div class="header-left">
+            <button id="menu-btn" class="header-icon-btn" title="Open Navigation Drawer">
+              <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="3" y1="12" x2="21" y2="12"></line>
+                <line x1="3" y1="6" x2="21" y2="6"></line>
+                <line x1="3" y1="18" x2="21" y2="18"></line>
+              </svg>
+            </button>
+            <h1 id="calc-title">Обычный</h1>
+            <button id="compact-btn" class="header-icon-btn" title="Keep on top / Compact Mode">
+              <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round" class="icon-expand">
+                <polyline points="15 3 21 3 21 9"></polyline>
+                <polyline points="9 21 3 21 3 15"></polyline>
+                <line x1="21" y1="3" x2="14" y2="10"></line>
+                <line x1="3" y1="21" x2="10" y2="14"></line>
+              </svg>
+              <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round" class="icon-shrink" style="display: none;">
+                <polyline points="4 14 10 14 10 20"></polyline>
+                <polyline points="20 10 14 10 14 4"></polyline>
+                <line x1="14" y1="10" x2="21" y2="3"></line>
+                <line x1="10" y1="14" x2="3" y2="21"></line>
+              </svg>
+            </button>
+          </div>
+          <div class="header-right">
+            <!-- Toggle Sidebar button (shown on small screens) -->
+            <button id="sidebar-toggle-btn" class="header-icon-btn" title="History & Memory">
+              <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <polyline points="12 6 12 12 16 14"></polyline>
+              </svg>
+            </button>
+          </div>
+        </header>
+
+        <!-- Display Area -->
+        <div id="calc-display-container">
+          <div id="expression-preview"></div>
+          <div id="calculator-display">0</div>
+        </div>
+
+        <!-- Memory Buttons Row -->
+        <div id="memory-bar">
+          <button class="btn-mem" id="btn-mc" disabled>MC</button>
+          <button class="btn-mem" id="btn-mr" disabled>MR</button>
+          <button class="btn-mem" id="btn-m-plus">M+</button>
+          <button class="btn-mem" id="btn-m-minus">M-</button>
+          <button class="btn-mem" id="btn-ms">MS</button>
+          <button class="btn-mem" id="btn-m-list" disabled>M▼</button>
+        </div>
+
+        <!-- Calculator Grid of Keys -->
+        <div id="calculator-grid">
+          <button class="btn-op" id="btn-pct">%</button>
+          <button class="btn-op" id="btn-ce">CE</button>
+          <button class="btn-op" id="btn-c">C</button>
+          <button class="btn-op" id="btn-back" title="Backspace">
+            <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"></path>
+              <line x1="18" y1="9" x2="12" y2="15"></line>
+              <line x1="12" y1="9" x2="18" y2="15"></line>
+            </svg>
+          </button>
+
+          <button class="btn-op" id="btn-inv">1/x</button>
+          <button class="btn-op" id="btn-sqr">x²</button>
+          <button class="btn-op" id="btn-sqrt">²√x</button>
+          <button class="btn-op" id="btn-div">÷</button>
+
+          <button class="btn-num" id="btn-7">7</button>
+          <button class="btn-num" id="btn-8">8</button>
+          <button class="btn-num" id="btn-9">9</button>
+          <button class="btn-op" id="btn-mul">×</button>
+
+          <button class="btn-num" id="btn-4">4</button>
+          <button class="btn-num" id="btn-5">5</button>
+          <button class="btn-num" id="btn-6">6</button>
+          <button class="btn-op" id="btn-sub">−</button>
+
+          <button class="btn-num" id="btn-1">1</button>
+          <button class="btn-num" id="btn-2">2</button>
+          <button class="btn-num" id="btn-3">3</button>
+          <button class="btn-op" id="btn-add">+</button>
+
+          <button class="btn-op" id="btn-neg">+/-</button>
+          <button class="btn-num" id="btn-0">0</button>
+          <button class="btn-num" id="btn-dec">,</button>
+          <button class="btn-eq" id="btn-eq">=</button>
         </div>
       </div>
-      <div id="error-zone" class="zone">
-        <h2>ERROR</h2>
-      </div>
-      <div id="log-panel" class="zone">
-        <h2>TRACE LOG</h2>
-        <div id="log-list"></div>
-      </div>
-      <div id="status-bar">
-        <span>CSS-Server v0.1.0</span>
-        <span id="status-port">:8080</span>
-        <span id="status-counter">active: 0</span>
-      </div>
+
+      <!-- Right Pane: Sidebar Panel -->
+      <aside id="sidebar-pane">
+        <!-- Sidebar Navigation Tabs -->
+        <nav id="sidebar-tabs">
+          <button class="tab-btn active" data-tab="history">Журнал</button>
+          <button class="tab-btn" data-tab="memory">Память</button>
+          <button class="tab-btn" data-tab="server">Сервер</button>
+        </nav>
+
+        <!-- Tab Content Panes -->
+        <div id="tab-contents">
+          <!-- History Tab -->
+          <div id="history-tab" class="tab-content active">
+            <div id="history-container">
+              <div id="history-empty">Журнала еще нет.</div>
+              <div id="history-list" class="scrollbar-custom"></div>
+            </div>
+            <div id="history-footer">
+              <button id="clear-history-btn" title="Clear all history" disabled>
+                <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="3 6 5 6 21 6"></polyline>
+                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- Memory Tab -->
+          <div id="memory-tab" class="tab-content">
+            <div id="memory-container">
+              <div id="memory-empty">В памяти ничего не сохранено.</div>
+              <div id="memory-list" class="scrollbar-custom"></div>
+            </div>
+          </div>
+
+          <!-- Server Tab -->
+          <div id="server-tab" class="tab-content">
+            <!-- Server Status & Controls -->
+            <div class="server-status-card">
+              <div class="status-indicator">
+                <span class="status-dot online"></span>
+                <span class="status-text">CSS-Server v0.1.0</span>
+              </div>
+              <div class="status-details">
+                <span>Порт <strong id="status-port">:8080</strong></span>
+                <span id="status-counter">active: 0</span>
+              </div>
+            </div>
+
+            <!-- Control Deck (Embedded in Server tab for diagnostic inputs) -->
+            <div id="control-deck" class="zone">
+              <h2>MANUAL DISPATCHER</h2>
+              <div class="deck-inputs">
+                <div class="input-group">
+                  <label for="input-a">VAL A</label>
+                  <input type="number" id="input-a" value="5" min="0" />
+                </div>
+                <div class="input-group">
+                  <label for="input-b">VAL B</label>
+                  <input type="number" id="input-b" value="10" min="0" />
+                </div>
+              </div>
+              <button id="dispatch-btn">DISPATCH TRANSACTION</button>
+              <div class="monitor-display">
+                <label>MONITOR OUT:</label>
+                <span id="monitor-result">READY</span>
+              </div>
+            </div>
+
+            <!-- Horizontal pipeline nodes -->
+            <div class="pipeline-section">
+              <h2>COMPUTATION PIPELINE</h2>
+              <div id="pipeline-lanes">
+                <div class="lane-col">
+                  <span class="lane-title">INBOUND</span>
+                  <div id="inbound" class="zone"></div>
+                </div>
+                <div class="lane-col">
+                  <span class="lane-title">ALU</span>
+                  <div id="alu-lane" class="zone"></div>
+                </div>
+                <div class="lane-col">
+                  <span class="lane-title">DB WRITE</span>
+                  <div id="db-write-queue" class="zone"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Trace Log panel -->
+            <div id="log-panel" class="zone">
+              <h2>TRACE LOG</h2>
+              <div id="log-list" class="scrollbar-custom"></div>
+            </div>
+          </div>
+        </div>
+      </aside>
     </div>
+    <!-- Toast notification container -->
+    <div id="toast-container"></div>
   </body>
 </html>

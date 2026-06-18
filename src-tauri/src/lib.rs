@@ -26,6 +26,7 @@ struct DbWriteRequestPayload {
     val_a: f64,
     val_b: f64,
     result: f64,
+    operator: Option<String>,
 }
 
 #[derive(Serialize, Clone)]
@@ -255,12 +256,16 @@ pub fn run() {
         }
     };
 
+    // Try to add operator column if database already exists (migration fallback)
+    let _ = conn.execute("ALTER TABLE calculations ADD COLUMN operator TEXT DEFAULT '+'", []);
+
     if let Err(e) = conn.execute(
         "CREATE TABLE IF NOT EXISTS calculations (
             id TEXT PRIMARY KEY,
             val_a REAL,
             val_b REAL,
             result REAL,
+            operator TEXT DEFAULT '+',
             timestamp TEXT DEFAULT CURRENT_TIMESTAMP
         )",
         [],
@@ -301,9 +306,10 @@ pub fn run() {
                         debug!(request_id = %payload.request_id, val_a = payload.val_a, val_b = payload.val_b, result = payload.result, "db-write-request event received");
                         let status = {
                             let db = db_conn_setup.lock().unwrap();
+                            let op = payload.operator.as_deref().unwrap_or("+");
                             match db.execute(
-                                "INSERT OR REPLACE INTO calculations (id, val_a, val_b, result) VALUES (?1, ?2, ?3, ?4)",
-                                rusqlite::params![payload.request_id, payload.val_a, payload.val_b, payload.result],
+                                "INSERT OR REPLACE INTO calculations (id, val_a, val_b, result, operator) VALUES (?1, ?2, ?3, ?4, ?5)",
+                                rusqlite::params![payload.request_id, payload.val_a, payload.val_b, payload.result, op],
                             ) {
                                 Ok(_) => {
                                     info!(request_id = %payload.request_id, "calculation saved to database");
@@ -327,6 +333,64 @@ pub fn run() {
                     Err(e) => {
                         error!(error = %e, payload = %event.payload(), "failed to deserialize db-write-request event");
                     }
+                }
+            });
+
+            let db_conn_history = db_conn.clone();
+            let app_handle_history = app.handle().clone();
+            app.listen("history-request", move |_event| {
+                debug!("history-request event received");
+                let db = db_conn_history.lock().unwrap();
+                let mut stmt = match db.prepare("SELECT id, val_a, val_b, result, operator, timestamp FROM calculations ORDER BY timestamp DESC LIMIT 50") {
+                    Ok(s) => s,
+                    Err(e) => {
+                        error!(error = %e, "failed to prepare SELECT query");
+                        return;
+                    }
+                };
+                
+                let rows = stmt.query_map([], |row| {
+                    Ok(serde_json::json!({
+                        "id": row.get::<_, String>(0)?,
+                        "val_a": row.get::<_, f64>(1)?,
+                        "val_b": row.get::<_, f64>(2)?,
+                        "result": row.get::<_, f64>(3)?,
+                        "operator": row.get::<_, String>(4)?,
+                        "timestamp": row.get::<_, String>(5)?,
+                    }))
+                });
+                
+                let calculations: Vec<serde_json::Value> = match rows {
+                    Ok(mapped_rows) => mapped_rows.filter_map(|r| r.ok()).collect(),
+                    Err(e) => {
+                        error!(error = %e, "failed to query rows");
+                        Vec::new()
+                    }
+                };
+                
+                if let Err(e) = app_handle_history.emit("history-response", calculations) {
+                    error!(error = %e, "failed to emit history-response");
+                }
+            });
+
+            let db_conn_clear = db_conn.clone();
+            let app_handle_clear = app.handle().clone();
+            app.listen("clear-history-request", move |_event| {
+                debug!("clear-history-request event received");
+                let db = db_conn_clear.lock().unwrap();
+                let status = match db.execute("DELETE FROM calculations", []) {
+                    Ok(_) => {
+                        info!("calculations table cleared");
+                        "success".to_string()
+                    }
+                    Err(e) => {
+                        error!(error = %e, "failed to clear calculations table");
+                        "error".to_string()
+                    }
+                };
+                
+                if let Err(e) = app_handle_clear.emit("clear-history-response", status) {
+                    error!(error = %e, "failed to emit clear-history-response");
                 }
             });
 

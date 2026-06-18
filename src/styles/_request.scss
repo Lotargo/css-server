@@ -1,56 +1,82 @@
-/* ---- Request Block ---- */
+/* ---- Request Task Cards ---- */
 .request {
-  width: 100px;
-  height: 64px;
+  width: 100%;
+  padding: 8px;
   border-radius: 4px;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  font-size: 0.7rem;
-  font-weight: bold;
-  transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-align: center;
+  word-break: break-all;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  
+  &::before {
+    margin-bottom: 2px;
+  }
 }
 
-/* Inbound: grey, stacked at top */
+/* Inbound: grey/neutral task card */
 #inbound .add-task {
-  margin-top: 8px;
-  background: #333;
-  border: 1px solid #555;
-  color: #999;
-
+  background-color: #333333;
+  border: 1px solid #4a4a4a;
+  color: #d1d5db;
+  
   &::before {
     content: attr(data-a) " + " attr(data-b);
   }
 }
 
-/* DB Write Queue: deep purple, pulsing, branching on database write outcomes */
-#db-write-queue .add-task {
-  position: relative;
-  margin: 40px auto 0;
-  background: #3c096c;
-  border: 1px solid #7b2cbf;
-  color: #e0aaff;
-  animation: pulse-db-write 1s infinite alternate ease-in-out;
+/* ALU: active/calculating task card */
+#alu-lane .add-task {
+  background-color: #1e3a8a;
+  border: 1px solid #3b82f6;
+  color: #93c5fd;
+  box-shadow: 0 0 8px rgba(59, 130, 246, 0.4);
+  animation: #{"if(style(--val-a >= 0) and style(--val-b >= 0): slide-to-db 1.2s ease-in-out forwards; else: drop-to-trash 1.0s ease-in forwards)"};
+}
 
+#alu-lane .math-task {
+  background-color: #311042;
+  border: 1px solid #a855f7;
+  color: #e9d5ff;
+  box-shadow: 0 0 8px rgba(168, 85, 247, 0.4);
+}
+
+/* DB Write Queue: purple task card */
+#db-write-queue .request {
+  background-color: #3b0764;
+  border: 1px solid #c084fc;
+  color: #f3e8ff;
+  box-shadow: 0 0 8px rgba(192, 132, 252, 0.3);
+  animation: pulse-db-write 1s infinite alternate ease-in-out;
+  
   &::before {
     content: "DB WRITE...";
   }
-
+  
   &[data-db-result="success"] {
-    background: #132a13;
-    border-color: #3f5e30;
-    color: #97a97c;
+    background-color: #064e3b;
+    border-color: #34d399;
+    color: #a7f3d0;
+    box-shadow: 0 0 8px rgba(52, 211, 153, 0.4);
     animation: slide-from-db-to-outbound 1.2s ease-in-out forwards;
+    
     &::before {
       content: "DB SUCCESS";
     }
   }
-
+  
   &[data-db-result="error"] {
-    background: #5a1a1a;
-    border-color: #9b2226;
-    color: #ffb3b3;
-    animation: drop-to-trash 1.0s ease-in forwards;
+    background-color: #7f1d1d;
+    border-color: #f87171;
+    color: #fee2e2;
+    box-shadow: 0 0 8px rgba(248, 113, 113, 0.4);
+    animation: drop-to-trash 1s ease-in forwards;
+    
     &::before {
       content: "DB ERROR";
     }
