@@ -67,6 +67,7 @@ Animate the computation lifecycle.
 2. On-screen visual shows a block with values 5 and 10 moving left to right, merging, turning green, and vanishing.
 3. Invalid input (e.g., non-numeric values) is handled by CSS and returns HTTP 400.
 4. No memory leaks — all DOM nodes are removed after response dispatch.
+5. All E2E test scenarios are covered by an automated test suite, passing cleanly on every run.
 
 ### 2.2 Verification Checklist
 
@@ -78,6 +79,7 @@ Before marking this sprint as closed:
 - [x] **E2E-4:** Visual: grey block appears in INBOUND → moves to ALU → turns green and slides to OUTBOUND → disappears
 - [x] **E2E-5:** Error visual: block appears → routes to ERROR zone with red animation
 - [x] **E2E-6:** `window.__TAURI__.event` listener fires once per request (no duplicate events)
+- [x] **E2E-AUTO:** `npm run test` executes successfully and passes all automated E2E test cases
 - [x] **MEM-1:** After 10 sequential requests, DOM contains no orphaned `.request` nodes
 - [x] **BUS-1:** Rust HTTP thread contains zero `if/else` branches on business data (only request routing)
 - [x] **BUS-2:** JS event handler contains zero arithmetic operations (`+`, `-`, `*`, `/`)
