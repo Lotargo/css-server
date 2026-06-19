@@ -22,6 +22,12 @@
   initial-value: 0;
 }
 
+@property --metric {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: -1;
+}
+
 :root {
   color-scheme: dark;
   --bg: #151515;
@@ -352,6 +358,12 @@ h1 {
   gap: 10px;
 }
 
+.network-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
 .network-lane {
   display: flex;
   flex-direction: column;
@@ -413,6 +425,32 @@ h1 {
   color: #fecaca;
 }
 
+.metric-card {
+  min-height: 58px;
+}
+
+.metric-card[data-kind="latency"] {
+  --metric: attr(data-ms type(<number>), -1);
+  border-color: if(style(--metric < 0): var(--line); style(--metric < 300): #34d399; style(--metric < 1000): #fbbf24; else: #f87171);
+  color: if(style(--metric < 0): var(--text); style(--metric < 300): #a7f3d0; style(--metric < 1000): #fde68a; else: #fecaca);
+}
+
+.metric-card[data-kind="payload"] {
+  --metric: attr(data-bytes type(<number>), -1);
+  border-color: if(style(--metric < 0): var(--line); style(--metric < 1024): #34d399; style(--metric < 102400): #60a5fa; else: #fbbf24);
+  color: if(style(--metric < 0): var(--text); style(--metric < 1024): #a7f3d0; style(--metric < 102400): #bfdbfe; else: #fde68a);
+}
+
+.metric-card[data-kind="body"][data-body="nonempty"] {
+  border-color: #34d399;
+  color: #a7f3d0;
+}
+
+.metric-card[data-kind="body"][data-body="empty"] {
+  border-color: #f87171;
+  color: #fecaca;
+}
+
 .network-response {
   min-height: 150px;
   margin: 0;
@@ -435,7 +473,8 @@ h1 {
   .proof-modules,
   .network-lab,
   .network-runtime,
-  .network-lanes {
+  .network-lanes,
+  .network-metrics {
     grid-template-columns: 1fr;
   }
 

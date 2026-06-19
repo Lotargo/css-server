@@ -46,6 +46,15 @@ function setNetworkCard(id, state, text) {
   card.textContent = text;
 }
 
+function setMetricCard(id, text, dataset) {
+  const card = document.getElementById(id);
+  if (!card) return;
+  card.textContent = text;
+  for (const [key, value] of Object.entries(dataset)) {
+    card.dataset[key] = String(value);
+  }
+}
+
 function previewText(text) {
   if (!text) return "(empty response)";
   return text.length > 900 ? `${text.slice(0, 900)}\n...` : text;
@@ -77,6 +86,9 @@ async function runNetworkRequest(event) {
   statusCard.textContent = "pending";
   setNetworkCard("network-request-card", "queued", `${method.value} ${endpoint.value}`);
   setNetworkCard("network-transport-card", "fetching", "fetch()");
+  setMetricCard("network-latency-card", "latency pending", { ms: -1 });
+  setMetricCard("network-payload-card", "payload pending", { bytes: -1 });
+  setMetricCard("network-body-card", "body pending", { body: "unknown" });
   response.textContent = "Request in flight...";
 
   const startedAt = performance.now();
@@ -100,12 +112,20 @@ async function runNetworkRequest(event) {
     setNetworkCard("network-transport-card", "done", `${elapsed} ms`);
     statusCard.dataset.status = String(res.status);
     statusCard.textContent = `${res.status} ${res.statusText || "HTTP"}`;
+    setMetricCard("network-latency-card", `${elapsed} ms`, { ms: elapsed });
+    setMetricCard("network-payload-card", `${text.length} chars`, { bytes: text.length });
+    setMetricCard("network-body-card", text.length > 0 ? "body non-empty" : "body empty", {
+      body: text.length > 0 ? "nonempty" : "empty"
+    });
     response.textContent = previewText(text);
   } catch (error) {
     setNetworkCard("network-request-card", "error", "request failed");
     setNetworkCard("network-transport-card", "error", "blocked");
     statusCard.dataset.status = "0";
     statusCard.textContent = "CORS / network / input error";
+    setMetricCard("network-latency-card", "latency failed", { ms: -1 });
+    setMetricCard("network-payload-card", "payload failed", { bytes: -1 });
+    setMetricCard("network-body-card", "body unavailable", { body: "unknown" });
     response.textContent = error instanceof Error ? error.message : String(error);
   }
 }
