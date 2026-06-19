@@ -154,7 +154,9 @@ h1 {
 
 .boundary-grid article,
 .proof-modules,
-.network-lab {
+.network-lab,
+.explain-strip,
+.runtime-notes {
   background: var(--panel);
   border: 1px solid var(--line);
   border-radius: 8px;
@@ -330,22 +332,36 @@ body.calculator-open {
 }
 
 .boundary-grid h2,
+.explain-strip h2,
 .proof-modules h2 {
   font-size: clamp(1.2rem, 2vw, 1.8rem);
   line-height: 1.12;
 }
 
 .boundary-grid p,
+.explain-strip p,
 .proof-modules p {
   color: var(--sub);
   line-height: 1.45;
 }
 
-.proof-modules {
+.explain-strip {
   display: grid;
-  grid-template-columns: minmax(280px, 1fr) auto;
-  gap: 18px;
-  align-items: center;
+  grid-template-columns: minmax(260px, 0.72fr) minmax(320px, 1fr);
+  gap: 20px;
+  align-items: start;
+  margin-top: 16px;
+  padding: 20px;
+}
+
+.explain-strip > div {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.proof-modules {
+  display: block;
   margin-top: 16px;
   padding: 20px;
 }
@@ -576,6 +592,29 @@ body.calculator-open {
   font-size: 0.82rem;
 }
 
+.runtime-notes {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+  margin-top: 16px;
+  padding: 20px;
+}
+
+.runtime-notes > div {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.runtime-list {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding-left: 18px;
+  color: var(--sub);
+  line-height: 1.45;
+}
+
 .proof-modules > div {
   display: flex;
   flex-direction: column;
@@ -584,12 +623,14 @@ body.calculator-open {
 
 @media (max-width: 860px) {
   .hero,
+  .explain-strip,
   .boundary-grid,
   .proof-modules,
   .network-lab,
   .network-runtime,
   .network-lanes,
-  .network-metrics {
+  .network-metrics,
+  .runtime-notes {
     grid-template-columns: 1fr;
   }
 

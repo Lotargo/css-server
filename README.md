@@ -4,7 +4,7 @@
 [![License](https://img.shields.io/badge/license-Apache%202.0-green)](LICENSE)
 [![Rust](https://img.shields.io/badge/rust-2021-orange)](src-tauri/Cargo.toml)
 [![Tauri](https://img.shields.io/badge/tauri-2-purple)](src-tauri/Cargo.toml)
-[![Chromium](https://img.shields.io/badge/chromium-133%2B-red)](dev_docs/blueprint.md)
+[![Chromium](https://img.shields.io/badge/chromium-133%2B-red)](#who-is-this-for)
 
 A static browser runtime where **CSS does the computation**. The calculator is the proof module; the GitHub Pages site in `docs/` is the public runtime shell showing local CSS/HTML computation plus outbound HTTP transport without a backend process.
 
@@ -37,7 +37,6 @@ The public site source lives entirely in [`docs/`](docs/):
 docs/index.html
 docs/styles.css
 docs/main.js
-docs/notes/
 ```
 
 It can be served directly by GitHub Pages from the `docs/` folder. The first runtime demo includes:
@@ -45,7 +44,7 @@ It can be served directly by GitHub Pages from the `docs/` folder. The first run
 - a live CSS computation proof;
 - a Network Lab that performs user-triggered outbound `fetch`;
 - CSS status/latency/payload/content classification from DOM attributes;
-- safety and deployment boundary notes.
+- explicit safety and deployment boundaries on the landing page itself.
 
 ### Local calculator proof module
 
@@ -124,7 +123,6 @@ Communication is Tauri events only — not a single `#[tauri::command]`.
 │   ├── index.html          # Landing + live CSS proof + Network Lab
 │   ├── main.js             # Browser transport/orchestration only
 │   ├── styles.css          # Self-contained site CSS and CSS compute demo
-│   └── notes/              # Site-facing boundary docs
 ├── src/                    # Local calculator proof module
 │   ├── index.html          # SPA with all calculator modes
 │   ├── main.js             # Bridge, settings, pipeline
@@ -133,7 +131,6 @@ Communication is Tauri events only — not a single `#[tauri::command]`.
 │   ├── styles.css          # Compiled output
 │   └── modes/              # JS handlers per mode
 ├── src-tauri/              # Rust backend (HTTP, IPC, SQLite)
-├── dev_docs/               # Architecture & sprint documentation
 ├── tests/e2e.test.js       # E2E tests (node:test)
 └── .brains/                # Dev session tracking
 ```
@@ -148,18 +145,6 @@ Network Lab uses normal browser `fetch`. That means:
 - user-triggered requests are visible;
 - shared provider API keys must not be committed or bundled;
 - abusive traffic generation, scraping at scale, spam, mining, or stealth behavior are out of scope.
-
-## Docs
-
-All documentation in [`dev_docs/`](dev_docs/):
-
-| Document | About |
-|---|---|
-| [`blueprint.md`](dev_docs/blueprint.md) | Architecture, pipeline, browser support matrix |
-| [`manifest.md`](dev_docs/manifest.md) | Core principles and philosophy |
-| [`sprint-github-pages-runtime.md`](dev_docs/sprint-github-pages-runtime.md) | Static runtime and Network Lab sprint |
-| [`sprint-doc.md`](dev_docs/sprint-doc.md) | Backlog, definition of done, verification |
-| [`DISCLAIMER.md`](dev_docs/DISCLAIMER.md) | Limitations, risks |
 
 ## License
 

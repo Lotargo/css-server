@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>CSS-Server — Static Runtime</title>
+    <title>CSS-Server - CSS Compute Runtime</title>
     <link rel="stylesheet" href="./styles.css" />
     <script type="module" src="./main.js" defer></script>
   </head>
@@ -11,12 +11,12 @@
     <main class="site-shell">
       <section class="hero" aria-labelledby="hero-title">
         <div class="hero-copy">
-          <p class="kicker">GitHub Pages compatible runtime</p>
-          <h1 id="hero-title">Backend-like computation without a backend.</h1>
-          <p class="lead">CSS-Server is a static browser runtime experiment: GitHub Pages serves files, the browser owns execution, DOM nodes carry task state, and CSS resolves computation visibly.</p>
+          <p class="kicker">Static runtime experiment</p>
+          <h1 id="hero-title">CSS as a compute layer, not just paint.</h1>
+          <p class="lead">CSS-Server tests how far modern browser CSS can be pushed: DOM nodes hold task state, typed custom properties carry values, selectors route states, and CSS resolves parts of the computation in the open.</p>
           <div class="hero-actions">
-            <a class="primary-link" href="#runtime-proof">Run CSS proof</a>
-            <a class="secondary-link" href="./notes/deployment.html">Deployment boundary</a>
+            <a class="primary-link" href="#runtime-proof">Open proof module</a>
+            <a class="secondary-link" href="#network-lab">Try static fetch</a>
           </div>
         </div>
 
@@ -31,9 +31,9 @@
               <iframe class="launcher-frame" src="./src/index.html" title="CSS-Server calculator preview" loading="eager"></iframe>
             </div>
             <div class="launcher-copy">
-              <p class="kicker">Full proof module</p>
-              <h2>Windows-style calculator, running as static files.</h2>
-              <p>The same browser-only calculator copy lives under <code>docs/src/</code>; the landing page opens it in an isolated frame so its full app CSS and runtime stay intact.</p>
+              <p class="kicker">Proof module</p>
+              <h2>A calculator is small enough to inspect and large enough to fail honestly.</h2>
+              <p>Arithmetic, modes, converters, graphing, settings, history, and diagnostics create enough state to prove whether CSS can carry real deterministic behavior. This is why the demo is a calculator: it exposes the runtime instead of hiding it behind a toy counter.</p>
               <div class="launcher-actions">
                 <button class="primary-link" id="open-calculator" type="button">Open calculator</button>
                 <a class="secondary-link" href="./src/index.html">Standalone page</a>
@@ -43,29 +43,37 @@
         </section>
       </section>
 
+      <section class="explain-strip" aria-labelledby="what-title">
+        <div>
+          <p class="kicker">What this is</p>
+          <h2 id="what-title">A runtime boundary test, not a claim that GitHub Pages runs servers.</h2>
+        </div>
+        <p>There are almost no projects like this because CSS is designed as a styling language. It has no sockets, filesystem, durable processes, request listeners, private environment variables, or normal control flow. CSS-Server explores the narrow but interesting space that remains: local computation inside the browser, with JavaScript and Rust reduced to I/O bridges where CSS cannot act.</p>
+      </section>
+
       <section class="boundary-grid" aria-label="Runtime boundary">
         <article>
-          <span>Static host</span>
+          <span>GitHub Pages</span>
           <h2>GitHub Pages serves files only</h2>
-          <p>No inbound server, no hidden Node process, no backend runtime on GitHub infrastructure.</p>
+          <p>The public landing has no inbound backend, no hidden Node process, and no server-side execution on GitHub infrastructure.</p>
         </article>
         <article>
-          <span>Computation</span>
-          <h2>CSS and HTML run locally</h2>
-          <p>The browser resolves typed attributes, custom properties, `calc()`, and selector-driven state.</p>
+          <span>Browser runtime</span>
+          <h2>CSS and HTML carry visible state</h2>
+          <p>The browser resolves typed attributes, custom properties, <code>calc()</code>, and selector-driven classification locally.</p>
         </article>
         <article>
-          <span>Transport</span>
-          <h2>Outbound Web APIs come next</h2>
-          <p>Network Lab will attach transparent `fetch` transport without SDKs or bundled secrets.</p>
+          <span>Local app</span>
+          <h2>Tauri/Rust is the desktop bridge</h2>
+          <p>The downloadable/local version can expose an HTTP endpoint, SQLite history, and IPC. That is outside the GitHub Pages boundary.</p>
         </article>
       </section>
 
       <section class="network-lab" id="network-lab" aria-labelledby="network-title">
         <div class="network-copy">
-          <p class="kicker">Network Lab</p>
-          <h2 id="network-title">Outbound HTTP from a static site.</h2>
-          <p>Send a user-triggered request from GitHub Pages-compatible JavaScript, then route response metadata back into visible DOM state for CSS classification.</p>
+          <p class="kicker">Static fetch boundary</p>
+          <h2 id="network-title">API checks here are outbound browser requests.</h2>
+          <p>This form does not prove that Pages has a backend. It proves the opposite boundary: a static page can make user-triggered <code>fetch()</code> calls, then reflect status, latency, payload size, body presence, and content type back into DOM attributes for CSS classification.</p>
         </div>
 
         <form class="network-form" id="network-form">
@@ -93,8 +101,8 @@
           </label>
           <p class="network-warning">Do not paste shared API secrets here. Browser requests are visible to the user and constrained by CORS.</p>
           <div class="network-presets" aria-label="Network Lab presets">
-            <button type="button" data-network-preset="success">Preset: public CORS API</button>
-            <button type="button" data-network-preset="cors-failure">Preset: CORS/network failure</button>
+            <button type="button" data-network-preset="success">Public CORS demo</button>
+            <button type="button" data-network-preset="cors-failure">Failure boundary</button>
           </div>
           <button class="primary-link" type="submit">Send request</button>
         </form>
@@ -132,18 +140,31 @@
         </div>
       </section>
 
+      <section class="runtime-notes" aria-label="Runtime notes">
+        <div>
+          <p class="kicker">What CSS handles</p>
+          <ul class="runtime-list">
+            <li>Numeric values through custom properties and typed attributes.</li>
+            <li>Branching and status classification through selectors and style conditions.</li>
+            <li>Visible task cells, so runtime state can be inspected in the DOM.</li>
+          </ul>
+        </div>
+        <div>
+          <p class="kicker">What CSS cannot be</p>
+          <ul class="runtime-list">
+            <li>An inbound HTTP server on GitHub Pages.</li>
+            <li>A place for private API keys, secrets, or provider credentials.</li>
+            <li>A replacement for JavaScript/Rust when durable I/O is required.</li>
+          </ul>
+        </div>
+      </section>
+
       <section class="proof-modules" aria-label="Proof modules">
         <div>
-          <p class="kicker">Why calculator first?</p>
-          <h2>The calculator is the proof module, not the product ceiling.</h2>
-          <p>Arithmetic, conversion, graphing, and settings proved that the CSS/HTML substrate can hold real deterministic behavior. The Pages site is the next shell around that idea.</p>
+          <p class="kicker">Project shape</p>
+          <h2>One project, two boundaries.</h2>
+          <p>The GitHub Pages landing is the public static shell. The local Tauri build is the heavier proof: Rust accepts HTTP requests, SQLite stores history, JavaScript observes browser events, and CSS remains the computation substrate where the experiment allows it.</p>
         </div>
-        <nav class="doc-links" aria-label="Project notes">
-          <a href="./notes/manifest.html">Runtime Manifest</a>
-          <a href="./notes/network.html">Network Boundary</a>
-          <a href="./notes/deployment.html">Pages Deployment</a>
-          <a href="./notes/safety.html">Safety Boundary</a>
-        </nav>
       </section>
     </main>
 
