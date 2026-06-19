@@ -2124,29 +2124,57 @@ body {
   inherits: false;
   initial-value: 0;
 }
+@property --conv-base {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 0;
+}
 .conv-task-length {
   --conv-val: attr(data-value type(<number>), 0);
   --conv-from: attr(data-from type(<custom-ident>), m);
   --conv-to: attr(data-to type(<custom-ident>), ft);
-  --conv-result: if(style(--conv-to: mm): calc(var(--conv-val) * 1000); style(--conv-to: cm): calc(var(--conv-val) * 100); style(--conv-to: m): var(--conv-val); style(--conv-to: km): calc(var(--conv-val) / 1000); style(--conv-to: in): calc(var(--conv-val) * 39.3701); style(--conv-to: ft): calc(var(--conv-val) * 3.28084); style(--conv-to: yd): calc(var(--conv-val) * 1.09361); style(--conv-to: mi): calc(var(--conv-val) / 1609.34); else: var(--conv-val));
+  --conv-base: if(style(--conv-from: mm): calc(var(--conv-val) / 1000); style(--conv-from: cm): calc(var(--conv-val) / 100); style(--conv-from: m): var(--conv-val); style(--conv-from: km): calc(var(--conv-val) * 1000); style(--conv-from: in): calc(var(--conv-val) * 0.0254); style(--conv-from: ft): calc(var(--conv-val) * 0.3048); style(--conv-from: yd): calc(var(--conv-val) * 0.9144); style(--conv-from: mi): calc(var(--conv-val) * 1609.344); else: var(--conv-val));
+  --conv-result: if(style(--conv-to: mm): calc(var(--conv-base) * 1000); style(--conv-to: cm): calc(var(--conv-base) * 100); style(--conv-to: m): var(--conv-base); style(--conv-to: km): calc(var(--conv-base) / 1000); style(--conv-to: in): calc(var(--conv-base) / 0.0254); style(--conv-to: ft): calc(var(--conv-base) / 0.3048); style(--conv-to: yd): calc(var(--conv-base) / 0.9144); style(--conv-to: mi): calc(var(--conv-base) / 1609.344); else: var(--conv-base));
 }
 
 .conv-task-weight {
   --conv-val: attr(data-value type(<number>), 0);
+  --conv-from: attr(data-from type(<custom-ident>), kg);
   --conv-to: attr(data-to type(<custom-ident>), lb);
-  --conv-result: if(style(--conv-to: mg): calc(var(--conv-val) * 1000000); style(--conv-to: g): calc(var(--conv-val) * 1000); style(--conv-to: kg): var(--conv-val); style(--conv-to: t): calc(var(--conv-val) / 1000); style(--conv-to: oz): calc(var(--conv-val) * 35.274); style(--conv-to: lb): calc(var(--conv-val) * 2.20462); else: var(--conv-val));
+  --conv-base: if(style(--conv-from: mg): calc(var(--conv-val) / 1000000); style(--conv-from: g): calc(var(--conv-val) / 1000); style(--conv-from: kg): var(--conv-val); style(--conv-from: t): calc(var(--conv-val) * 1000); style(--conv-from: oz): calc(var(--conv-val) * 0.028349523125); style(--conv-from: lb): calc(var(--conv-val) * 0.45359237); else: var(--conv-val));
+  --conv-result: if(style(--conv-to: mg): calc(var(--conv-base) * 1000000); style(--conv-to: g): calc(var(--conv-base) * 1000); style(--conv-to: kg): var(--conv-base); style(--conv-to: t): calc(var(--conv-base) / 1000); style(--conv-to: oz): calc(var(--conv-base) / 0.028349523125); style(--conv-to: lb): calc(var(--conv-base) / 0.45359237); else: var(--conv-base));
 }
 
 .conv-task-temp {
   --conv-val: attr(data-value type(<number>), 0);
+  --conv-from: attr(data-from type(<custom-ident>), c);
   --conv-to: attr(data-to type(<custom-ident>), f);
-  --conv-result: if(style(--conv-to: c): var(--conv-val); style(--conv-to: f): calc(var(--conv-val) * 9 / 5 + 32); style(--conv-to: k): calc(var(--conv-val) + 273.15); else: var(--conv-val));
+  --conv-base: if(style(--conv-from: c): var(--conv-val); style(--conv-from: f): calc((var(--conv-val) - 32) * 5 / 9); style(--conv-from: k): calc(var(--conv-val) - 273.15); else: var(--conv-val));
+  --conv-result: if(style(--conv-to: c): var(--conv-base); style(--conv-to: f): calc(var(--conv-base) * 9 / 5 + 32); style(--conv-to: k): calc(var(--conv-base) + 273.15); else: var(--conv-base));
 }
 
 .conv-task-time {
   --conv-val: attr(data-value type(<number>), 0);
+  --conv-from: attr(data-from type(<custom-ident>), s);
   --conv-to: attr(data-to type(<custom-ident>), min);
-  --conv-result: if(style(--conv-to: ms): calc(var(--conv-val) * 1000); style(--conv-to: s): var(--conv-val); style(--conv-to: min): calc(var(--conv-val) / 60); style(--conv-to: h): calc(var(--conv-val) / 3600); style(--conv-to: d): calc(var(--conv-val) / 86400); style(--conv-to: w): calc(var(--conv-val) / 604800); style(--conv-to: mth): calc(var(--conv-val) / 2629746); style(--conv-to: y): calc(var(--conv-val) / 31556952); else: var(--conv-val));
+  --conv-base: if(style(--conv-from: ms): calc(var(--conv-val) / 1000); style(--conv-from: s): var(--conv-val); style(--conv-from: min): calc(var(--conv-val) * 60); style(--conv-from: h): calc(var(--conv-val) * 3600); style(--conv-from: d): calc(var(--conv-val) * 86400); style(--conv-from: w): calc(var(--conv-val) * 604800); style(--conv-from: mth): calc(var(--conv-val) * 2629746); style(--conv-from: y): calc(var(--conv-val) * 31556952); else: var(--conv-val));
+  --conv-result: if(style(--conv-to: ms): calc(var(--conv-base) * 1000); style(--conv-to: s): var(--conv-base); style(--conv-to: min): calc(var(--conv-base) / 60); style(--conv-to: h): calc(var(--conv-base) / 3600); style(--conv-to: d): calc(var(--conv-base) / 86400); style(--conv-to: w): calc(var(--conv-base) / 604800); style(--conv-to: mth): calc(var(--conv-base) / 2629746); style(--conv-to: y): calc(var(--conv-base) / 31556952); else: var(--conv-base));
+}
+
+.conv-task-volume {
+  --conv-val: attr(data-value type(<number>), 0);
+  --conv-from: attr(data-from type(<custom-ident>), l);
+  --conv-to: attr(data-to type(<custom-ident>), gal);
+  --conv-base: if(style(--conv-from: ml): calc(var(--conv-val) / 1000); style(--conv-from: l): var(--conv-val); style(--conv-from: m3): calc(var(--conv-val) * 1000); style(--conv-from: tsp): calc(var(--conv-val) * 0.00492892159375); style(--conv-from: tbsp): calc(var(--conv-val) * 0.01478676478125); style(--conv-from: floz): calc(var(--conv-val) * 0.0295735295625); style(--conv-from: cup): calc(var(--conv-val) * 0.2365882365); style(--conv-from: pt): calc(var(--conv-val) * 0.473176473); style(--conv-from: qt): calc(var(--conv-val) * 0.946352946); style(--conv-from: gal): calc(var(--conv-val) * 3.785411784); else: var(--conv-val));
+  --conv-result: if(style(--conv-to: ml): calc(var(--conv-base) * 1000); style(--conv-to: l): var(--conv-base); style(--conv-to: m3): calc(var(--conv-base) / 1000); style(--conv-to: tsp): calc(var(--conv-base) / 0.00492892159375); style(--conv-to: tbsp): calc(var(--conv-base) / 0.01478676478125); style(--conv-to: floz): calc(var(--conv-base) / 0.0295735295625); style(--conv-to: cup): calc(var(--conv-base) / 0.2365882365); style(--conv-to: pt): calc(var(--conv-base) / 0.473176473); style(--conv-to: qt): calc(var(--conv-base) / 0.946352946); style(--conv-to: gal): calc(var(--conv-base) / 3.785411784); else: var(--conv-base));
+}
+
+.conv-task-currency {
+  --conv-val: attr(data-value type(<number>), 0);
+  --conv-from: attr(data-from type(<custom-ident>), usd);
+  --conv-to: attr(data-to type(<custom-ident>), eur);
+  --conv-base: if(style(--conv-from: usd): var(--conv-val); style(--conv-from: eur): calc(var(--conv-val) / 0.92); style(--conv-from: gbp): calc(var(--conv-val) / 0.78); style(--conv-from: jpy): calc(var(--conv-val) / 157); style(--conv-from: rub): calc(var(--conv-val) / 89); style(--conv-from: cny): calc(var(--conv-val) / 7.25); style(--conv-from: krw): calc(var(--conv-val) / 1380); else: var(--conv-val));
+  --conv-result: if(style(--conv-to: usd): var(--conv-base); style(--conv-to: eur): calc(var(--conv-base) * 0.92); style(--conv-to: gbp): calc(var(--conv-base) * 0.78); style(--conv-to: jpy): calc(var(--conv-base) * 157); style(--conv-to: rub): calc(var(--conv-base) * 89); style(--conv-to: cny): calc(var(--conv-base) * 7.25); style(--conv-to: krw): calc(var(--conv-base) * 1380); else: var(--conv-base));
 }
 
 /* Converter layout */

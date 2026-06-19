@@ -4,6 +4,16 @@
 import { log } from '../main.js';
 
 const converterConfigs = {
+  currency: {
+    fromSelect: "#currency-from", toSelect: "#currency-to",
+    fromInput: "#currency-from-val", toInput: "#currency-to-val",
+    swapBtn: "#currency-swap", taskClass: "conv-task-currency"
+  },
+  volume: {
+    fromSelect: "#volume-from", toSelect: "#volume-to",
+    fromInput: "#volume-from-val", toInput: "#volume-to-val",
+    swapBtn: "#volume-swap", taskClass: "conv-task-volume"
+  },
   length: {
     fromSelect: "#length-from", toSelect: "#length-to",
     fromInput: "#length-from-val", toInput: "#length-to-val",
@@ -50,9 +60,13 @@ function performConversion(config) {
   setTimeout(() => {
     const style = getComputedStyle(node);
     const result = parseFloat(style.getPropertyValue("--conv-result").trim()) || 0;
-    toInput.value = String(result);
+    const formattedResult = String(Number(result.toPrecision(12)));
+    const display = toInput.closest(".converter-mode")?.querySelector("#converter-result");
+
+    toInput.value = formattedResult;
+    if (display) display.textContent = formattedResult;
     node.remove();
-    log("INFO", "converter", `${value} ${fromUnit} = ${result} ${toUnit}`);
+    log("INFO", "converter", `${value} ${fromUnit} = ${formattedResult} ${toUnit}`);
   }, 100);
 }
 

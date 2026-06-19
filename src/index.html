@@ -540,6 +540,80 @@
           </div>
         </div>
 
+        <!-- Converter: Currency Mode -->
+        <div class="mode-section mode-currency converter-mode">
+          <div id="converter-display-container">
+            <div id="converter-result">0</div>
+          </div>
+          <div class="converter-inputs">
+            <div class="converter-input-group">
+              <select id="currency-from" class="converter-select">
+                <option value="usd" selected>Доллар США (USD)</option>
+                <option value="eur">Евро (EUR)</option>
+                <option value="gbp">Фунт стерлингов (GBP)</option>
+                <option value="jpy">Иена (JPY)</option>
+                <option value="rub">Рубль (RUB)</option>
+                <option value="cny">Юань (CNY)</option>
+                <option value="krw">Вона (KRW)</option>
+              </select>
+              <input type="number" id="currency-from-val" class="converter-value" value="1" />
+            </div>
+            <button id="currency-swap" class="swap-btn">⇅</button>
+            <div class="converter-input-group">
+              <select id="currency-to" class="converter-select">
+                <option value="usd">Доллар США (USD)</option>
+                <option value="eur" selected>Евро (EUR)</option>
+                <option value="gbp">Фунт стерлингов (GBP)</option>
+                <option value="jpy">Иена (JPY)</option>
+                <option value="rub">Рубль (RUB)</option>
+                <option value="cny">Юань (CNY)</option>
+                <option value="krw">Вона (KRW)</option>
+              </select>
+              <input type="number" id="currency-to-val" class="converter-value" readonly />
+            </div>
+          </div>
+        </div>
+
+        <!-- Converter: Volume Mode -->
+        <div class="mode-section mode-volume converter-mode">
+          <div id="converter-display-container">
+            <div id="converter-result">0</div>
+          </div>
+          <div class="converter-inputs">
+            <div class="converter-input-group">
+              <select id="volume-from" class="converter-select">
+                <option value="ml">Миллилитры (ml)</option>
+                <option value="l" selected>Литры (l)</option>
+                <option value="m3">Кубические метры (m³)</option>
+                <option value="tsp">Чайные ложки (tsp)</option>
+                <option value="tbsp">Столовые ложки (tbsp)</option>
+                <option value="floz">Жидкие унции (fl oz)</option>
+                <option value="cup">Чашки (cup)</option>
+                <option value="pt">Пинты (pt)</option>
+                <option value="qt">Кварты (qt)</option>
+                <option value="gal">Галлоны (gal)</option>
+              </select>
+              <input type="number" id="volume-from-val" class="converter-value" value="1" />
+            </div>
+            <button id="volume-swap" class="swap-btn">⇅</button>
+            <div class="converter-input-group">
+              <select id="volume-to" class="converter-select">
+                <option value="ml">Миллилитры (ml)</option>
+                <option value="l">Литры (l)</option>
+                <option value="m3">Кубические метры (m³)</option>
+                <option value="tsp">Чайные ложки (tsp)</option>
+                <option value="tbsp">Столовые ложки (tbsp)</option>
+                <option value="floz">Жидкие унции (fl oz)</option>
+                <option value="cup">Чашки (cup)</option>
+                <option value="pt">Пинты (pt)</option>
+                <option value="qt">Кварты (qt)</option>
+                <option value="gal" selected>Галлоны (gal)</option>
+              </select>
+              <input type="number" id="volume-to-val" class="converter-value" readonly />
+            </div>
+          </div>
+        </div>
+
         <!-- Converter: Length Mode -->
         <div class="mode-section mode-length converter-mode">
           <div id="converter-display-container">
