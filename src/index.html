@@ -11,7 +11,7 @@
     <script type="module" src="/main.js" defer></script>
   </head>
   <body>
-    <div id="calculator-app" data-active-mode="standard" class="sidebar-open">
+    <div id="calculator-app" data-active-mode="standard" data-theme="dark" data-theme-preference="system" data-angle-mode="rad" data-result-precision="12" class="sidebar-open">
       <!-- Left Pane: Main Calculator -->
       <div id="calculator-pane">
         <!-- Navigation Drawer Overlay -->
@@ -745,6 +745,118 @@
               <input type="number" id="time-to-val" class="converter-value" readonly />
             </div>
           </div>
+        </div>
+
+        <!-- Settings Mode -->
+        <div class="mode-section mode-settings">
+          <section class="settings-panel" aria-labelledby="settings-heading">
+            <header class="settings-heading">
+              <h2 id="settings-heading">Параметры</h2>
+              <p>Настройки интерфейса и поведения калькулятора.</p>
+            </header>
+
+            <section class="settings-group" aria-labelledby="appearance-heading">
+              <div class="settings-group-title">
+                <h3 id="appearance-heading">Внешний вид</h3>
+              </div>
+              <div class="settings-card">
+                <div class="setting-row">
+                  <div class="setting-copy">
+                    <span class="setting-label">Тема приложения</span>
+                    <span class="setting-description">Используется для всех режимов и боковых панелей.</span>
+                  </div>
+                  <div class="settings-radio-stack" role="radiogroup" aria-label="Тема приложения">
+                    <label class="settings-radio">
+                      <input type="radio" name="app-theme" value="system" id="app-theme-system" checked />
+                      <span>Системная</span>
+                    </label>
+                    <label class="settings-radio">
+                      <input type="radio" name="app-theme" value="dark" id="app-theme-dark" />
+                      <span>Темная</span>
+                    </label>
+                    <label class="settings-radio">
+                      <input type="radio" name="app-theme" value="light" id="app-theme-light" />
+                      <span>Светлая</span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <section class="settings-group" aria-labelledby="preferences-heading">
+              <div class="settings-group-title">
+                <h3 id="preferences-heading">Предпочтения</h3>
+              </div>
+              <div class="settings-card">
+                <div class="setting-row">
+                  <div class="setting-copy">
+                    <span class="setting-label">Углы</span>
+                    <span class="setting-description">Общий режим для инженерного калькулятора и графиков.</span>
+                  </div>
+                  <div class="settings-segment" role="radiogroup" aria-label="Режим углов">
+                    <label>
+                      <input type="radio" name="settings-angle" value="deg" id="settings-angle-deg" />
+                      <span>DEG</span>
+                    </label>
+                    <label>
+                      <input type="radio" name="settings-angle" value="rad" id="settings-angle-rad" checked />
+                      <span>RAD</span>
+                    </label>
+                    <label>
+                      <input type="radio" name="settings-angle" value="grad" id="settings-angle-grad" />
+                      <span>GRAD</span>
+                    </label>
+                  </div>
+                </div>
+
+                <div class="setting-row">
+                  <div class="setting-copy">
+                    <span class="setting-label">Точность результата</span>
+                    <span class="setting-description">Количество значащих цифр для отображения результатов.</span>
+                  </div>
+                  <select id="settings-result-precision" class="settings-select">
+                    <option value="8">8</option>
+                    <option value="10">10</option>
+                    <option value="12" selected>12</option>
+                    <option value="15">15</option>
+                  </select>
+                </div>
+
+                <div class="setting-row">
+                  <div class="setting-copy">
+                    <span class="setting-label">Боковая панель</span>
+                    <span class="setting-description">Показывать журнал, память и серверную диагностику в широком окне.</span>
+                  </div>
+                  <label class="settings-switch">
+                    <input type="checkbox" id="settings-sidebar-visible" checked />
+                    <span aria-hidden="true"></span>
+                  </label>
+                </div>
+              </div>
+            </section>
+
+            <section class="settings-group" aria-labelledby="about-heading">
+              <div class="settings-group-title">
+                <h3 id="about-heading">Сведения</h3>
+              </div>
+              <div class="settings-card settings-about-card">
+                <div class="settings-about-main">
+                  <div class="settings-app-mark" aria-hidden="true">CSS</div>
+                  <div>
+                    <span class="setting-label">CSS-Server — Glass Calculator</span>
+                    <span class="setting-description">Версия 0.1.0 · Glass Calculator Parity</span>
+                  </div>
+                </div>
+                <p class="settings-manifesto">CSS/HTML остаются вычислительной подложкой проекта; JavaScript и Rust помогают с вводом, состоянием, диагностикой и мостами.</p>
+                <div class="settings-doc-links">
+                  <a href="../README.md">README.md</a>
+                  <a href="../dev_docs/manifest.md">dev_docs/manifest.md</a>
+                  <a href="../dev_docs/DISCLAIMER.md">dev_docs/DISCLAIMER.md</a>
+                </div>
+                <button id="settings-reset-app" class="settings-reset-btn" type="button">Сбросить параметры</button>
+              </div>
+            </section>
+          </section>
         </div>
       </div>
 

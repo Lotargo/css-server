@@ -8,7 +8,7 @@ let sciExpressionVal = "";
 let sciAccumulator = null;
 let sciPendingOp = null;
 let sciShouldResetDisplay = false;
-let angleMode = "deg";
+let angleMode = "rad";
 
 const sciDisplayEl = document.getElementById("sci-calculator-display");
 const sciPreviewEl = document.getElementById("sci-expression-preview");
@@ -174,14 +174,21 @@ export function initScientificMode() {
       angleMode = btn.dataset.angle;
       document.querySelectorAll("#sci-mode-controls .sci-mode-btn").forEach(b => b.classList.remove("active"));
       btn.classList.add("active");
-      document.getElementById("calculator-app").dataset.angleMode = angleMode;
+      if (window.cssServerUpdateSettings) {
+        window.cssServerUpdateSettings({ angleMode });
+      } else {
+        document.getElementById("calculator-app").dataset.angleMode = angleMode;
+      }
       log("INFO", "sci-mode", `angle mode set to: ${angleMode}`);
     });
   });
   
   const appContainer = document.getElementById("calculator-app");
   if (appContainer) {
-    appContainer.dataset.angleMode = "deg";
+    angleMode = appContainer.dataset.angleMode || angleMode;
+    document.querySelectorAll("#sci-mode-controls .sci-mode-btn").forEach(btn => {
+      btn.classList.toggle("active", btn.dataset.angle === angleMode);
+    });
   }
 
   // Dropdown menu toggle

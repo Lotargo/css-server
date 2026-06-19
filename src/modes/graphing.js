@@ -755,14 +755,23 @@ export function initGraphingMode() {
   
   // Angle Units toggle
   const unitBtns = document.querySelectorAll(".unit-toggle-btn");
+  const appContainer = document.getElementById("calculator-app");
+  if (appContainer) {
+    angleUnits = appContainer.dataset.angleMode || angleUnits;
+    unitBtns.forEach(btn => {
+      btn.classList.toggle("active", btn.dataset.unit === angleUnits);
+    });
+  }
+
   unitBtns.forEach(btn => {
     btn.addEventListener("click", () => {
       unitBtns.forEach(b => b.classList.remove("active"));
       btn.classList.add("active");
       angleUnits = btn.dataset.unit;
       
-      const appContainer = document.getElementById("calculator-app");
-      if (appContainer) {
+      if (window.cssServerUpdateSettings) {
+        window.cssServerUpdateSettings({ angleMode: angleUnits });
+      } else if (appContainer) {
         appContainer.dataset.angleMode = angleUnits;
       }
       

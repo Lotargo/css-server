@@ -55,6 +55,13 @@ const { listen, emit } = hasTauri
 
 const MAX_LOG = 100;
 const logPanel = document.getElementById("log-list");
+const SETTINGS_STORAGE_KEY = "css_server_app_settings";
+const DEFAULT_APP_SETTINGS = {
+  theme: "system",
+  angleMode: "rad",
+  resultPrecision: "12",
+  sidebarVisible: true
+};
 
 export function log(level, source, message, data) {
   const ts = new Date().toISOString().slice(11, 23);
@@ -77,6 +84,120 @@ export function log(level, source, message, data) {
     logPanel.removeChild(logPanel.firstChild);
   }
   logPanel.scrollTop = logPanel.scrollHeight;
+}
+
+function getSystemTheme() {
+  if (typeof window === "undefined" || !window.matchMedia) return "dark";
+  return window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+}
+
+function loadAppSettings() {
+  try {
+    const stored = JSON.parse(localStorage.getItem(SETTINGS_STORAGE_KEY) || "{}");
+    return { ...DEFAULT_APP_SETTINGS, ...stored };
+  } catch (err) {
+    log("WARN", "settings", "failed to parse saved settings", err);
+    return { ...DEFAULT_APP_SETTINGS };
+  }
+}
+
+function persistAppSettings(nextSettings) {
+  localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(nextSettings));
+}
+
+function syncSettingsControls(settings) {
+  const themeInput = document.querySelector(`input[name="app-theme"][value="${settings.theme}"]`);
+  if (themeInput) themeInput.checked = true;
+
+  const angleInput = document.querySelector(`input[name="settings-angle"][value="${settings.angleMode}"]`);
+  if (angleInput) angleInput.checked = true;
+
+  const precisionSelect = document.getElementById("settings-result-precision");
+  if (precisionSelect) precisionSelect.value = settings.resultPrecision;
+
+  const sidebarToggle = document.getElementById("settings-sidebar-visible");
+  if (sidebarToggle) sidebarToggle.checked = settings.sidebarVisible;
+
+  document.querySelectorAll("#sci-mode-controls .sci-mode-btn").forEach(btn => {
+    btn.classList.toggle("active", btn.dataset.angle === settings.angleMode);
+  });
+}
+
+function applyAppSettings(settings) {
+  const appContainer = document.getElementById("calculator-app");
+  if (!appContainer) return;
+
+  const theme = settings.theme === "system" ? getSystemTheme() : settings.theme;
+  appContainer.dataset.theme = theme;
+  appContainer.dataset.themePreference = settings.theme;
+  appContainer.dataset.angleMode = settings.angleMode;
+  appContainer.dataset.resultPrecision = settings.resultPrecision;
+  appContainer.classList.toggle("server-pane-hidden", !settings.sidebarVisible);
+
+  syncSettingsControls(settings);
+}
+
+function updateAppSettings(patch) {
+  window.cssServerSettings = {
+    ...DEFAULT_APP_SETTINGS,
+    ...(window.cssServerSettings || {}),
+    ...patch
+  };
+  persistAppSettings(window.cssServerSettings);
+  applyAppSettings(window.cssServerSettings);
+  log("INFO", "settings", "settings updated", window.cssServerSettings);
+}
+
+function initSettings() {
+  window.cssServerSettings = loadAppSettings();
+  window.cssServerUpdateSettings = updateAppSettings;
+  applyAppSettings(window.cssServerSettings);
+
+  document.querySelectorAll('input[name="app-theme"]').forEach(input => {
+    input.addEventListener("change", () => {
+      if (input.checked) updateAppSettings({ theme: input.value });
+    });
+  });
+
+  document.querySelectorAll('input[name="settings-angle"]').forEach(input => {
+    input.addEventListener("change", () => {
+      if (input.checked) updateAppSettings({ angleMode: input.value });
+    });
+  });
+
+  const precisionSelect = document.getElementById("settings-result-precision");
+  if (precisionSelect) {
+    precisionSelect.addEventListener("change", () => {
+      updateAppSettings({ resultPrecision: precisionSelect.value });
+    });
+  }
+
+  const sidebarToggle = document.getElementById("settings-sidebar-visible");
+  if (sidebarToggle) {
+    sidebarToggle.addEventListener("change", () => {
+      updateAppSettings({ sidebarVisible: sidebarToggle.checked });
+    });
+  }
+
+  const resetBtn = document.getElementById("settings-reset-app");
+  if (resetBtn) {
+    resetBtn.addEventListener("click", () => {
+      localStorage.removeItem(SETTINGS_STORAGE_KEY);
+      window.cssServerSettings = { ...DEFAULT_APP_SETTINGS };
+      applyAppSettings(window.cssServerSettings);
+      showToast("Параметры сброшены");
+      log("INFO", "settings", "settings reset");
+    });
+  }
+
+  if (window.matchMedia) {
+    const systemThemeQuery = window.matchMedia("(prefers-color-scheme: light)");
+    systemThemeQuery.addEventListener("change", () => {
+      if ((window.cssServerSettings || DEFAULT_APP_SETTINGS).theme === "system") {
+        applyAppSettings(window.cssServerSettings || DEFAULT_APP_SETTINGS);
+      }
+    });
+  }
 }
 
 const inbound = document.getElementById("inbound");
@@ -1064,6 +1185,7 @@ const appContainerInit = document.getElementById("calculator-app");
 if (appContainerInit && window.innerWidth <= 768) {
   appContainerInit.classList.remove("sidebar-open");
 }
+initSettings();
 updateUi();
 
 setup().catch((err) => {

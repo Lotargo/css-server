@@ -23,6 +23,31 @@
   --border-focus: #8553f4;
 }
 
+#calculator-app[data-theme="light"] {
+  --bg-app: #f3f3f3;
+  --bg-pane: #f7f7f7;
+  --bg-sidebar: rgba(255, 255, 255, 0.78);
+
+  --bg-num: #ffffff;
+  --bg-num-hover: #f2f2f2;
+  --bg-num-active: #e8e8e8;
+
+  --bg-op: #eeeeee;
+  --bg-op-hover: #e5e5e5;
+  --bg-op-active: #dddddd;
+
+  --bg-accent: #8553f4;
+  --bg-accent-hover: #7446de;
+  --bg-accent-active: #6133c4;
+
+  --text-main: #1a1a1a;
+  --text-sub: #505050;
+  --text-muted: #777777;
+
+  --border-subtle: rgba(0, 0, 0, 0.12);
+  --border-focus: #7446de;
+}
+
 *, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
