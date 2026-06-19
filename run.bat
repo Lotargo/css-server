@@ -16,4 +16,4 @@ call npm run build:css
 
 :: Launch Dev server
 echo Launching CSS-Server dev environment...
-call npm run dev
+node scripts\dev.mjs

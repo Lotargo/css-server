@@ -4,7 +4,7 @@
   "version": "0.1.0",
   "type": "module",
   "scripts": {
-    "dev": "concurrently --kill-others --success first \"npm run watch:css\" \"tauri dev\"",
+    "dev": "node scripts/dev.mjs",
     "build": "npm run build:css && tauri build",
     "build:css": "sass src/styles/main.scss src/styles.css --no-source-map",
     "watch:css": "sass src/styles/main.scss src/styles.css --watch --no-source-map",

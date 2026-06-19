@@ -12,6 +12,8 @@ let yMax = 10;
 let angleUnits = "rad";
 let isRendering = false;
 let renderPending = false;
+let isPanning = false;
+let panStart = null;
 
 const colors = ["#a88df8", "#34c759", "#007aff", "#ff9500", "#ff3b30"];
 
@@ -475,6 +477,11 @@ function insertAtCursor(text) {
 }
 
 export function initGraphingMode() {
+  const graphContainer = document.getElementById("graph-container");
+  if (graphContainer && !graphContainer.dataset.graphView) {
+    graphContainer.dataset.graphView = "input";
+  }
+
   renderEquationsList();
   
   // Set up equations add button
@@ -639,6 +646,64 @@ export function initGraphingMode() {
     updateSettingsInputs();
     renderGraph();
   }, { passive: false });
+
+  graphCanvas?.addEventListener("pointerdown", (e) => {
+    if (e.button !== 0) return;
+
+    const rect = graphCanvas.getBoundingClientRect();
+    if (rect.width === 0 || rect.height === 0) return;
+
+    isPanning = true;
+    panStart = {
+      pointerId: e.pointerId,
+      clientX: e.clientX,
+      clientY: e.clientY,
+      xMin,
+      xMax,
+      yMin,
+      yMax,
+      width: rect.width,
+      height: rect.height,
+    };
+
+    graphCanvas.classList.add("is-panning");
+    graphCanvas.setPointerCapture?.(e.pointerId);
+    e.preventDefault();
+  });
+
+  graphCanvas?.addEventListener("pointermove", (e) => {
+    if (!isPanning || !panStart || e.pointerId !== panStart.pointerId) return;
+
+    const dx = e.clientX - panStart.clientX;
+    const dy = e.clientY - panStart.clientY;
+    const xUnitsPerPx = (panStart.xMax - panStart.xMin) / panStart.width;
+    const yUnitsPerPx = (panStart.yMax - panStart.yMin) / panStart.height;
+
+    xMin = panStart.xMin - dx * xUnitsPerPx;
+    xMax = panStart.xMax - dx * xUnitsPerPx;
+    yMin = panStart.yMin + dy * yUnitsPerPx;
+    yMax = panStart.yMax + dy * yUnitsPerPx;
+
+    updateSettingsInputs();
+    renderGraph();
+    e.preventDefault();
+  });
+
+  function endPan(e) {
+    if (!isPanning || !panStart || e.pointerId !== panStart.pointerId) return;
+    isPanning = false;
+    panStart = null;
+    graphCanvas?.classList.remove("is-panning");
+    graphCanvas?.releasePointerCapture?.(e.pointerId);
+  }
+
+  graphCanvas?.addEventListener("pointerup", endPan);
+  graphCanvas?.addEventListener("pointercancel", endPan);
+  graphCanvas?.addEventListener("lostpointercapture", () => {
+    isPanning = false;
+    panStart = null;
+    graphCanvas?.classList.remove("is-panning");
+  });
   
   // Settings popup toggle
   const settingsPopup = document.getElementById("graph-settings-popup");
@@ -716,21 +781,23 @@ export function initGraphingMode() {
     renderGraph();
   });
   
-  // View Toggle button
-  const viewToggle = document.getElementById("graph-view-toggle");
-  const sidePanel = document.getElementById("graph-side-panel");
-  if (viewToggle && sidePanel) {
-    viewToggle.addEventListener("click", () => {
-      const isVisible = sidePanel.style.display !== "none";
-      if (isVisible) {
-        sidePanel.style.display = "none";
-        viewToggle.classList.remove("active");
-      } else {
-        sidePanel.style.display = "flex";
-        viewToggle.classList.add("active");
-      }
-      setTimeout(renderGraph, 50);
-    });
+  // Narrow layouts use two tabs. Wide layouts ignore this state and show both panes.
+  const graphToggle = document.getElementById("graph-canvas-toggle");
+  const inputToggle = document.getElementById("graph-input-toggle");
+  function setGraphView(view) {
+    if (graphContainer) {
+      graphContainer.dataset.graphView = view;
+    }
+    graphToggle?.classList.toggle("active", view === "graph");
+    inputToggle?.classList.toggle("active", view === "input");
+    requestAnimationFrame(renderGraph);
+  }
+
+  graphToggle?.addEventListener("click", () => setGraphView("graph"));
+  inputToggle?.addEventListener("click", () => setGraphView("input"));
+
+  if (graphContainer) {
+    setGraphView(graphContainer.dataset.graphView || "input");
   }
   
   // ResizeObserver for canvas viewport container (prevents recursive loops)
