@@ -1,4 +1,19 @@
 const hasTauri = typeof window !== "undefined" && !!window.__TAURI__;
+const isEmbeddedPublicCalculator = (() => {
+  const params = new URLSearchParams(window.location.search);
+  if (params.get("embed") === "1") return true;
+
+  try {
+    return window.self !== window.top;
+  } catch {
+    return true;
+  }
+})();
+
+if (isEmbeddedPublicCalculator) {
+  document.body.classList.add("embedded-calculator");
+}
+
 const { listen, emit } = hasTauri
   ? window.__TAURI__.event
   : {

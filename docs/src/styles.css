@@ -110,6 +110,10 @@ body.public-calculator #landing-back-link span {
   line-height: 1;
 }
 
+body.public-calculator.embedded-calculator #landing-back-link {
+  display: none;
+}
+
 body.public-calculator #calculator-grid,
 body.public-calculator #scientific-grid,
 body.public-calculator #programmer-grid {

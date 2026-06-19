@@ -10,7 +10,7 @@ function openCalculator(event) {
   calculatorOpener = event?.currentTarget || openCalculatorButton;
 
   if (!calculatorFrame.getAttribute("src")) {
-    calculatorFrame.setAttribute("src", "./src/index.html");
+    calculatorFrame.setAttribute("src", "./src/index.html?embed=1");
   }
 
   calculatorOverlay.classList.add("open");
