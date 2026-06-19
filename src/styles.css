@@ -47,19 +47,42 @@ body {
 
 #calculator-app {
   display: grid;
-  grid-template-columns: 1.3fr 1fr;
+  grid-template-columns: 1fr;
   width: 100vw;
   height: 100vh;
   background-color: var(--bg-app);
 }
 
+#sidebar-pane {
+  display: none;
+}
+
+/* Wide Layouts (desktop): Show sidebar side-by-side for calculator modes */
+@media (min-width: 769px) {
+  #calculator-app[data-active-mode=standard],
+  #calculator-app[data-active-mode=scientific],
+  #calculator-app[data-active-mode=programmer] {
+    grid-template-columns: 1.3fr 1fr;
+  }
+  #calculator-app[data-active-mode=standard] #sidebar-pane,
+  #calculator-app[data-active-mode=scientific] #sidebar-pane,
+  #calculator-app[data-active-mode=programmer] #sidebar-pane {
+    display: flex;
+    border-left: 1px solid var(--border-subtle);
+  }
+  #calculator-app[data-active-mode=standard] #calculator-pane,
+  #calculator-app[data-active-mode=scientific] #calculator-pane,
+  #calculator-app[data-active-mode=programmer] #calculator-pane {
+    border-right: 1px solid var(--border-subtle);
+  }
+}
 /* --- Left Pane: Calculator --- */
 #calculator-pane {
   display: flex;
   flex-direction: column;
   background-color: var(--bg-pane);
   height: 100%;
-  border-right: 1px solid var(--border-subtle);
+  border-right: none;
 }
 
 #calc-header {
@@ -106,20 +129,20 @@ body {
   flex-direction: column;
   justify-content: flex-end;
   align-items: flex-end;
-  padding: 24px;
-  flex: 0 0 140px;
+  padding: clamp(12px, 2.5vh, 24px);
+  flex: 0 0 clamp(80px, 18vh, 140px);
   text-align: right;
   word-break: break-all;
   overflow: hidden;
 }
 #calc-display-container #expression-preview {
-  font-size: 0.9rem;
+  font-size: clamp(0.75rem, 1.5vh, 0.9rem);
   color: var(--text-sub);
-  min-height: 20px;
-  margin-bottom: 6px;
+  min-height: clamp(16px, 2vh, 20px);
+  margin-bottom: clamp(2px, 0.8vh, 6px);
 }
 #calc-display-container #calculator-display {
-  font-size: 2.8rem;
+  font-size: clamp(1.8rem, 6vh, 2.8rem);
   font-weight: 500;
   color: var(--text-main);
   line-height: 1.15;
@@ -163,7 +186,7 @@ body {
 #calculator-grid button {
   border: 1px solid rgba(0, 0, 0, 0.05);
   border-radius: 4px;
-  font-size: 1.05rem;
+  font-size: clamp(0.9rem, 2vw, 1.05rem);
   font-weight: 450;
   color: var(--text-main);
   cursor: pointer;
@@ -214,7 +237,6 @@ body {
   background-color: var(--bg-sidebar);
   backdrop-filter: blur(25px);
   -webkit-backdrop-filter: blur(25px);
-  display: flex;
   flex-direction: column;
   height: 100%;
   overflow: hidden;
@@ -696,8 +718,8 @@ body {
 
 /* --- Compact Mode Styling --- */
 .compact-body {
-  height: 520px !important;
-  width: 360px !important;
+  height: 100% !important;
+  width: 100% !important;
 }
 
 #calculator-app.compact-mode {
@@ -743,6 +765,49 @@ body {
   border-radius: 3px;
 }
 
+/* --- Responsive Layout for Narrow Windows --- */
+@media (max-width: 768px) {
+  #calculator-app {
+    grid-template-columns: 1fr !important;
+  }
+  #calculator-app #sidebar-pane {
+    display: none;
+  }
+  #calculator-app #calculator-pane {
+    border-right: none !important;
+  }
+  /* Show toggle button and overlay only for calculator modes */
+  #calculator-app[data-active-mode=standard] #calc-header #sidebar-toggle-btn,
+  #calculator-app[data-active-mode=scientific] #calc-header #sidebar-toggle-btn,
+  #calculator-app[data-active-mode=programmer] #calc-header #sidebar-toggle-btn {
+    display: flex !important;
+  }
+  #calculator-app[data-active-mode=standard].sidebar-open #sidebar-pane,
+  #calculator-app[data-active-mode=scientific].sidebar-open #sidebar-pane,
+  #calculator-app[data-active-mode=programmer].sidebar-open #sidebar-pane {
+    display: flex !important;
+    position: absolute !important;
+    top: 52px !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    width: 300px !important;
+    max-width: 85% !important;
+    z-index: 100 !important;
+    border-left: 1px solid var(--border-subtle) !important;
+    box-shadow: -5px 0 15px rgba(0, 0, 0, 0.3) !important;
+    background-color: var(--bg-sidebar) !important;
+  }
+}
+/* --- Mobile Full-Width Sidebar Overlay --- */
+@media (max-width: 500px) {
+  #calculator-app.sidebar-open[data-active-mode=standard] #sidebar-pane,
+  #calculator-app.sidebar-open[data-active-mode=scientific] #sidebar-pane,
+  #calculator-app.sidebar-open[data-active-mode=programmer] #sidebar-pane {
+    width: 100% !important;
+    max-width: 100% !important;
+    border-left: none !important;
+  }
+}
 /* ---- Request Task Cards ---- */
 .request {
   width: 100%;
@@ -1099,7 +1164,7 @@ body {
 #scientific-grid button {
   border: 1px solid rgba(0, 0, 0, 0.05);
   border-radius: 4px;
-  font-size: 1.05rem;
+  font-size: clamp(0.85rem, 1.8vw, 1.05rem);
   font-weight: 450;
   color: var(--text-main);
   cursor: pointer;
@@ -1107,7 +1172,7 @@ body {
   align-items: center;
   justify-content: center;
   transition: background-color 0.15s, border-color 0.15s, transform 0.05s;
-  height: 48px;
+  height: clamp(36px, 6.5vh, 48px);
 }
 #scientific-grid button:active {
   transform: scale(0.98);
@@ -1126,7 +1191,7 @@ body {
 }
 #scientific-grid .btn-sci {
   background-color: var(--bg-op);
-  font-size: 0.95rem;
+  font-size: clamp(0.75rem, 1.5vw, 0.95rem);
 }
 #scientific-grid .btn-sci:hover {
   background-color: var(--bg-op-hover);
@@ -1136,7 +1201,7 @@ body {
 }
 #scientific-grid .btn-eq {
   background-color: var(--bg-accent);
-  font-size: 1.3rem;
+  font-size: clamp(1.1rem, 2vw, 1.3rem);
   border-color: rgba(255, 255, 255, 0.08);
 }
 #scientific-grid .btn-eq:hover {
@@ -1180,20 +1245,20 @@ body {
   flex-direction: column;
   justify-content: flex-end;
   align-items: flex-end;
-  padding: 24px;
-  flex: 0 0 140px;
+  padding: clamp(12px, 2.5vh, 24px);
+  flex: 0 0 clamp(80px, 18vh, 140px);
   text-align: right;
   word-break: break-all;
   overflow: hidden;
 }
 #sci-display-container #sci-expression-preview {
-  font-size: 0.9rem;
+  font-size: clamp(0.75rem, 1.5vh, 0.9rem);
   color: var(--text-sub);
-  min-height: 20px;
-  margin-bottom: 6px;
+  min-height: clamp(16px, 2vh, 20px);
+  margin-bottom: clamp(2px, 0.8vh, 6px);
 }
 #sci-display-container #sci-calculator-display {
-  font-size: 2.8rem;
+  font-size: clamp(1.8rem, 6vh, 2.8rem);
   font-weight: 500;
   color: var(--text-main);
   line-height: 1.15;
@@ -1226,20 +1291,20 @@ body {
   flex-direction: column;
   justify-content: flex-end;
   align-items: flex-end;
-  padding: 24px;
-  flex: 0 0 180px;
+  padding: clamp(10px, 2vh, 24px);
+  flex: 0 0 clamp(110px, 24vh, 180px);
   text-align: right;
   word-break: break-all;
   overflow: hidden;
 }
 #prog-display-container #prog-expression-preview {
-  font-size: 0.9rem;
+  font-size: clamp(0.72rem, 1.3vh, 0.9rem);
   color: var(--text-sub);
-  min-height: 20px;
-  margin-bottom: 6px;
+  min-height: clamp(16px, 2vh, 20px);
+  margin-bottom: clamp(2px, 0.8vh, 6px);
 }
 #prog-display-container #prog-calculator-display {
-  font-size: 2.8rem;
+  font-size: clamp(1.8rem, 5.5vh, 2.8rem);
   font-weight: 500;
   color: var(--text-main);
   line-height: 1.15;
@@ -1250,13 +1315,13 @@ body {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  margin-top: 8px;
-  font-size: 0.8rem;
+  margin-top: clamp(4px, 1vh, 8px);
+  font-size: clamp(0.7rem, 1.4vh, 0.8rem);
   color: var(--text-sub);
   font-family: "Fira Code", monospace;
 }
 #prog-display-container #prog-base-display .base-value {
-  padding: 2px 0;
+  padding: 1px 0;
 }
 #prog-display-container #prog-base-display .base-value.active {
   color: var(--text-main);
@@ -1328,7 +1393,7 @@ body {
 #programmer-grid button {
   border: 1px solid rgba(0, 0, 0, 0.05);
   border-radius: 4px;
-  font-size: 1.05rem;
+  font-size: clamp(0.85rem, 1.8vw, 1.05rem);
   font-weight: 450;
   color: var(--text-main);
   cursor: pointer;
@@ -1336,7 +1401,7 @@ body {
   align-items: center;
   justify-content: center;
   transition: background-color 0.15s, transform 0.05s;
-  height: 48px;
+  height: clamp(36px, 6.5vh, 48px);
 }
 #programmer-grid button:active {
   transform: scale(0.98);
@@ -1356,7 +1421,7 @@ body {
 }
 #programmer-grid .btn-prog {
   background-color: var(--bg-op);
-  font-size: 0.95rem;
+  font-size: clamp(0.75rem, 1.5vw, 0.95rem);
 }
 #programmer-grid .btn-prog:hover {
   background-color: var(--bg-op-hover);
@@ -1378,7 +1443,7 @@ body {
 }
 #programmer-grid .btn-eq {
   background-color: var(--bg-accent);
-  font-size: 1.3rem;
+  font-size: clamp(1.1rem, 2vw, 1.3rem);
 }
 #programmer-grid .btn-eq:hover {
   background-color: var(--bg-accent-hover);
@@ -1505,7 +1570,9 @@ body {
   background-color: #0c0c0c;
 }
 #graph-container #graph-workspace #graph-viewport #graph-canvas {
-  flex: 1;
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
 }

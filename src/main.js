@@ -901,14 +901,9 @@ const sidebarToggleBtn = document.getElementById("sidebar-toggle-btn");
 const sidebarPane = document.getElementById("sidebar-pane");
 if (sidebarToggleBtn && sidebarPane) {
   sidebarToggleBtn.addEventListener("click", () => {
-    const isHidden = sidebarPane.style.display === "none";
     const appContainer = document.getElementById("calculator-app");
-    if (isHidden) {
-      sidebarPane.style.display = "flex";
-      if (appContainer) appContainer.style.gridTemplateColumns = "1.3fr 1fr";
-    } else {
-      sidebarPane.style.display = "none";
-      if (appContainer) appContainer.style.gridTemplateColumns = "1fr";
+    if (appContainer) {
+      appContainer.classList.toggle("sidebar-open");
     }
   });
 }
@@ -1040,7 +1035,35 @@ if (compactBtn) {
   });
 }
 
+// Automatically close sidebar overlay when resizing from desktop to narrow layout
+window.addEventListener("resize", () => {
+  const appContainer = document.getElementById("calculator-app");
+  if (appContainer && window.innerWidth <= 768) {
+    if (appContainer.classList.contains("sidebar-open")) {
+      appContainer.classList.remove("sidebar-open");
+    }
+  }
+});
+
+// Click-outside listener: close sidebar overlay on click outside
+const calculatorPane = document.getElementById("calculator-pane");
+if (calculatorPane) {
+  calculatorPane.addEventListener("click", (e) => {
+    const appContainer = document.getElementById("calculator-app");
+    if (appContainer && appContainer.classList.contains("sidebar-open") && window.innerWidth <= 768) {
+      if (!e.target.closest("#sidebar-toggle-btn")) {
+        appContainer.classList.remove("sidebar-open");
+        log("INFO", "window", "sidebar overlay closed by clicking outside");
+      }
+    }
+  });
+}
+
 // Initial UI layout render
+const appContainerInit = document.getElementById("calculator-app");
+if (appContainerInit && window.innerWidth <= 768) {
+  appContainerInit.classList.remove("sidebar-open");
+}
 updateUi();
 
 setup().catch((err) => {

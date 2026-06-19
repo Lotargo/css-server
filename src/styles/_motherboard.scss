@@ -1,9 +1,31 @@
 #calculator-app {
   display: grid;
-  grid-template-columns: 1.3fr 1fr;
+  grid-template-columns: 1fr;
   width: 100vw;
   height: 100vh;
   background-color: var(--bg-app);
+}
+
+#sidebar-pane {
+  display: none;
+}
+
+/* Wide Layouts (desktop): Show sidebar side-by-side for calculator modes */
+@media (min-width: 769px) {
+  #calculator-app[data-active-mode="standard"],
+  #calculator-app[data-active-mode="scientific"],
+  #calculator-app[data-active-mode="programmer"] {
+    grid-template-columns: 1.3fr 1fr;
+    
+    #sidebar-pane {
+      display: flex;
+      border-left: 1px solid var(--border-subtle);
+    }
+    
+    #calculator-pane {
+      border-right: 1px solid var(--border-subtle);
+    }
+  }
 }
 
 /* --- Left Pane: Calculator --- */
@@ -12,7 +34,7 @@
   flex-direction: column;
   background-color: var(--bg-pane);
   height: 100%;
-  border-right: 1px solid var(--border-subtle);
+  border-right: none;
 }
 
 #calc-header {
@@ -64,21 +86,21 @@
   flex-direction: column;
   justify-content: flex-end;
   align-items: flex-end;
-  padding: 24px;
-  flex: 0 0 140px;
+  padding: clamp(12px, 2.5vh, 24px);
+  flex: 0 0 clamp(80px, 18vh, 140px);
   text-align: right;
   word-break: break-all;
   overflow: hidden;
   
   #expression-preview {
-    font-size: 0.9rem;
+    font-size: clamp(0.75rem, 1.5vh, 0.9rem);
     color: var(--text-sub);
-    min-height: 20px;
-    margin-bottom: 6px;
+    min-height: clamp(16px, 2vh, 20px);
+    margin-bottom: clamp(2px, 0.8vh, 6px);
   }
   
   #calculator-display {
-    font-size: 2.8rem;
+    font-size: clamp(1.8rem, 6vh, 2.8rem);
     font-weight: 500;
     color: var(--text-main);
     line-height: 1.15;
@@ -126,7 +148,7 @@
   button {
     border: 1px solid rgba(0, 0, 0, 0.05);
     border-radius: 4px;
-    font-size: 1.05rem;
+    font-size: clamp(0.9rem, 2vw, 1.05rem);
     font-weight: 450;
     color: var(--text-main);
     cursor: pointer;
@@ -171,7 +193,6 @@
   background-color: var(--bg-sidebar);
   backdrop-filter: blur(25px);
   -webkit-backdrop-filter: blur(25px);
-  display: flex;
   flex-direction: column;
   height: 100%;
   overflow: hidden;
@@ -711,8 +732,8 @@
 
 /* --- Compact Mode Styling --- */
 .compact-body {
-  height: 520px !important;
-  width: 360px !important;
+  height: 100% !important;
+  width: 100% !important;
 }
 
 #calculator-app.compact-mode {
@@ -765,6 +786,59 @@
         font-size: 0.95rem;
         border-radius: 3px;
       }
+    }
+  }
+}
+
+/* --- Responsive Layout for Narrow Windows --- */
+@media (max-width: 768px) {
+  #calculator-app {
+    grid-template-columns: 1fr !important;
+    
+    #sidebar-pane {
+      display: none;
+    }
+    
+    #calculator-pane {
+      border-right: none !important;
+    }
+  }
+
+  /* Show toggle button and overlay only for calculator modes */
+  #calculator-app[data-active-mode="standard"],
+  #calculator-app[data-active-mode="scientific"],
+  #calculator-app[data-active-mode="programmer"] {
+    #calc-header #sidebar-toggle-btn {
+      display: flex !important;
+    }
+    
+    &.sidebar-open {
+      #sidebar-pane {
+        display: flex !important;
+        position: absolute !important;
+        top: 52px !important;
+        right: 0 !important;
+        bottom: 0 !important;
+        width: 300px !important;
+        max-width: 85% !important;
+        z-index: 100 !important;
+        border-left: 1px solid var(--border-subtle) !important;
+        box-shadow: -5px 0 15px rgba(0, 0, 0, 0.3) !important;
+        background-color: var(--bg-sidebar) !important;
+      }
+    }
+  }
+}
+
+/* --- Mobile Full-Width Sidebar Overlay --- */
+@media (max-width: 500px) {
+  #calculator-app.sidebar-open[data-active-mode="standard"],
+  #calculator-app.sidebar-open[data-active-mode="scientific"],
+  #calculator-app.sidebar-open[data-active-mode="programmer"] {
+    #sidebar-pane {
+      width: 100% !important;
+      max-width: 100% !important;
+      border-left: none !important;
     }
   }
 }

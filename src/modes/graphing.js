@@ -10,6 +10,8 @@ let xMax = 10;
 let yMin = -10;
 let yMax = 10;
 let angleUnits = "rad";
+let isRendering = false;
+let renderPending = false;
 
 const colors = ["#a88df8", "#34c759", "#007aff", "#ff9500", "#ff3b30"];
 
@@ -196,192 +198,208 @@ function getMathCoords(px, py, width, height) {
 
 async function renderGraph() {
   if (!graphCanvas) return;
-  
-  const dpr = window.devicePixelRatio || 1;
-  const rect = graphCanvas.getBoundingClientRect();
-  const newWidth = Math.floor(rect.width * dpr);
-  const newHeight = Math.floor(rect.height * dpr);
-  
-  if (graphCanvas.width !== newWidth || graphCanvas.height !== newHeight) {
-    graphCanvas.width = newWidth;
-    graphCanvas.height = newHeight;
+  if (isRendering) {
+    renderPending = true;
+    return;
   }
-  
-  const ctx = graphCanvas.getContext('2d');
-  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-  const width = rect.width;
-  const height = rect.height;
-  
-  ctx.clearRect(0, 0, width, height);
-  
-  if (width === 0 || height === 0) return;
-  
-  // Calculate dynamic steps
-  const xStep = calculateStepSize(xMin, xMax, 10);
-  const yStep = calculateStepSize(yMin, yMax, 8);
-  
-  // Draw Grid Lines
-  ctx.lineWidth = 0.5;
-  ctx.strokeStyle = "rgba(255, 255, 255, 0.08)";
-  ctx.fillStyle = "rgba(255, 255, 255, 0.4)";
-  ctx.font = "10px Inter, sans-serif";
-  
-  // Vertical Grid Lines
-  const firstX = Math.ceil(xMin / xStep) * xStep;
-  for (let val = firstX; val <= xMax; val += xStep) {
-    if (Math.abs(val) < 1e-10) continue;
+  isRendering = true;
+
+  try {
+    const dpr = window.devicePixelRatio || 1;
+    const viewport = document.getElementById("graph-viewport");
+    const rect = viewport ? viewport.getBoundingClientRect() : graphCanvas.getBoundingClientRect();
+    const newWidth = Math.floor(rect.width * dpr);
+    const newHeight = Math.floor(rect.height * dpr);
     
-    const { px } = getScreenCoords(val, 0, width, height);
-    ctx.beginPath();
-    ctx.moveTo(px, 0);
-    ctx.lineTo(px, height);
-    ctx.stroke();
-    
-    // Position label near horizontal axis
-    const center = getScreenCoords(0, 0, width, height);
-    let labelY = center.py + 14;
-    if (labelY < 14) labelY = 14;
-    if (labelY > height - 6) labelY = height - 6;
-    
-    ctx.textAlign = "center";
-    ctx.textBaseline = "top";
-    ctx.fillText(String(Number(val.toFixed(4))), px, labelY);
-  }
-  
-  // Horizontal Grid Lines
-  const firstY = Math.ceil(yMin / yStep) * yStep;
-  for (let val = firstY; val <= yMax; val += yStep) {
-    if (Math.abs(val) < 1e-10) continue;
-    
-    const { py } = getScreenCoords(0, val, width, height);
-    ctx.beginPath();
-    ctx.moveTo(0, py);
-    ctx.lineTo(width, py);
-    ctx.stroke();
-    
-    // Position label near vertical axis
-    const center = getScreenCoords(0, 0, width, height);
-    let labelX = center.px - 6;
-    if (labelX < 6) labelX = 6;
-    if (labelX > width - 24) labelX = width - 24;
-    
-    ctx.textAlign = "right";
-    ctx.textBaseline = "middle";
-    ctx.fillText(String(Number(val.toFixed(4))), labelX, py);
-  }
-  
-  // Draw Main Axes
-  ctx.lineWidth = 1.2;
-  ctx.strokeStyle = "rgba(255, 255, 255, 0.35)";
-  const center = getScreenCoords(0, 0, width, height);
-  
-  // Draw X-axis
-  if (center.py >= 0 && center.py <= height) {
-    ctx.beginPath();
-    ctx.moveTo(0, center.py);
-    ctx.lineTo(width, center.py);
-    ctx.stroke();
-    
-    // X arrowhead
-    ctx.beginPath();
-    ctx.moveTo(width, center.py);
-    ctx.lineTo(width - 6, center.py - 3);
-    ctx.lineTo(width - 6, center.py + 3);
-    ctx.closePath();
-    ctx.fillStyle = "rgba(255, 255, 255, 0.35)";
-    ctx.fill();
-    
-    // X label
-    ctx.fillStyle = "rgba(255, 255, 255, 0.6)";
-    ctx.textAlign = "right";
-    ctx.textBaseline = "bottom";
-    ctx.fillText("x", width - 8, center.py - 4);
-  }
-  
-  // Draw Y-axis
-  if (center.px >= 0 && center.px <= width) {
-    ctx.beginPath();
-    ctx.moveTo(center.px, height);
-    ctx.lineTo(center.px, 0);
-    ctx.stroke();
-    
-    // Y arrowhead
-    ctx.beginPath();
-    ctx.moveTo(center.px, 0);
-    ctx.lineTo(center.px - 3, 6);
-    ctx.lineTo(center.px + 3, 6);
-    ctx.closePath();
-    ctx.fillStyle = "rgba(255, 255, 255, 0.35)";
-    ctx.fill();
-    
-    // Y label
-    ctx.fillStyle = "rgba(255, 255, 255, 0.6)";
-    ctx.textAlign = "left";
-    ctx.textBaseline = "top";
-    ctx.fillText("y", center.px + 6, 6);
-  }
-  
-  // Draw origin "0" label
-  if (center.px >= 0 && center.px <= width && center.py >= 0 && center.py <= height) {
-    ctx.fillStyle = "rgba(255, 255, 255, 0.5)";
-    ctx.textAlign = "right";
-    ctx.textBaseline = "top";
-    ctx.fillText("0", center.px - 4, center.py + 4);
-  }
-  
-  // Plot curves
-  for (let i = 0; i < equations.length; i++) {
-    const eqStr = equations[i];
-    if (!eqStr || eqStr.trim() === "") continue;
-    
-    const parsedEq = parseEquation(eqStr);
-    if (!parsedEq) continue;
-    
-    const stepCount = Math.floor(width / 2);
-    const xArray = [];
-    const pxArray = [];
-    
-    for (let step = 0; step <= stepCount; step++) {
-      const px = step * 2;
-      const { x } = getMathCoords(px, 0, width, height);
-      xArray.push(x);
-      pxArray.push(px);
+    if (graphCanvas.width !== newWidth || graphCanvas.height !== newHeight) {
+      graphCanvas.width = newWidth;
+      graphCanvas.height = newHeight;
     }
     
-    const yArray = await plotFunctionPoints(parsedEq, xArray);
+    const ctx = graphCanvas.getContext('2d');
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    const width = rect.width;
+    const height = rect.height;
     
-    ctx.beginPath();
-    ctx.lineWidth = 2.0;
-    ctx.strokeStyle = colors[i % colors.length];
+    ctx.clearRect(0, 0, width, height);
     
-    let first = true;
-    for (let j = 0; j < xArray.length; j++) {
-      const y = yArray[j];
-      const px = pxArray[j];
+    if (width === 0 || height === 0) return;
+    
+    // Calculate dynamic steps
+    const xStep = calculateStepSize(xMin, xMax, 10);
+    const yStep = calculateStepSize(yMin, yMax, 8);
+    
+    // Draw Grid Lines
+    ctx.lineWidth = 0.5;
+    ctx.strokeStyle = "rgba(255, 255, 255, 0.08)";
+    ctx.fillStyle = "rgba(255, 255, 255, 0.4)";
+    ctx.font = "10px Inter, sans-serif";
+    
+    // Vertical Grid Lines
+    const firstX = Math.ceil(xMin / xStep) * xStep;
+    for (let val = firstX; val <= xMax; val += xStep) {
+      if (Math.abs(val) < 1e-10) continue;
       
-      if (isNaN(y) || !isFinite(y)) {
-        first = true;
-        continue;
+      const { px } = getScreenCoords(val, 0, width, height);
+      ctx.beginPath();
+      ctx.moveTo(px, 0);
+      ctx.lineTo(px, height);
+      ctx.stroke();
+      
+      // Position label near horizontal axis
+      const center = getScreenCoords(0, 0, width, height);
+      let labelY = center.py + 14;
+      if (labelY < 14) labelY = 14;
+      if (labelY > height - 6) labelY = height - 6;
+      
+      ctx.textAlign = "center";
+      ctx.textBaseline = "top";
+      ctx.fillText(String(Number(val.toFixed(4))), px, labelY);
+    }
+    
+    // Horizontal Grid Lines
+    const firstY = Math.ceil(yMin / yStep) * yStep;
+    for (let val = firstY; val <= yMax; val += yStep) {
+      if (Math.abs(val) < 1e-10) continue;
+      
+      const { py } = getScreenCoords(0, val, width, height);
+      ctx.beginPath();
+      ctx.moveTo(0, py);
+      ctx.lineTo(width, py);
+      ctx.stroke();
+      
+      // Position label near vertical axis
+      const center = getScreenCoords(0, 0, width, height);
+      let labelX = center.px - 6;
+      if (labelX < 6) labelX = 6;
+      if (labelX > width - 24) labelX = width - 24;
+      
+      ctx.textAlign = "right";
+      ctx.textBaseline = "middle";
+      ctx.fillText(String(Number(val.toFixed(4))), labelX, py);
+    }
+    
+    // Draw Main Axes
+    ctx.lineWidth = 1.2;
+    ctx.strokeStyle = "rgba(255, 255, 255, 0.35)";
+    const center = getScreenCoords(0, 0, width, height);
+    
+    // Draw X-axis
+    if (center.py >= 0 && center.py <= height) {
+      ctx.beginPath();
+      ctx.moveTo(0, center.py);
+      ctx.lineTo(width, center.py);
+      ctx.stroke();
+      
+      // X arrowhead
+      ctx.beginPath();
+      ctx.moveTo(width, center.py);
+      ctx.lineTo(width - 6, center.py - 3);
+      ctx.lineTo(width - 6, center.py + 3);
+      ctx.closePath();
+      ctx.fillStyle = "rgba(255, 255, 255, 0.35)";
+      ctx.fill();
+      
+      // X label
+      ctx.fillStyle = "rgba(255, 255, 255, 0.6)";
+      ctx.textAlign = "right";
+      ctx.textBaseline = "bottom";
+      ctx.fillText("x", width - 8, center.py - 4);
+    }
+    
+    // Draw Y-axis
+    if (center.px >= 0 && center.px <= width) {
+      ctx.beginPath();
+      ctx.moveTo(center.px, height);
+      ctx.lineTo(center.px, 0);
+      ctx.stroke();
+      
+      // Y arrowhead
+      ctx.beginPath();
+      ctx.moveTo(center.px, 0);
+      ctx.lineTo(center.px - 3, 6);
+      ctx.lineTo(center.px + 3, 6);
+      ctx.closePath();
+      ctx.fillStyle = "rgba(255, 255, 255, 0.35)";
+      ctx.fill();
+      
+      // Y label
+      ctx.fillStyle = "rgba(255, 255, 255, 0.6)";
+      ctx.textAlign = "left";
+      ctx.textBaseline = "top";
+      ctx.fillText("y", center.px + 6, 6);
+    }
+    
+    // Draw origin "0" label
+    if (center.px >= 0 && center.px <= width && center.py >= 0 && center.py <= height) {
+      ctx.fillStyle = "rgba(255, 255, 255, 0.5)";
+      ctx.textAlign = "right";
+      ctx.textBaseline = "top";
+      ctx.fillText("0", center.px - 4, center.py + 4);
+    }
+    
+    // Plot curves
+    for (let i = 0; i < equations.length; i++) {
+      const eqStr = equations[i];
+      if (!eqStr || eqStr.trim() === "") continue;
+      
+      const parsedEq = parseEquation(eqStr);
+      if (!parsedEq) continue;
+      
+      const stepCount = Math.floor(width / 2);
+      const xArray = [];
+      const pxArray = [];
+      
+      for (let step = 0; step <= stepCount; step++) {
+        const px = step * 2;
+        const { x } = getMathCoords(px, 0, width, height);
+        xArray.push(x);
+        pxArray.push(px);
       }
       
-      const { py } = getScreenCoords(0, y, width, height);
+      const yArray = await plotFunctionPoints(parsedEq, xArray);
       
-      // Allow line drawing slightly outside view boundaries for seamless transition
-      if (py >= -20 && py <= height + 20) {
-        if (first) {
-          ctx.moveTo(px, py);
-          first = false;
-        } else {
-          ctx.lineTo(px, py);
+      ctx.beginPath();
+      ctx.lineWidth = 2.0;
+      ctx.strokeStyle = colors[i % colors.length];
+      
+      let first = true;
+      for (let j = 0; j < xArray.length; j++) {
+        const y = yArray[j];
+        const px = pxArray[j];
+        
+        if (isNaN(y) || !isFinite(y)) {
+          first = true;
+          continue;
         }
-      } else {
-        first = true;
+        
+        const { py } = getScreenCoords(0, y, width, height);
+        
+        // Allow line drawing slightly outside view boundaries for seamless transition
+        if (py >= -20 && py <= height + 20) {
+          if (first) {
+            ctx.moveTo(px, py);
+            first = false;
+          } else {
+            ctx.lineTo(px, py);
+          }
+        } else {
+          first = true;
+        }
       }
+      ctx.stroke();
     }
-    ctx.stroke();
+    
+    log("INFO", "graph", `rendered ${equations.filter(e => e !== "").length} active functions`);
+  } catch (error) {
+    log("ERROR", "graph", `Error rendering graph: ${error.message || error}`);
+  } finally {
+    isRendering = false;
+    if (renderPending) {
+      renderPending = false;
+      requestAnimationFrame(renderGraph);
+    }
   }
-  
-  log("INFO", "graph", `rendered ${equations.filter(e => e !== "").length} active functions`);
 }
 
 function renderEquationsList() {

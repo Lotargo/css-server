@@ -136,7 +136,9 @@ $graph-result-expr: "calc(var(--graph-scale-y) * (#{$graph-f-val}) + var(--graph
       background-color: #0c0c0c;
       
       #graph-canvas {
-        flex: 1;
+        position: absolute;
+        top: 0;
+        left: 0;
         width: 100%;
         height: 100%;
       }

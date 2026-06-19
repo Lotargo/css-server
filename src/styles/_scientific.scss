@@ -52,7 +52,7 @@ $sci-trig-rad-expr: "if(style(--sci-op: sin): sin(var(--sci-val)); style(--sci-o
   button {
     border: 1px solid rgba(0, 0, 0, 0.05);
     border-radius: 4px;
-    font-size: 1.05rem;
+    font-size: clamp(0.85rem, 1.8vw, 1.05rem);
     font-weight: 450;
     color: var(--text-main);
     cursor: pointer;
@@ -60,7 +60,7 @@ $sci-trig-rad-expr: "if(style(--sci-op: sin): sin(var(--sci-val)); style(--sci-o
     align-items: center;
     justify-content: center;
     transition: background-color 0.15s, border-color 0.15s, transform 0.05s;
-    height: 48px;
+    height: clamp(36px, 6.5vh, 48px);
     &:active { transform: scale(0.98); }
     &:hover { background-color: rgba(255, 255, 255, 0.05); }
   }
@@ -73,14 +73,14 @@ $sci-trig-rad-expr: "if(style(--sci-op: sin): sin(var(--sci-val)); style(--sci-o
   
   .btn-sci {
     background-color: var(--bg-op);
-    font-size: 0.95rem;
+    font-size: clamp(0.75rem, 1.5vw, 0.95rem);
     &:hover { background-color: var(--bg-op-hover); }
     &:active { background-color: var(--bg-op-active); }
   }
   
   .btn-eq {
     background-color: var(--bg-accent);
-    font-size: 1.3rem;
+    font-size: clamp(1.1rem, 2vw, 1.3rem);
     border-color: rgba(255, 255, 255, 0.08);
     &:hover { background-color: var(--bg-accent-hover); }
     &:active { background-color: var(--bg-accent-active); }
@@ -115,21 +115,21 @@ $sci-trig-rad-expr: "if(style(--sci-op: sin): sin(var(--sci-val)); style(--sci-o
   flex-direction: column;
   justify-content: flex-end;
   align-items: flex-end;
-  padding: 24px;
-  flex: 0 0 140px;
+  padding: clamp(12px, 2.5vh, 24px);
+  flex: 0 0 clamp(80px, 18vh, 140px);
   text-align: right;
   word-break: break-all;
   overflow: hidden;
   
   #sci-expression-preview {
-    font-size: 0.9rem;
+    font-size: clamp(0.75rem, 1.5vh, 0.9rem);
     color: var(--text-sub);
-    min-height: 20px;
-    margin-bottom: 6px;
+    min-height: clamp(16px, 2vh, 20px);
+    margin-bottom: clamp(2px, 0.8vh, 6px);
   }
   
   #sci-calculator-display {
-    font-size: 2.8rem;
+    font-size: clamp(1.8rem, 6vh, 2.8rem);
     font-weight: 500;
     color: var(--text-main);
     line-height: 1.15;

@@ -76,21 +76,21 @@ $prog-bitwise-result-expr: "if(style(--op: and): #{css-bitwise-and(var(--val-a),
   flex-direction: column;
   justify-content: flex-end;
   align-items: flex-end;
-  padding: 24px;
-  flex: 0 0 180px;
+  padding: clamp(10px, 2vh, 24px);
+  flex: 0 0 clamp(110px, 24vh, 180px);
   text-align: right;
   word-break: break-all;
   overflow: hidden;
   
   #prog-expression-preview {
-    font-size: 0.9rem;
+    font-size: clamp(0.72rem, 1.3vh, 0.9rem);
     color: var(--text-sub);
-    min-height: 20px;
-    margin-bottom: 6px;
+    min-height: clamp(16px, 2vh, 20px);
+    margin-bottom: clamp(2px, 0.8vh, 6px);
   }
   
   #prog-calculator-display {
-    font-size: 2.8rem;
+    font-size: clamp(1.8rem, 5.5vh, 2.8rem);
     font-weight: 500;
     color: var(--text-main);
     line-height: 1.15;
@@ -102,13 +102,13 @@ $prog-bitwise-result-expr: "if(style(--op: and): #{css-bitwise-and(var(--val-a),
     display: flex;
     flex-direction: column;
     align-items: flex-end;
-    margin-top: 8px;
-    font-size: 0.8rem;
+    margin-top: clamp(4px, 1vh, 8px);
+    font-size: clamp(0.7rem, 1.4vh, 0.8rem);
     color: var(--text-sub);
     font-family: 'Fira Code', monospace;
     
     .base-value {
-      padding: 2px 0;
+      padding: 1px 0;
       &.active { color: var(--text-main); font-weight: 600; }
     }
   }
@@ -167,7 +167,7 @@ $prog-bitwise-result-expr: "if(style(--op: and): #{css-bitwise-and(var(--val-a),
   button {
     border: 1px solid rgba(0, 0, 0, 0.05);
     border-radius: 4px;
-    font-size: 1.05rem;
+    font-size: clamp(0.85rem, 1.8vw, 1.05rem);
     font-weight: 450;
     color: var(--text-main);
     cursor: pointer;
@@ -175,7 +175,7 @@ $prog-bitwise-result-expr: "if(style(--op: and): #{css-bitwise-and(var(--val-a),
     align-items: center;
     justify-content: center;
     transition: background-color 0.15s, transform 0.05s;
-    height: 48px;
+    height: clamp(36px, 6.5vh, 48px);
     &:active { transform: scale(0.98); }
     &:hover { background-color: rgba(255, 255, 255, 0.05); }
     &:disabled { opacity: 0.3; cursor: not-allowed; }
@@ -188,7 +188,7 @@ $prog-bitwise-result-expr: "if(style(--op: and): #{css-bitwise-and(var(--val-a),
   
   .btn-prog {
     background-color: var(--bg-op);
-    font-size: 0.95rem;
+    font-size: clamp(0.75rem, 1.5vw, 0.95rem);
     &:hover { background-color: var(--bg-op-hover); }
     &.btn-hex {
       background-color: #1a1a2e;
@@ -204,7 +204,7 @@ $prog-bitwise-result-expr: "if(style(--op: and): #{css-bitwise-and(var(--val-a),
   
   .btn-eq {
     background-color: var(--bg-accent);
-    font-size: 1.3rem;
+    font-size: clamp(1.1rem, 2vw, 1.3rem);
     &:hover { background-color: var(--bg-accent-hover); }
   }
 }

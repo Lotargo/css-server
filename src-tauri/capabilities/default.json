@@ -10,6 +10,7 @@
     "core:event:allow-listen",
     "core:window:allow-set-size",
     "core:window:allow-set-always-on-top",
-    "opener:default"
+    "opener:default",
+    "window-state:default"
   ]
 }
