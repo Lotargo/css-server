@@ -1,8 +1,9 @@
 [package]
 name = "css-server"
 version = "0.1.0"
-description = "CSS-Server: Glass Box Backend Architecture — PoC"
+description = "CSS-Server: Glass Calculator — reactive computation machine"
 authors = ["CSS-Server Team"]
+license = "Apache-2.0"
 edition = "2021"
 
 [lib]
