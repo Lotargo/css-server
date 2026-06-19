@@ -60,6 +60,59 @@
         </article>
       </section>
 
+      <section class="network-lab" id="network-lab" aria-labelledby="network-title">
+        <div class="network-copy">
+          <p class="kicker">Network Lab</p>
+          <h2 id="network-title">Outbound HTTP from a static site.</h2>
+          <p>Send a user-triggered request from GitHub Pages-compatible JavaScript, then route response metadata back into visible DOM state for CSS classification.</p>
+        </div>
+
+        <form class="network-form" id="network-form">
+          <label>
+            <span>Endpoint</span>
+            <input id="network-endpoint" type="url" value="https://api.github.com/zen" spellcheck="false" />
+          </label>
+          <label>
+            <span>Method</span>
+            <select id="network-method">
+              <option value="GET" selected>GET</option>
+              <option value="POST">POST</option>
+              <option value="PUT">PUT</option>
+              <option value="PATCH">PATCH</option>
+              <option value="DELETE">DELETE</option>
+            </select>
+          </label>
+          <label>
+            <span>Headers JSON</span>
+            <textarea id="network-headers" spellcheck="false">{}</textarea>
+          </label>
+          <label>
+            <span>Body</span>
+            <textarea id="network-body" spellcheck="false" placeholder="Ignored for GET/HEAD"></textarea>
+          </label>
+          <p class="network-warning">Do not paste shared API secrets here. Browser requests are visible to the user and constrained by CORS.</p>
+          <button class="primary-link" type="submit">Send request</button>
+        </form>
+
+        <div class="network-runtime" aria-label="Network request lifecycle">
+          <div class="network-lanes">
+            <div class="network-lane">
+              <span class="cell-label">Request</span>
+              <div id="network-request-card" class="network-card" data-state="idle">idle</div>
+            </div>
+            <div class="network-lane">
+              <span class="cell-label">Transport</span>
+              <div id="network-transport-card" class="network-card" data-state="idle">waiting</div>
+            </div>
+            <div class="network-lane">
+              <span class="cell-label">CSS status</span>
+              <div id="network-status-card" class="network-card status-card" data-status="0">not classified</div>
+            </div>
+          </div>
+          <pre id="network-response" class="network-response">Response preview will appear here.</pre>
+        </div>
+      </section>
+
       <section class="proof-modules" aria-label="Proof modules">
         <div>
           <p class="kicker">Why calculator first?</p>
@@ -68,6 +121,7 @@
         </div>
         <nav class="doc-links" aria-label="Project notes">
           <a href="./notes/manifest.html">Runtime Manifest</a>
+          <a href="./notes/network.html">Network Boundary</a>
           <a href="./notes/deployment.html">Pages Deployment</a>
           <a href="./notes/safety.html">Safety Boundary</a>
         </nav>

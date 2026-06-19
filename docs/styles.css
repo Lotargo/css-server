@@ -151,7 +151,8 @@ h1 {
 
 .runtime-proof,
 .boundary-grid article,
-.proof-modules {
+.proof-modules,
+.network-lab {
   background: var(--panel);
   border: 1px solid var(--line);
   border-radius: 8px;
@@ -266,6 +267,162 @@ h1 {
   padding: 20px;
 }
 
+.network-lab {
+  display: grid;
+  grid-template-columns: minmax(280px, 0.8fr) minmax(320px, 1fr);
+  gap: 18px;
+  margin-top: 16px;
+  padding: 20px;
+}
+
+.network-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.network-copy p:not(.kicker),
+.network-warning {
+  color: var(--sub);
+  line-height: 1.45;
+}
+
+.network-form {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 140px;
+  gap: 10px;
+}
+
+.network-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.network-form label:nth-of-type(3),
+.network-form label:nth-of-type(4),
+.network-form .network-warning,
+.network-form button {
+  grid-column: 1 / -1;
+}
+
+.network-form span {
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.network-form input,
+.network-form select,
+.network-form textarea {
+  width: 100%;
+  min-height: 40px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 10px;
+  background: #181818;
+  color: var(--text);
+  font: inherit;
+}
+
+.network-form textarea {
+  min-height: 74px;
+  resize: vertical;
+  font-family: "Cascadia Code", "Fira Code", monospace;
+  font-size: 0.82rem;
+}
+
+.network-warning {
+  margin: 2px 0;
+  font-size: 0.86rem;
+}
+
+.network-runtime {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 0.75fr);
+  gap: 12px;
+}
+
+.network-lanes {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.network-lane {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.network-card,
+.network-response {
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: #181818;
+  color: var(--text);
+}
+
+.network-card {
+  min-height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
+  text-align: center;
+  font-weight: 800;
+  word-break: break-word;
+}
+
+.network-card[data-state="queued"] {
+  border-color: #60a5fa;
+  color: #bfdbfe;
+}
+
+.network-card[data-state="fetching"] {
+  border-color: #a855f7;
+  color: #e9d5ff;
+}
+
+.network-card[data-state="done"] {
+  border-color: #34d399;
+  color: #a7f3d0;
+}
+
+.network-card[data-state="error"] {
+  border-color: #f87171;
+  color: #fecaca;
+}
+
+.status-card[data-status^="2"] {
+  border-color: #34d399;
+  color: #a7f3d0;
+}
+
+.status-card[data-status^="3"] {
+  border-color: #60a5fa;
+  color: #bfdbfe;
+}
+
+.status-card[data-status^="4"],
+.status-card[data-status^="5"] {
+  border-color: #f87171;
+  color: #fecaca;
+}
+
+.network-response {
+  min-height: 150px;
+  margin: 0;
+  padding: 12px;
+  overflow: auto;
+  white-space: pre-wrap;
+  font-family: "Cascadia Code", "Fira Code", monospace;
+  font-size: 0.82rem;
+}
+
 .proof-modules > div {
   display: flex;
   flex-direction: column;
@@ -275,7 +432,10 @@ h1 {
 @media (max-width: 860px) {
   .hero,
   .boundary-grid,
-  .proof-modules {
+  .proof-modules,
+  .network-lab,
+  .network-runtime,
+  .network-lanes {
     grid-template-columns: 1fr;
   }
 

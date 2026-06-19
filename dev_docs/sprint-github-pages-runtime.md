@@ -190,13 +190,13 @@ GitHub Actions deployment remains deferred until the static runtime is manually 
 
 **Goal:** Demonstrate outbound HTTP from the static runtime.
 
-- [ ] Add `Network Lab` mode.
-- [ ] Add endpoint, method, headers, and body controls.
-- [ ] Implement transparent `fetch` transport in JavaScript.
-- [ ] Render request lifecycle as visible DOM tasks.
-- [ ] Route response status, headers, and body summary into DOM/CSS-readable state.
-- [ ] Start with CORS-friendly public APIs that do not require secrets.
-- [ ] Add clear user-facing warnings for custom endpoints and API keys.
+- [x] Add `Network Lab` mode.
+- [x] Add endpoint, method, headers, and body controls.
+- [x] Implement transparent `fetch` transport in JavaScript.
+- [x] Render request lifecycle as visible DOM tasks.
+- [x] Route response status, headers, and body summary into DOM/CSS-readable state.
+- [x] Start with CORS-friendly public APIs that do not require secrets.
+- [x] Add clear user-facing warnings for custom endpoints and API keys.
 
 ---
 
@@ -204,11 +204,11 @@ GitHub Actions deployment remains deferred until the static runtime is manually 
 
 **Goal:** Keep the "CSS computes" promise alive in the network demo.
 
-- [ ] Let CSS classify response status ranges.
+- [x] Let CSS classify response status ranges.
 - [ ] Let CSS validate simple response fields where feasible.
 - [ ] Let CSS compute derived metrics such as latency bands, payload size bands, and result badges.
 - [ ] Keep JSON parsing in JavaScript only as I/O normalization, not business decision logic.
-- [ ] Document every JS boundary that exists because browser APIs require it.
+- [x] Document every JS boundary that exists because browser APIs require it.
 
 ---
 
