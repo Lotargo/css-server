@@ -880,15 +880,44 @@ drawerItems.forEach(item => {
     // Close drawer
     toggleDrawer(false);
     
-    if (mode === "standard") {
-      drawerItems.forEach(i => i.classList.remove("active"));
-      item.classList.add("active");
-      const titleEl = document.getElementById("calc-title");
-      if (titleEl) titleEl.textContent = "Обычный";
-    } else {
-      let modeName = item.querySelector("span") ? item.querySelector("span").textContent : "Этот режим";
-      showToast(`Режим "${modeName}" временно заблокирован. Вернитесь к "Обычному" режиму.`);
+    // Set active mode on app container
+    const appContainer = document.getElementById("calculator-app");
+    if (appContainer) {
+      appContainer.dataset.activeMode = mode;
     }
+
+    // Update active state in drawer
+    drawerItems.forEach(i => i.classList.remove("active"));
+    item.classList.add("active");
+
+    // Update title
+    const titleEl = document.getElementById("calc-title");
+    if (titleEl) {
+      const modeNames = {
+        standard: "Обычный",
+        scientific: "Инженерный",
+        programmer: "Программист",
+        graphing: "Построение графиков",
+        date: "Вычисление даты",
+        currency: "Валюта",
+        volume: "Объем",
+        length: "Длина",
+        weight: "Вес и масса",
+        temperature: "Температура",
+        energy: "Энергия",
+        area: "Площадь",
+        speed: "Скорость",
+        time: "Время",
+        power: "Мощность",
+        data: "Данные",
+        pressure: "Давление",
+        angle: "Угол",
+        settings: "Параметры"
+      };
+      titleEl.textContent = modeNames[mode] || mode;
+    }
+
+    log("INFO", "mode", `switched to mode: ${mode}`);
   });
 });
 

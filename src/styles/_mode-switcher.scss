@@ -1,0 +1,32 @@
+/* Mode Switching Infrastructure */
+#calculator-app {
+  --current-mode: standard;
+}
+
+/* Hide all mode-specific sections by default */
+.mode-section {
+  display: none !important;
+}
+
+/* Show only the active mode section */
+#calculator-app[data-active-mode="standard"] .mode-standard,
+#calculator-app[data-active-mode="scientific"] .mode-scientific,
+#calculator-app[data-active-mode="programmer"] .mode-programmer,
+#calculator-app[data-active-mode="graphing"] .mode-graphing,
+#calculator-app[data-active-mode="date"] .mode-date,
+#calculator-app[data-active-mode="currency"] .mode-currency,
+#calculator-app[data-active-mode="volume"] .mode-volume,
+#calculator-app[data-active-mode="length"] .mode-length,
+#calculator-app[data-active-mode="weight"] .mode-weight,
+#calculator-app[data-active-mode="temperature"] .mode-temperature,
+#calculator-app[data-active-mode="energy"] .mode-energy,
+#calculator-app[data-active-mode="area"] .mode-area,
+#calculator-app[data-active-mode="speed"] .mode-speed,
+#calculator-app[data-active-mode="time"] .mode-time,
+#calculator-app[data-active-mode="power"] .mode-power,
+#calculator-app[data-active-mode="data"] .mode-data,
+#calculator-app[data-active-mode="pressure"] .mode-pressure,
+#calculator-app[data-active-mode="angle"] .mode-angle {
+  display: flex !important;
+  flex-direction: column;
+}

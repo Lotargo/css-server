@@ -11,7 +11,7 @@
     <script type="module" src="/main.js" defer></script>
   </head>
   <body>
-    <div id="calculator-app">
+    <div id="calculator-app" data-active-mode="standard">
       <!-- Left Pane: Main Calculator -->
       <div id="calculator-pane">
         <!-- Navigation Drawer Overlay -->
@@ -145,60 +145,71 @@
           </div>
         </header>
 
-        <!-- Display Area -->
-        <div id="calc-display-container">
-          <div id="expression-preview"></div>
-          <div id="calculator-display">0</div>
+        <div class="mode-section mode-standard">
+          <!-- Display Area -->
+          <div id="calc-display-container">
+            <div id="expression-preview"></div>
+            <div id="calculator-display">0</div>
+          </div>
+
+          <!-- Memory Buttons Row -->
+          <div id="memory-bar">
+            <button class="btn-mem" id="btn-mc" disabled>MC</button>
+            <button class="btn-mem" id="btn-mr" disabled>MR</button>
+            <button class="btn-mem" id="btn-m-plus">M+</button>
+            <button class="btn-mem" id="btn-m-minus">M-</button>
+            <button class="btn-mem" id="btn-ms">MS</button>
+            <button class="btn-mem" id="btn-m-list" disabled>M▼</button>
+          </div>
+
+          <!-- Calculator Grid of Keys -->
+          <div id="calculator-grid">
+            <button class="btn-op" id="btn-pct">%</button>
+            <button class="btn-op" id="btn-ce">CE</button>
+            <button class="btn-op" id="btn-c">C</button>
+            <button class="btn-op" id="btn-back" title="Backspace">
+              <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"></path>
+                <line x1="18" y1="9" x2="12" y2="15"></line>
+                <line x1="12" y1="9" x2="18" y2="15"></line>
+              </svg>
+            </button>
+
+            <button class="btn-op" id="btn-inv">1/x</button>
+            <button class="btn-op" id="btn-sqr">x²</button>
+            <button class="btn-op" id="btn-sqrt">²√x</button>
+            <button class="btn-op" id="btn-div">÷</button>
+
+            <button class="btn-num" id="btn-7">7</button>
+            <button class="btn-num" id="btn-8">8</button>
+            <button class="btn-num" id="btn-9">9</button>
+            <button class="btn-op" id="btn-mul">×</button>
+
+            <button class="btn-num" id="btn-4">4</button>
+            <button class="btn-num" id="btn-5">5</button>
+            <button class="btn-num" id="btn-6">6</button>
+            <button class="btn-op" id="btn-sub">−</button>
+
+            <button class="btn-num" id="btn-1">1</button>
+            <button class="btn-num" id="btn-2">2</button>
+            <button class="btn-num" id="btn-3">3</button>
+            <button class="btn-op" id="btn-add">+</button>
+
+            <button class="btn-op" id="btn-neg">+/-</button>
+            <button class="btn-num" id="btn-0">0</button>
+            <button class="btn-num" id="btn-dec">,</button>
+            <button class="btn-eq" id="btn-eq">=</button>
+          </div>
         </div>
 
-        <!-- Memory Buttons Row -->
-        <div id="memory-bar">
-          <button class="btn-mem" id="btn-mc" disabled>MC</button>
-          <button class="btn-mem" id="btn-mr" disabled>MR</button>
-          <button class="btn-mem" id="btn-m-plus">M+</button>
-          <button class="btn-mem" id="btn-m-minus">M-</button>
-          <button class="btn-mem" id="btn-ms">MS</button>
-          <button class="btn-mem" id="btn-m-list" disabled>M▼</button>
-        </div>
-
-        <!-- Calculator Grid of Keys -->
-        <div id="calculator-grid">
-          <button class="btn-op" id="btn-pct">%</button>
-          <button class="btn-op" id="btn-ce">CE</button>
-          <button class="btn-op" id="btn-c">C</button>
-          <button class="btn-op" id="btn-back" title="Backspace">
-            <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"></path>
-              <line x1="18" y1="9" x2="12" y2="15"></line>
-              <line x1="12" y1="9" x2="18" y2="15"></line>
-            </svg>
-          </button>
-
-          <button class="btn-op" id="btn-inv">1/x</button>
-          <button class="btn-op" id="btn-sqr">x²</button>
-          <button class="btn-op" id="btn-sqrt">²√x</button>
-          <button class="btn-op" id="btn-div">÷</button>
-
-          <button class="btn-num" id="btn-7">7</button>
-          <button class="btn-num" id="btn-8">8</button>
-          <button class="btn-num" id="btn-9">9</button>
-          <button class="btn-op" id="btn-mul">×</button>
-
-          <button class="btn-num" id="btn-4">4</button>
-          <button class="btn-num" id="btn-5">5</button>
-          <button class="btn-num" id="btn-6">6</button>
-          <button class="btn-op" id="btn-sub">−</button>
-
-          <button class="btn-num" id="btn-1">1</button>
-          <button class="btn-num" id="btn-2">2</button>
-          <button class="btn-num" id="btn-3">3</button>
-          <button class="btn-op" id="btn-add">+</button>
-
-          <button class="btn-op" id="btn-neg">+/-</button>
-          <button class="btn-num" id="btn-0">0</button>
-          <button class="btn-num" id="btn-dec">,</button>
-          <button class="btn-eq" id="btn-eq">=</button>
-        </div>
+        <!-- Placeholder Mode Sections -->
+        <div class="mode-section mode-scientific" id="mode-scientific-placeholder"></div>
+        <div class="mode-section mode-programmer" id="mode-programmer-placeholder"></div>
+        <div class="mode-section mode-graphing" id="mode-graphing-placeholder"></div>
+        <div class="mode-section mode-date" id="mode-date-placeholder"></div>
+        <div class="mode-section mode-currency" id="mode-currency-placeholder"></div>
+        <div class="mode-section mode-volume" id="mode-volume-placeholder"></div>
+        <div class="mode-section mode-length" id="mode-length-placeholder"></div>
       </div>
 
       <!-- Right Pane: Sidebar Panel -->
