@@ -2,6 +2,8 @@ use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::sync::mpsc::{channel, Sender};
 use std::sync::{Arc, Mutex, Condvar};
+use std::sync::atomic::{AtomicBool, Ordering};
+use std::time::Duration;
 use tauri::{AppHandle, Emitter, Listener};
 use tiny_http::{Header, Response, Server};
 use tracing::{debug, error, info, warn};
@@ -84,6 +86,7 @@ fn start_http_server(
     app_handle: AppHandle,
     pending: Arc<Mutex<HashMap<String, Sender<String>>>>,
     coordinator: Arc<(Mutex<RequestCoordinator>, Condvar)>,
+    shutdown: Arc<AtomicBool>,
 ) {
     std::thread::spawn(move || {
         let server = match Server::http("0.0.0.0:8080") {
@@ -97,10 +100,23 @@ fn start_http_server(
             }
         };
 
-        for mut request in server.incoming_requests() {
+        while !shutdown.load(Ordering::SeqCst) {
+            let mut request = match server.recv_timeout(Duration::from_millis(200)) {
+                Ok(Some(request)) => request,
+                Ok(None) => continue,
+                Err(e) => {
+                    if shutdown.load(Ordering::SeqCst) {
+                        break;
+                    }
+                    warn!(error = %e, "HTTP server receive error");
+                    continue;
+                }
+            };
+
             let app_handle = app_handle.clone();
             let pending = pending.clone();
             let coordinator = coordinator.clone();
+            let shutdown = shutdown.clone();
 
             let method = request.method().to_string();
             let url = request.url().to_string();
@@ -131,8 +147,13 @@ fn start_http_server(
                 {
                     let (lock, cvar) = &*thread_coordinator;
                     let mut coord = lock.lock().unwrap();
-                    while coord.active_count >= 3 {
+                    while coord.active_count >= 3 && !shutdown.load(Ordering::SeqCst) {
                         coord = cvar.wait(coord).unwrap();
+                    }
+                    if shutdown.load(Ordering::SeqCst) {
+                        coord.queued_count -= 1;
+                        send_response(request, 503, "server shutting down");
+                        return;
                     }
                     // Transition from queued to active
                     coord.queued_count -= 1;
@@ -233,6 +254,8 @@ fn start_http_server(
                 }
             });
         }
+
+        info!("HTTP server shutdown complete");
     });
 }
 
@@ -286,10 +309,14 @@ pub fn run() {
         }),
         Condvar::new(),
     ));
+    let shutdown = Arc::new(AtomicBool::new(false));
 
     let db_conn_clone = db_conn.clone();
+    let shutdown_for_setup = shutdown.clone();
+    let shutdown_for_run = shutdown.clone();
+    let coordinator_for_run = coordinator.clone();
 
-    tauri::Builder::default()
+    let app = tauri::Builder::default()
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_window_state::Builder::default().build())
         .setup(move |app| {
@@ -297,8 +324,9 @@ pub fn run() {
             let pending_clone = pending.clone();
             let coordinator_clone = coordinator.clone();
             let db_conn_setup = db_conn_clone.clone();
+            let shutdown_clone = shutdown_for_setup.clone();
 
-            start_http_server(app_handle, pending_clone, coordinator_clone);
+            start_http_server(app_handle, pending_clone, coordinator_clone, shutdown_clone);
 
             let app_handle_db = app.handle().clone();
             app.listen("db-write-request", move |event| {
@@ -449,6 +477,15 @@ pub fn run() {
             info!("CSS-Server setup complete");
             Ok(())
         })
-        .run(tauri::generate_context!())
-        .expect("error while running tauri application");
+        .build(tauri::generate_context!())
+        .expect("error while building tauri application");
+
+    app.run(move |_app_handle, event| {
+        if let tauri::RunEvent::ExitRequested { .. } = event {
+            info!("shutdown requested, stopping HTTP server");
+            shutdown_for_run.store(true, Ordering::SeqCst);
+            let (_lock, cvar) = &*coordinator_for_run;
+            cvar.notify_all();
+        }
+    });
 }
