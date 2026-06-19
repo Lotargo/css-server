@@ -1,3 +1,4 @@
+@charset "UTF-8";
 :root {
   --bg-app: #1c1c1c;
   --bg-pane: #202020;
@@ -34,23 +35,14 @@ body {
   user-select: none;
 }
 
-/* Custom scrollbars */
-.scrollbar-custom::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+/* Hide scrollbars everywhere but keep scrolling functional */
+* {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
 }
 
-.scrollbar-custom::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.scrollbar-custom::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.12);
-  border-radius: 10px;
-}
-
-.scrollbar-custom::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.2);
+*::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
 }
 
 #calculator-app {
@@ -974,4 +966,991 @@ body {
   color: #f87171;
   background-color: rgba(248, 113, 113, 0.05);
   padding-left: 2px;
+}
+
+/* Mode Switching Infrastructure */
+#calculator-app {
+  --current-mode: standard;
+}
+
+/* Hide all mode-specific sections by default */
+.mode-section {
+  display: none !important;
+}
+
+/* Show only the active mode section */
+#calculator-app[data-active-mode=standard] .mode-standard,
+#calculator-app[data-active-mode=scientific] .mode-scientific,
+#calculator-app[data-active-mode=programmer] .mode-programmer,
+#calculator-app[data-active-mode=graphing] .mode-graphing,
+#calculator-app[data-active-mode=date] .mode-date,
+#calculator-app[data-active-mode=currency] .mode-currency,
+#calculator-app[data-active-mode=volume] .mode-volume,
+#calculator-app[data-active-mode=length] .mode-length,
+#calculator-app[data-active-mode=weight] .mode-weight,
+#calculator-app[data-active-mode=temperature] .mode-temperature,
+#calculator-app[data-active-mode=energy] .mode-energy,
+#calculator-app[data-active-mode=area] .mode-area,
+#calculator-app[data-active-mode=speed] .mode-speed,
+#calculator-app[data-active-mode=time] .mode-time,
+#calculator-app[data-active-mode=power] .mode-power,
+#calculator-app[data-active-mode=data] .mode-data,
+#calculator-app[data-active-mode=pressure] .mode-pressure,
+#calculator-app[data-active-mode=angle] .mode-angle {
+  display: flex !important;
+  flex-direction: column;
+  flex: 1;
+  height: 100%;
+}
+
+/* Mode title mapping */
+#calculator-app[data-active-mode=scientific] #calc-title::after {
+  content: "Инженерный";
+}
+
+#calculator-app[data-active-mode=programmer] #calc-title::after {
+  content: "Программист";
+}
+
+#calculator-app[data-active-mode=graphing] #calc-title::after {
+  content: "Построение графиков";
+}
+
+#calculator-app[data-active-mode=date] #calc-title::after {
+  content: "Вычисление даты";
+}
+
+#calculator-app[data-active-mode=currency] #calc-title::after {
+  content: "Валюта";
+}
+
+#calculator-app[data-active-mode=volume] #calc-title::after {
+  content: "Объем";
+}
+
+#calculator-app[data-active-mode=length] #calc-title::after {
+  content: "Длина";
+}
+
+#calculator-app[data-active-mode=weight] #calc-title::after {
+  content: "Вес и масса";
+}
+
+#calculator-app[data-active-mode=temperature] #calc-title::after {
+  content: "Температура";
+}
+
+#calculator-app[data-active-mode=time] #calc-title::after {
+  content: "Время";
+}
+
+/* Hide default title text when using ::after */
+#calculator-app:not([data-active-mode=standard]) #calc-title {
+  font-size: 0;
+}
+#calculator-app:not([data-active-mode=standard]) #calc-title::after {
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+/* Scientific Calculator ALU */
+@property --sci-val {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 0;
+}
+@property --sci-result {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 0;
+}
+@property --sci-op {
+  syntax: "<custom-ident>";
+  inherits: false;
+  initial-value: none;
+}
+/* Scientific operation routing */
+.sci-task {
+  --sci-val: attr(data-val type(<number>), 0);
+  --sci-op: attr(data-op type(<custom-ident>), none);
+  --sci-result: if(
+    style(--sci-op: sin): sin(var(--sci-val));
+    style(--sci-op: cos): cos(var(--sci-val));
+    style(--sci-op: tan): tan(var(--sci-val));
+    style(--sci-op: asin): asin(var(--sci-val));
+    style(--sci-op: acos): acos(var(--sci-val));
+    style(--sci-op: atan): atan(var(--sci-val));
+    style(--sci-op: log): log10(var(--sci-val));
+    style(--sci-op: ln): ln(var(--sci-val));
+    style(--sci-op: sqrt): sqrt(var(--sci-val));
+    style(--sci-op: cbrt): cbrt(var(--sci-val));
+    style(--sci-op: abs): abs(var(--sci-val));
+    style(--sci-op: exp): exp(var(--sci-val));
+    style(--sci-op: floor): floor(var(--sci-val));
+    style(--sci-op: ceil): ceil(var(--sci-val));
+    style(--sci-op: round): round(var(--sci-val));
+    else: var(--sci-val)
+  );
+}
+
+/* Trigonometric mode (DEG vs RAD) */
+#calculator-app[data-angle-mode=deg] .sci-task-trig {
+  --sci-val: attr(data-val type(<number>), 0);
+  --sci-op: attr(data-op type(<custom-ident>), sin);
+  --sci-result: if(
+    style(--sci-op: sin): sin(calc(var(--sci-val) * 3.14159265358979 / 180));
+    style(--sci-op: cos): cos(calc(var(--sci-val) * 3.14159265358979 / 180));
+    style(--sci-op: tan): tan(calc(var(--sci-val) * 3.14159265358979 / 180));
+    else: var(--sci-val)
+  );
+}
+
+#calculator-app[data-angle-mode=rad] .sci-task-trig {
+  --sci-val: attr(data-val type(<number>), 0);
+  --sci-op: attr(data-op type(<custom-ident>), sin);
+  --sci-result: if(
+    style(--sci-op: sin): sin(var(--sci-val));
+    style(--sci-op: cos): cos(var(--sci-val));
+    style(--sci-op: tan): tan(var(--sci-val));
+    else: var(--sci-val)
+  );
+}
+
+/* Grid styling */
+#scientific-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 2px;
+  padding: 0 14px 14px 14px;
+  flex: 1;
+}
+#scientific-grid button {
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  border-radius: 4px;
+  font-size: 1.05rem;
+  font-weight: 450;
+  color: var(--text-main);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.15s, border-color 0.15s, transform 0.05s;
+  height: 48px;
+}
+#scientific-grid button:active {
+  transform: scale(0.98);
+}
+#scientific-grid button:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+#scientific-grid .btn-num {
+  background-color: var(--bg-num);
+}
+#scientific-grid .btn-num:hover {
+  background-color: var(--bg-num-hover);
+}
+#scientific-grid .btn-num:active {
+  background-color: var(--bg-num-active);
+}
+#scientific-grid .btn-sci {
+  background-color: var(--bg-op);
+  font-size: 0.95rem;
+}
+#scientific-grid .btn-sci:hover {
+  background-color: var(--bg-op-hover);
+}
+#scientific-grid .btn-sci:active {
+  background-color: var(--bg-op-active);
+}
+#scientific-grid .btn-eq {
+  background-color: var(--bg-accent);
+  font-size: 1.3rem;
+  border-color: rgba(255, 255, 255, 0.08);
+}
+#scientific-grid .btn-eq:hover {
+  background-color: var(--bg-accent-hover);
+}
+#scientific-grid .btn-eq:active {
+  background-color: var(--bg-accent-active);
+}
+
+/* Mode controls */
+#sci-mode-controls {
+  display: flex;
+  gap: 8px;
+  padding: 0 14px 8px 14px;
+  align-items: center;
+}
+#sci-mode-controls .sci-mode-btn {
+  background: none;
+  border: 1px solid var(--border-subtle);
+  color: var(--text-sub);
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+#sci-mode-controls .sci-mode-btn:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+  color: var(--text-main);
+}
+#sci-mode-controls .sci-mode-btn.active {
+  background-color: var(--bg-accent);
+  color: var(--text-main);
+  border-color: var(--bg-accent);
+}
+
+/* Display container */
+#sci-display-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: flex-end;
+  padding: 24px;
+  flex: 0 0 140px;
+  text-align: right;
+  word-break: break-all;
+  overflow: hidden;
+}
+#sci-display-container #sci-expression-preview {
+  font-size: 0.9rem;
+  color: var(--text-sub);
+  min-height: 20px;
+  margin-bottom: 6px;
+}
+#sci-display-container #sci-calculator-display {
+  font-size: 2.8rem;
+  font-weight: 500;
+  color: var(--text-main);
+  line-height: 1.15;
+  letter-spacing: -0.5px;
+  max-width: 100%;
+}
+
+/* Programmer Calculator ALU */
+@property --prog-val {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 0;
+}
+@property --prog-result {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 0;
+}
+/* Bitwise operations */
+.prog-bitwise-task {
+  --val-a: attr(data-a type(<number>), 0);
+  --val-b: attr(data-b type(<number>), 0);
+  --op: attr(data-op type(<custom-ident>), and);
+  --result: if(
+    style(--op: and): calc(0 + ((floor(var(--val-a) / 1) - floor(var(--val-a) / 2) * 2) * (floor(var(--val-b) / 1) - floor(var(--val-b) / 2) * 2)) * 1 + ((floor(var(--val-a) / 2) - floor(var(--val-a) / 4) * 2) * (floor(var(--val-b) / 2) - floor(var(--val-b) / 4) * 2)) * 2 + ((floor(var(--val-a) / 4) - floor(var(--val-a) / 8) * 2) * (floor(var(--val-b) / 4) - floor(var(--val-b) / 8) * 2)) * 4 + ((floor(var(--val-a) / 8) - floor(var(--val-a) / 16) * 2) * (floor(var(--val-b) / 8) - floor(var(--val-b) / 16) * 2)) * 8 + ((floor(var(--val-a) / 16) - floor(var(--val-a) / 32) * 2) * (floor(var(--val-b) / 16) - floor(var(--val-b) / 32) * 2)) * 16 + ((floor(var(--val-a) / 32) - floor(var(--val-a) / 64) * 2) * (floor(var(--val-b) / 32) - floor(var(--val-b) / 64) * 2)) * 32 + ((floor(var(--val-a) / 64) - floor(var(--val-a) / 128) * 2) * (floor(var(--val-b) / 64) - floor(var(--val-b) / 128) * 2)) * 64 + ((floor(var(--val-a) / 128) - floor(var(--val-a) / 256) * 2) * (floor(var(--val-b) / 128) - floor(var(--val-b) / 256) * 2)) * 128 + ((floor(var(--val-a) / 256) - floor(var(--val-a) / 512) * 2) * (floor(var(--val-b) / 256) - floor(var(--val-b) / 512) * 2)) * 256 + ((floor(var(--val-a) / 512) - floor(var(--val-a) / 1024) * 2) * (floor(var(--val-b) / 512) - floor(var(--val-b) / 1024) * 2)) * 512 + ((floor(var(--val-a) / 1024) - floor(var(--val-a) / 2048) * 2) * (floor(var(--val-b) / 1024) - floor(var(--val-b) / 2048) * 2)) * 1024 + ((floor(var(--val-a) / 2048) - floor(var(--val-a) / 4096) * 2) * (floor(var(--val-b) / 2048) - floor(var(--val-b) / 4096) * 2)) * 2048 + ((floor(var(--val-a) / 4096) - floor(var(--val-a) / 8192) * 2) * (floor(var(--val-b) / 4096) - floor(var(--val-b) / 8192) * 2)) * 4096 + ((floor(var(--val-a) / 8192) - floor(var(--val-a) / 16384) * 2) * (floor(var(--val-b) / 8192) - floor(var(--val-b) / 16384) * 2)) * 8192 + ((floor(var(--val-a) / 16384) - floor(var(--val-a) / 32768) * 2) * (floor(var(--val-b) / 16384) - floor(var(--val-b) / 32768) * 2)) * 16384 + ((floor(var(--val-a) / 32768) - floor(var(--val-a) / 65536) * 2) * (floor(var(--val-b) / 32768) - floor(var(--val-b) / 65536) * 2)) * 32768);
+    style(--op: or): calc(0 + ((floor(var(--val-a) / 1) - floor(var(--val-a) / 2) * 2) + (floor(var(--val-b) / 1) - floor(var(--val-b) / 2) * 2) - (floor(var(--val-a) / 1) - floor(var(--val-a) / 2) * 2) * (floor(var(--val-b) / 1) - floor(var(--val-b) / 2) * 2)) * 1 + ((floor(var(--val-a) / 2) - floor(var(--val-a) / 4) * 2) + (floor(var(--val-b) / 2) - floor(var(--val-b) / 4) * 2) - (floor(var(--val-a) / 2) - floor(var(--val-a) / 4) * 2) * (floor(var(--val-b) / 2) - floor(var(--val-b) / 4) * 2)) * 2 + ((floor(var(--val-a) / 4) - floor(var(--val-a) / 8) * 2) + (floor(var(--val-b) / 4) - floor(var(--val-b) / 8) * 2) - (floor(var(--val-a) / 4) - floor(var(--val-a) / 8) * 2) * (floor(var(--val-b) / 4) - floor(var(--val-b) / 8) * 2)) * 4 + ((floor(var(--val-a) / 8) - floor(var(--val-a) / 16) * 2) + (floor(var(--val-b) / 8) - floor(var(--val-b) / 16) * 2) - (floor(var(--val-a) / 8) - floor(var(--val-a) / 16) * 2) * (floor(var(--val-b) / 8) - floor(var(--val-b) / 16) * 2)) * 8 + ((floor(var(--val-a) / 16) - floor(var(--val-a) / 32) * 2) + (floor(var(--val-b) / 16) - floor(var(--val-b) / 32) * 2) - (floor(var(--val-a) / 16) - floor(var(--val-a) / 32) * 2) * (floor(var(--val-b) / 16) - floor(var(--val-b) / 32) * 2)) * 16 + ((floor(var(--val-a) / 32) - floor(var(--val-a) / 64) * 2) + (floor(var(--val-b) / 32) - floor(var(--val-b) / 64) * 2) - (floor(var(--val-a) / 32) - floor(var(--val-a) / 64) * 2) * (floor(var(--val-b) / 32) - floor(var(--val-b) / 64) * 2)) * 32 + ((floor(var(--val-a) / 64) - floor(var(--val-a) / 128) * 2) + (floor(var(--val-b) / 64) - floor(var(--val-b) / 128) * 2) - (floor(var(--val-a) / 64) - floor(var(--val-a) / 128) * 2) * (floor(var(--val-b) / 64) - floor(var(--val-b) / 128) * 2)) * 64 + ((floor(var(--val-a) / 128) - floor(var(--val-a) / 256) * 2) + (floor(var(--val-b) / 128) - floor(var(--val-b) / 256) * 2) - (floor(var(--val-a) / 128) - floor(var(--val-a) / 256) * 2) * (floor(var(--val-b) / 128) - floor(var(--val-b) / 256) * 2)) * 128 + ((floor(var(--val-a) / 256) - floor(var(--val-a) / 512) * 2) + (floor(var(--val-b) / 256) - floor(var(--val-b) / 512) * 2) - (floor(var(--val-a) / 256) - floor(var(--val-a) / 512) * 2) * (floor(var(--val-b) / 256) - floor(var(--val-b) / 512) * 2)) * 256 + ((floor(var(--val-a) / 512) - floor(var(--val-a) / 1024) * 2) + (floor(var(--val-b) / 512) - floor(var(--val-b) / 1024) * 2) - (floor(var(--val-a) / 512) - floor(var(--val-a) / 1024) * 2) * (floor(var(--val-b) / 512) - floor(var(--val-b) / 1024) * 2)) * 512 + ((floor(var(--val-a) / 1024) - floor(var(--val-a) / 2048) * 2) + (floor(var(--val-b) / 1024) - floor(var(--val-b) / 2048) * 2) - (floor(var(--val-a) / 1024) - floor(var(--val-a) / 2048) * 2) * (floor(var(--val-b) / 1024) - floor(var(--val-b) / 2048) * 2)) * 1024 + ((floor(var(--val-a) / 2048) - floor(var(--val-a) / 4096) * 2) + (floor(var(--val-b) / 2048) - floor(var(--val-b) / 4096) * 2) - (floor(var(--val-a) / 2048) - floor(var(--val-a) / 4096) * 2) * (floor(var(--val-b) / 2048) - floor(var(--val-b) / 4096) * 2)) * 2048 + ((floor(var(--val-a) / 4096) - floor(var(--val-a) / 8192) * 2) + (floor(var(--val-b) / 4096) - floor(var(--val-b) / 8192) * 2) - (floor(var(--val-a) / 4096) - floor(var(--val-a) / 8192) * 2) * (floor(var(--val-b) / 4096) - floor(var(--val-b) / 8192) * 2)) * 4096 + ((floor(var(--val-a) / 8192) - floor(var(--val-a) / 16384) * 2) + (floor(var(--val-b) / 8192) - floor(var(--val-b) / 16384) * 2) - (floor(var(--val-a) / 8192) - floor(var(--val-a) / 16384) * 2) * (floor(var(--val-b) / 8192) - floor(var(--val-b) / 16384) * 2)) * 8192 + ((floor(var(--val-a) / 16384) - floor(var(--val-a) / 32768) * 2) + (floor(var(--val-b) / 16384) - floor(var(--val-b) / 32768) * 2) - (floor(var(--val-a) / 16384) - floor(var(--val-a) / 32768) * 2) * (floor(var(--val-b) / 16384) - floor(var(--val-b) / 32768) * 2)) * 16384 + ((floor(var(--val-a) / 32768) - floor(var(--val-a) / 65536) * 2) + (floor(var(--val-b) / 32768) - floor(var(--val-b) / 65536) * 2) - (floor(var(--val-a) / 32768) - floor(var(--val-a) / 65536) * 2) * (floor(var(--val-b) / 32768) - floor(var(--val-b) / 65536) * 2)) * 32768);
+    style(--op: xor): calc(0 + ((floor(var(--val-a) / 1) - floor(var(--val-a) / 2) * 2) + (floor(var(--val-b) / 1) - floor(var(--val-b) / 2) * 2) - 2 * (floor(var(--val-a) / 1) - floor(var(--val-a) / 2) * 2) * (floor(var(--val-b) / 1) - floor(var(--val-b) / 2) * 2)) * 1 + ((floor(var(--val-a) / 2) - floor(var(--val-a) / 4) * 2) + (floor(var(--val-b) / 2) - floor(var(--val-b) / 4) * 2) - 2 * (floor(var(--val-a) / 2) - floor(var(--val-a) / 4) * 2) * (floor(var(--val-b) / 2) - floor(var(--val-b) / 4) * 2)) * 2 + ((floor(var(--val-a) / 4) - floor(var(--val-a) / 8) * 2) + (floor(var(--val-b) / 4) - floor(var(--val-b) / 8) * 2) - 2 * (floor(var(--val-a) / 4) - floor(var(--val-a) / 8) * 2) * (floor(var(--val-b) / 4) - floor(var(--val-b) / 8) * 2)) * 4 + ((floor(var(--val-a) / 8) - floor(var(--val-a) / 16) * 2) + (floor(var(--val-b) / 8) - floor(var(--val-b) / 16) * 2) - 2 * (floor(var(--val-a) / 8) - floor(var(--val-a) / 16) * 2) * (floor(var(--val-b) / 8) - floor(var(--val-b) / 16) * 2)) * 8 + ((floor(var(--val-a) / 16) - floor(var(--val-a) / 32) * 2) + (floor(var(--val-b) / 16) - floor(var(--val-b) / 32) * 2) - 2 * (floor(var(--val-a) / 16) - floor(var(--val-a) / 32) * 2) * (floor(var(--val-b) / 16) - floor(var(--val-b) / 32) * 2)) * 16 + ((floor(var(--val-a) / 32) - floor(var(--val-a) / 64) * 2) + (floor(var(--val-b) / 32) - floor(var(--val-b) / 64) * 2) - 2 * (floor(var(--val-a) / 32) - floor(var(--val-a) / 64) * 2) * (floor(var(--val-b) / 32) - floor(var(--val-b) / 64) * 2)) * 32 + ((floor(var(--val-a) / 64) - floor(var(--val-a) / 128) * 2) + (floor(var(--val-b) / 64) - floor(var(--val-b) / 128) * 2) - 2 * (floor(var(--val-a) / 64) - floor(var(--val-a) / 128) * 2) * (floor(var(--val-b) / 64) - floor(var(--val-b) / 128) * 2)) * 64 + ((floor(var(--val-a) / 128) - floor(var(--val-a) / 256) * 2) + (floor(var(--val-b) / 128) - floor(var(--val-b) / 256) * 2) - 2 * (floor(var(--val-a) / 128) - floor(var(--val-a) / 256) * 2) * (floor(var(--val-b) / 128) - floor(var(--val-b) / 256) * 2)) * 128 + ((floor(var(--val-a) / 256) - floor(var(--val-a) / 512) * 2) + (floor(var(--val-b) / 256) - floor(var(--val-b) / 512) * 2) - 2 * (floor(var(--val-a) / 256) - floor(var(--val-a) / 512) * 2) * (floor(var(--val-b) / 256) - floor(var(--val-b) / 512) * 2)) * 256 + ((floor(var(--val-a) / 512) - floor(var(--val-a) / 1024) * 2) + (floor(var(--val-b) / 512) - floor(var(--val-b) / 1024) * 2) - 2 * (floor(var(--val-a) / 512) - floor(var(--val-a) / 1024) * 2) * (floor(var(--val-b) / 512) - floor(var(--val-b) / 1024) * 2)) * 512 + ((floor(var(--val-a) / 1024) - floor(var(--val-a) / 2048) * 2) + (floor(var(--val-b) / 1024) - floor(var(--val-b) / 2048) * 2) - 2 * (floor(var(--val-a) / 1024) - floor(var(--val-a) / 2048) * 2) * (floor(var(--val-b) / 1024) - floor(var(--val-b) / 2048) * 2)) * 1024 + ((floor(var(--val-a) / 2048) - floor(var(--val-a) / 4096) * 2) + (floor(var(--val-b) / 2048) - floor(var(--val-b) / 4096) * 2) - 2 * (floor(var(--val-a) / 2048) - floor(var(--val-a) / 4096) * 2) * (floor(var(--val-b) / 2048) - floor(var(--val-b) / 4096) * 2)) * 2048 + ((floor(var(--val-a) / 4096) - floor(var(--val-a) / 8192) * 2) + (floor(var(--val-b) / 4096) - floor(var(--val-b) / 8192) * 2) - 2 * (floor(var(--val-a) / 4096) - floor(var(--val-a) / 8192) * 2) * (floor(var(--val-b) / 4096) - floor(var(--val-b) / 8192) * 2)) * 4096 + ((floor(var(--val-a) / 8192) - floor(var(--val-a) / 16384) * 2) + (floor(var(--val-b) / 8192) - floor(var(--val-b) / 16384) * 2) - 2 * (floor(var(--val-a) / 8192) - floor(var(--val-a) / 16384) * 2) * (floor(var(--val-b) / 8192) - floor(var(--val-b) / 16384) * 2)) * 8192 + ((floor(var(--val-a) / 16384) - floor(var(--val-a) / 32768) * 2) + (floor(var(--val-b) / 16384) - floor(var(--val-b) / 32768) * 2) - 2 * (floor(var(--val-a) / 16384) - floor(var(--val-a) / 32768) * 2) * (floor(var(--val-b) / 16384) - floor(var(--val-b) / 32768) * 2)) * 16384 + ((floor(var(--val-a) / 32768) - floor(var(--val-a) / 65536) * 2) + (floor(var(--val-b) / 32768) - floor(var(--val-b) / 65536) * 2) - 2 * (floor(var(--val-a) / 32768) - floor(var(--val-a) / 65536) * 2) * (floor(var(--val-b) / 32768) - floor(var(--val-b) / 65536) * 2)) * 32768);
+    style(--op: not): calc(0 - var(--val-a) - 1);
+    style(--op: lshift): calc(var(--val-a) * 2);
+    style(--op: rshift): calc(floor(var(--val-a) / 2));
+    else: var(--val-b)
+  );
+}
+
+/* Display container */
+#prog-display-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: flex-end;
+  padding: 24px;
+  flex: 0 0 180px;
+  text-align: right;
+  word-break: break-all;
+  overflow: hidden;
+}
+#prog-display-container #prog-expression-preview {
+  font-size: 0.9rem;
+  color: var(--text-sub);
+  min-height: 20px;
+  margin-bottom: 6px;
+}
+#prog-display-container #prog-calculator-display {
+  font-size: 2.8rem;
+  font-weight: 500;
+  color: var(--text-main);
+  line-height: 1.15;
+  letter-spacing: -0.5px;
+  max-width: 100%;
+}
+#prog-display-container #prog-base-display {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  margin-top: 8px;
+  font-size: 0.8rem;
+  color: var(--text-sub);
+  font-family: "Fira Code", monospace;
+}
+#prog-display-container #prog-base-display .base-value {
+  padding: 2px 0;
+}
+#prog-display-container #prog-base-display .base-value.active {
+  color: var(--text-main);
+  font-weight: 600;
+}
+
+/* Mode controls */
+#prog-mode-controls {
+  display: flex;
+  gap: 8px;
+  padding: 0 14px 8px 14px;
+}
+#prog-mode-controls .prog-mode-btn {
+  background: none;
+  border: 1px solid var(--border-subtle);
+  color: var(--text-sub);
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+#prog-mode-controls .prog-mode-btn:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+  color: var(--text-main);
+}
+#prog-mode-controls .prog-mode-btn.active {
+  background-color: var(--bg-accent);
+  color: var(--text-main);
+  border-color: var(--bg-accent);
+}
+
+/* Word size */
+#prog-word-size {
+  display: flex;
+  gap: 8px;
+  padding: 0 14px 8px 14px;
+}
+#prog-word-size .word-btn {
+  background: none;
+  border: 1px solid var(--border-subtle);
+  color: var(--text-sub);
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+#prog-word-size .word-btn:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+  color: var(--text-main);
+}
+#prog-word-size .word-btn.active {
+  background-color: rgba(133, 83, 244, 0.2);
+  color: var(--text-main);
+  border-color: var(--bg-accent);
+}
+
+/* Programmer grid */
+#programmer-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 2px;
+  padding: 0 14px 14px 14px;
+  flex: 1;
+}
+#programmer-grid button {
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  border-radius: 4px;
+  font-size: 1.05rem;
+  font-weight: 450;
+  color: var(--text-main);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.15s, transform 0.05s;
+  height: 48px;
+}
+#programmer-grid button:active {
+  transform: scale(0.98);
+}
+#programmer-grid button:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+#programmer-grid button:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+#programmer-grid .btn-num {
+  background-color: var(--bg-num);
+}
+#programmer-grid .btn-num:hover {
+  background-color: var(--bg-num-hover);
+}
+#programmer-grid .btn-prog {
+  background-color: var(--bg-op);
+  font-size: 0.95rem;
+}
+#programmer-grid .btn-prog:hover {
+  background-color: var(--bg-op-hover);
+}
+#programmer-grid .btn-prog.btn-hex {
+  background-color: #1a1a2e;
+  color: #7c3aed;
+}
+#programmer-grid .btn-prog.btn-hex:disabled {
+  background-color: #1a1a2e;
+  color: #7c3aed;
+  opacity: 0.2;
+}
+#programmer-grid .btn-op {
+  background-color: var(--bg-op);
+}
+#programmer-grid .btn-op:hover {
+  background-color: var(--bg-op-hover);
+}
+#programmer-grid .btn-eq {
+  background-color: var(--bg-accent);
+  font-size: 1.3rem;
+}
+#programmer-grid .btn-eq:hover {
+  background-color: var(--bg-accent-hover);
+}
+
+/* Graphing Calculator ALU */
+@property --graph-x {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 0;
+}
+@property --graph-result {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 0;
+}
+@property --graph-func {
+  syntax: "<custom-ident>";
+  inherits: false;
+  initial-value: sin;
+}
+/* Function evaluation routing */
+.graph-task {
+  --graph-x: attr(data-x type(<number>), 0);
+  --graph-func: attr(data-func type(<custom-ident>), sin);
+  --graph-result: if(
+    style(--graph-func: sin): sin(var(--graph-x));
+    style(--graph-func: cos): cos(var(--graph-x));
+    style(--graph-func: tan): tan(var(--graph-x));
+    style(--graph-func: log): log10(var(--graph-x));
+    style(--graph-func: ln): ln(var(--graph-x));
+    style(--graph-func: sqrt): sqrt(var(--graph-x));
+    style(--graph-func: abs): abs(var(--graph-x));
+    style(--graph-func: x2): calc(var(--graph-x) * var(--graph-x));
+    style(--graph-func: x3): calc(var(--graph-x) * var(--graph-x) * var(--graph-x));
+    style(--graph-func: exp): exp(var(--graph-x));
+    else: var(--graph-x)
+  );
+}
+
+/* Graph container */
+#graph-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 16px;
+}
+#graph-container #graph-canvas {
+  flex: 1;
+  background-color: #0a0a0a;
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  position: relative;
+  overflow: hidden;
+  min-height: 250px;
+}
+#graph-container #graph-canvas::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 1px;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.1);
+}
+#graph-container #graph-canvas::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 100%;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.1);
+}
+#graph-container #graph-controls {
+  display: flex;
+  gap: 16px;
+  margin-top: 12px;
+  align-items: flex-start;
+}
+#graph-container #graph-controls #function-list {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+#graph-container #graph-controls #function-list .function-entry {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+#graph-container #graph-controls #function-list .function-entry .func-input {
+  flex: 1;
+  background-color: rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--border-subtle);
+  border-radius: 4px;
+  color: var(--text-main);
+  font-family: "Fira Code", monospace;
+  font-size: 0.9rem;
+  padding: 8px 12px;
+  outline: none;
+}
+#graph-container #graph-controls #function-list .function-entry .func-input:focus {
+  border-color: var(--bg-accent);
+}
+#graph-container #graph-controls #function-list .function-entry .func-color {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+}
+#graph-container #graph-controls #graph-zoom {
+  display: flex;
+  gap: 4px;
+}
+#graph-container #graph-controls #graph-zoom .zoom-btn {
+  width: 32px;
+  height: 32px;
+  background-color: var(--bg-op);
+  border: 1px solid var(--border-subtle);
+  border-radius: 4px;
+  color: var(--text-main);
+  font-size: 1.1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s;
+}
+#graph-container #graph-controls #graph-zoom .zoom-btn:hover {
+  background-color: var(--bg-op-hover);
+}
+
+/* Date Calculation ALU */
+@property --date-from {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 0;
+}
+@property --date-to {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 0;
+}
+@property --date-diff {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 0;
+}
+/* Date difference calculation */
+.date-task {
+  --date-from: attr(data-date-from type(<number>), 0);
+  --date-to: attr(data-date-to type(<number>), 0);
+  --date-diff: calc(var(--date-to) - var(--date-from));
+}
+
+/* Date display container */
+#date-display-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: flex-end;
+  padding: 24px;
+  flex: 0 0 120px;
+  text-align: right;
+  word-break: break-all;
+  overflow: hidden;
+}
+#date-display-container #date-result {
+  font-size: 2.8rem;
+  font-weight: 500;
+  color: var(--text-main);
+  line-height: 1.15;
+  letter-spacing: -0.5px;
+  max-width: 100%;
+}
+
+/* Calculation type toggle */
+#date-calc-type {
+  display: flex;
+  gap: 8px;
+  padding: 0 14px 12px 14px;
+}
+#date-calc-type .date-type-btn {
+  background: none;
+  border: 1px solid var(--border-subtle);
+  color: var(--text-sub);
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 8px 14px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+#date-calc-type .date-type-btn:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+  color: var(--text-main);
+}
+#date-calc-type .date-type-btn.active {
+  background-color: var(--bg-accent);
+  color: var(--text-main);
+  border-color: var(--bg-accent);
+}
+
+/* Date inputs */
+#date-inputs {
+  display: flex;
+  gap: 16px;
+  padding: 0 14px 16px 14px;
+}
+#date-inputs .date-input-group {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+#date-inputs .date-input-group label {
+  font-size: 0.8rem;
+  color: var(--text-sub);
+  font-weight: 600;
+}
+#date-inputs .date-input-group .date-field {
+  background-color: rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--border-subtle);
+  border-radius: 4px;
+  color: var(--text-main);
+  font-size: 0.9rem;
+  padding: 10px 12px;
+  outline: none;
+}
+#date-inputs .date-input-group .date-field:focus {
+  border-color: var(--bg-accent);
+}
+#date-inputs .date-input-group .date-field::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+}
+
+/* Result display */
+#date-result-display {
+  padding: 0 14px;
+}
+#date-result-display .result-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border-subtle);
+}
+#date-result-display .result-row:last-child {
+  border-bottom: none;
+}
+#date-result-display .result-row .result-label {
+  font-size: 0.85rem;
+  color: var(--text-sub);
+}
+#date-result-display .result-row .result-value {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-main);
+  font-family: "Fira Code", monospace;
+}
+
+/* Unit Converter ALU */
+@property --conv-val {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 0;
+}
+@property --conv-from {
+  syntax: "<custom-ident>";
+  inherits: false;
+  initial-value: m;
+}
+@property --conv-to {
+  syntax: "<custom-ident>";
+  inherits: false;
+  initial-value: ft;
+}
+@property --conv-result {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 0;
+}
+/* Length conversion */
+.conv-task-length {
+  --conv-val: attr(data-value type(<number>), 0);
+  --conv-from: attr(data-from type(<custom-ident>), m);
+  --conv-to: attr(data-to type(<custom-ident>), ft);
+  --conv-result: if(
+    style(--conv-to: mm): calc(var(--conv-val) * 1000);
+    style(--conv-to: cm): calc(var(--conv-val) * 100);
+    style(--conv-to: m): var(--conv-val);
+    style(--conv-to: km): calc(var(--conv-val) / 1000);
+    style(--conv-to: in): calc(var(--conv-val) * 39.3701);
+    style(--conv-to: ft): calc(var(--conv-val) * 3.28084);
+    style(--conv-to: yd): calc(var(--conv-val) * 1.09361);
+    style(--conv-to: mi): calc(var(--conv-val) / 1609.34);
+    else: var(--conv-val)
+  );
+}
+
+/* Weight conversion */
+.conv-task-weight {
+  --conv-val: attr(data-value type(<number>), 0);
+  --conv-to: attr(data-to type(<custom-ident>), lb);
+  --conv-result: if(
+    style(--conv-to: mg): calc(var(--conv-val) * 1000000);
+    style(--conv-to: g): calc(var(--conv-val) * 1000);
+    style(--conv-to: kg): var(--conv-val);
+    style(--conv-to: t): calc(var(--conv-val) / 1000);
+    style(--conv-to: oz): calc(var(--conv-val) * 35.274);
+    style(--conv-to: lb): calc(var(--conv-val) * 2.20462);
+    else: var(--conv-val)
+  );
+}
+
+/* Temperature conversion */
+.conv-task-temp {
+  --conv-val: attr(data-value type(<number>), 0);
+  --conv-to: attr(data-to type(<custom-ident>), f);
+  --conv-result: if(
+    style(--conv-to: c): var(--conv-val);
+    style(--conv-to: f): calc(var(--conv-val) * 9 / 5 + 32);
+    style(--conv-to: k): calc(var(--conv-val) + 273.15);
+    else: var(--conv-val)
+  );
+}
+
+/* Time conversion */
+.conv-task-time {
+  --conv-val: attr(data-value type(<number>), 0);
+  --conv-to: attr(data-to type(<custom-ident>), min);
+  --conv-result: if(
+    style(--conv-to: ms): calc(var(--conv-val) * 1000);
+    style(--conv-to: s): var(--conv-val);
+    style(--conv-to: min): calc(var(--conv-val) / 60);
+    style(--conv-to: h): calc(var(--conv-val) / 3600);
+    style(--conv-to: d): calc(var(--conv-val) / 86400);
+    style(--conv-to: w): calc(var(--conv-val) / 604800);
+    style(--conv-to: mth): calc(var(--conv-val) / 2629746);
+    style(--conv-to: y): calc(var(--conv-val) / 31556952);
+    else: var(--conv-val)
+  );
+}
+
+/* Converter layout */
+.converter-mode {
+  display: flex;
+  flex-direction: column;
+}
+.converter-mode #converter-display-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: flex-end;
+  padding: 24px;
+  flex: 0 0 120px;
+  text-align: right;
+  word-break: break-all;
+  overflow: hidden;
+}
+.converter-mode #converter-display-container #converter-result {
+  font-size: 2.8rem;
+  font-weight: 500;
+  color: var(--text-main);
+  line-height: 1.15;
+  letter-spacing: -0.5px;
+  max-width: 100%;
+}
+.converter-mode .converter-inputs {
+  padding: 0 14px 16px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.converter-mode .converter-inputs .converter-input-group {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+.converter-mode .converter-inputs .converter-input-group .converter-select {
+  flex: 1;
+  background-color: rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--border-subtle);
+  border-radius: 4px;
+  color: var(--text-main);
+  font-size: 0.85rem;
+  padding: 10px 12px;
+  outline: none;
+  cursor: pointer;
+}
+.converter-mode .converter-inputs .converter-input-group .converter-select:focus {
+  border-color: var(--bg-accent);
+}
+.converter-mode .converter-inputs .converter-input-group .converter-select option {
+  background-color: #2a2a2a;
+  color: var(--text-main);
+}
+.converter-mode .converter-inputs .converter-input-group .converter-value {
+  width: 120px;
+  background-color: rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--border-subtle);
+  border-radius: 4px;
+  color: var(--text-main);
+  font-size: 1rem;
+  font-weight: 600;
+  padding: 10px 12px;
+  text-align: right;
+  outline: none;
+}
+.converter-mode .converter-inputs .converter-input-group .converter-value:focus {
+  border-color: var(--bg-accent);
+}
+.converter-mode .converter-inputs .converter-input-group .converter-value:readonly {
+  background-color: rgba(0, 0, 0, 0.2);
+  color: var(--text-sub);
+}
+.converter-mode .converter-inputs .swap-btn {
+  align-self: center;
+  width: 36px;
+  height: 36px;
+  background-color: var(--bg-op);
+  border: 1px solid var(--border-subtle);
+  border-radius: 50%;
+  color: var(--text-main);
+  font-size: 1.1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+.converter-mode .converter-inputs .swap-btn:hover {
+  background-color: var(--bg-op-hover);
+  transform: rotate(180deg);
+}
+
+/* Dropdown Menus for Scientific Mode */
+.sci-dropdown {
+  position: relative;
+  display: inline-block;
+}
+.sci-dropdown .dropdown-trigger {
+  background: none;
+  border: 1px solid var(--border-subtle);
+  color: var(--text-sub);
+  font-size: 0.85rem;
+  font-weight: 500;
+  padding: 8px 14px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 32px;
+}
+.sci-dropdown .dropdown-trigger:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+  color: var(--text-main);
+}
+.sci-dropdown .dropdown-trigger::after {
+  content: "▾";
+  font-size: 0.7rem;
+  margin-left: 4px;
+}
+.sci-dropdown .dropdown-content {
+  display: none;
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  background-color: #2a2a2a;
+  border: 1px solid var(--border-subtle);
+  border-radius: 6px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  min-width: 140px;
+  padding: 6px 0;
+  opacity: 0;
+  transform: translateY(-8px);
+  transition: opacity 0.15s, transform 0.15s;
+}
+.sci-dropdown .dropdown-content .dropdown-item {
+  display: block;
+  width: 100%;
+  padding: 10px 16px;
+  background: none;
+  border: none;
+  color: var(--text-main);
+  font-size: 0.9rem;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 0.1s;
+}
+.sci-dropdown .dropdown-content .dropdown-item:hover {
+  background-color: rgba(255, 255, 255, 0.08);
+}
+.sci-dropdown .dropdown-content .dropdown-item:active {
+  background-color: rgba(133, 83, 244, 0.2);
+}
+.sci-dropdown.open .dropdown-content {
+  display: block;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Trigonometry dropdown */
+#trig-dropdown .dropdown-content .dropdown-item {
+  font-family: "Fira Code", monospace;
+  font-size: 0.85rem;
+}
+
+/* Function dropdown */
+#func-dropdown .dropdown-content .dropdown-item {
+  font-family: "Fira Code", monospace;
+  font-size: 0.85rem;
+}
+#func-dropdown .dropdown-content .dropdown-item::before {
+  margin-right: 8px;
+  opacity: 0.6;
+}
+#func-dropdown .dropdown-content .dropdown-item[data-func=floor]::before {
+  content: "⌊";
+}
+#func-dropdown .dropdown-content .dropdown-item[data-func=ceil]::before {
+  content: "⌈";
+}
+#func-dropdown .dropdown-content .dropdown-item[data-func=round]::before {
+  content: "⌊⌉";
+}
+#func-dropdown .dropdown-content .dropdown-item[data-func=rand]::before {
+  content: "?";
+}
+#func-dropdown .dropdown-content .dropdown-item[data-func=dms]::before {
+  content: "→";
+}
+#func-dropdown .dropdown-content .dropdown-item[data-func=deg]::before {
+  content: "→";
 }

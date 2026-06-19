@@ -11,7 +11,7 @@
     <script type="module" src="/main.js" defer></script>
   </head>
   <body>
-    <div id="calculator-app">
+    <div id="calculator-app" data-active-mode="standard">
       <!-- Left Pane: Main Calculator -->
       <div id="calculator-pane">
         <!-- Navigation Drawer Overlay -->
@@ -145,59 +145,398 @@
           </div>
         </header>
 
-        <!-- Display Area -->
-        <div id="calc-display-container">
-          <div id="expression-preview"></div>
-          <div id="calculator-display">0</div>
+        <!-- Standard Mode -->
+        <div class="mode-section mode-standard">
+          <!-- Display Area -->
+          <div id="calc-display-container">
+            <div id="expression-preview"></div>
+            <div id="calculator-display">0</div>
+          </div>
+
+          <!-- Memory Buttons Row -->
+          <div id="memory-bar">
+            <button class="btn-mem" id="btn-mc" disabled>MC</button>
+            <button class="btn-mem" id="btn-mr" disabled>MR</button>
+            <button class="btn-mem" id="btn-m-plus">M+</button>
+            <button class="btn-mem" id="btn-m-minus">M-</button>
+            <button class="btn-mem" id="btn-ms">MS</button>
+            <button class="btn-mem" id="btn-m-list" disabled>M▼</button>
+          </div>
+
+          <!-- Calculator Grid of Keys -->
+          <div id="calculator-grid">
+            <button class="btn-op" id="btn-pct">%</button>
+            <button class="btn-op" id="btn-ce">CE</button>
+            <button class="btn-op" id="btn-c">C</button>
+            <button class="btn-op" id="btn-back" title="Backspace">
+              <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"></path>
+                <line x1="18" y1="9" x2="12" y2="15"></line>
+                <line x1="12" y1="9" x2="18" y2="15"></line>
+              </svg>
+            </button>
+
+            <button class="btn-op" id="btn-inv">1/x</button>
+            <button class="btn-op" id="btn-sqr">x²</button>
+            <button class="btn-op" id="btn-sqrt">²√x</button>
+            <button class="btn-op" id="btn-div">÷</button>
+
+            <button class="btn-num" id="btn-7">7</button>
+            <button class="btn-num" id="btn-8">8</button>
+            <button class="btn-num" id="btn-9">9</button>
+            <button class="btn-op" id="btn-mul">×</button>
+
+            <button class="btn-num" id="btn-4">4</button>
+            <button class="btn-num" id="btn-5">5</button>
+            <button class="btn-num" id="btn-6">6</button>
+            <button class="btn-op" id="btn-sub">−</button>
+
+            <button class="btn-num" id="btn-1">1</button>
+            <button class="btn-num" id="btn-2">2</button>
+            <button class="btn-num" id="btn-3">3</button>
+            <button class="btn-op" id="btn-add">+</button>
+
+            <button class="btn-op" id="btn-neg">+/-</button>
+            <button class="btn-num" id="btn-0">0</button>
+            <button class="btn-num" id="btn-dec">,</button>
+            <button class="btn-eq" id="btn-eq">=</button>
+          </div>
         </div>
 
-        <!-- Memory Buttons Row -->
-        <div id="memory-bar">
-          <button class="btn-mem" id="btn-mc" disabled>MC</button>
-          <button class="btn-mem" id="btn-mr" disabled>MR</button>
-          <button class="btn-mem" id="btn-m-plus">M+</button>
-          <button class="btn-mem" id="btn-m-minus">M-</button>
-          <button class="btn-mem" id="btn-ms">MS</button>
-          <button class="btn-mem" id="btn-m-list" disabled>M▼</button>
+        <!-- Scientific Mode -->
+        <div class="mode-section mode-scientific">
+          <div id="sci-display-container">
+            <div id="sci-expression-preview"></div>
+            <div id="sci-calculator-display">0</div>
+          </div>
+          
+          <div id="sci-mode-controls">
+            <button class="sci-mode-btn active" data-angle="deg">DEG</button>
+            <button class="sci-mode-btn" data-angle="rad">RAD</button>
+            
+            <div class="sci-dropdown" id="trig-dropdown">
+              <button class="dropdown-trigger">Тригонометрия</button>
+              <div class="dropdown-content">
+                <button class="dropdown-item" data-func="sin">sin</button>
+                <button class="dropdown-item" data-func="cos">cos</button>
+                <button class="dropdown-item" data-func="tan">tan</button>
+                <button class="dropdown-item" data-func="csc">csc</button>
+                <button class="dropdown-item" data-func="sec">sec</button>
+                <button class="dropdown-item" data-func="cot">cot</button>
+              </div>
+            </div>
+            
+            <div class="sci-dropdown" id="func-dropdown">
+              <button class="dropdown-trigger">Функции</button>
+              <div class="dropdown-content">
+                <button class="dropdown-item" data-func="floor">floor</button>
+                <button class="dropdown-item" data-func="ceil">ceil</button>
+                <button class="dropdown-item" data-func="round">round</button>
+              </div>
+            </div>
+          </div>
+          
+          <div id="scientific-grid">
+            <button class="btn-sci" id="btn-pi">π</button>
+            <button class="btn-sci" id="btn-e">e</button>
+            <button class="btn-sci" id="sci-btn-c">C</button>
+            <button class="btn-sci" id="sci-btn-back">⌫</button>
+            <button class="btn-sci" id="sci-btn-div">÷</button>
+            
+            <button class="btn-sci" id="btn-sin">sin</button>
+            <button class="btn-sci" id="btn-cos">cos</button>
+            <button class="btn-sci" id="btn-tan">tan</button>
+            <button class="btn-sci" id="btn-x2">x²</button>
+            <button class="btn-sci" id="btn-1/x">1/x</button>
+            
+            <button class="btn-sci" id="btn-csc">csc</button>
+            <button class="btn-sci" id="btn-sec">sec</button>
+            <button class="btn-sci" id="btn-cot">cot</button>
+            <button class="btn-sci" id="btn-sqrt2">√</button>
+            <button class="btn-sci" id="sci-btn-mul">×</button>
+            
+            <button class="btn-sci" id="btn-log">log</button>
+            <button class="btn-sci" id="btn-ln">ln</button>
+            <button class="btn-sci" id="btn-abs">|x|</button>
+            <button class="btn-sci" id="btn-exp">exp</button>
+            <button class="btn-sci" id="sci-btn-sub">−</button>
+            
+            <button class="btn-num">7</button>
+            <button class="btn-num">8</button>
+            <button class="btn-num">9</button>
+            <button class="btn-sci" id="sci-btn-neg">+/-</button>
+            <button class="btn-sci" id="sci-btn-add">+</button>
+            
+            <button class="btn-num">4</button>
+            <button class="btn-num">5</button>
+            <button class="btn-num">6</button>
+            <button class="btn-num">0</button>
+            <button class="btn-sci" style="visibility:hidden;"></button>
+            
+            <button class="btn-num">1</button>
+            <button class="btn-num">2</button>
+            <button class="btn-num">3</button>
+            <button class="btn-num">,</button>
+            <button class="btn-eq" id="sci-btn-eq">=</button>
+          </div>
         </div>
 
-        <!-- Calculator Grid of Keys -->
-        <div id="calculator-grid">
-          <button class="btn-op" id="btn-pct">%</button>
-          <button class="btn-op" id="btn-ce">CE</button>
-          <button class="btn-op" id="btn-c">C</button>
-          <button class="btn-op" id="btn-back" title="Backspace">
-            <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"></path>
-              <line x1="18" y1="9" x2="12" y2="15"></line>
-              <line x1="12" y1="9" x2="18" y2="15"></line>
-            </svg>
-          </button>
+        <!-- Programmer Mode -->
+        <div class="mode-section mode-programmer">
+          <div id="prog-display-container">
+            <div id="prog-expression-preview"></div>
+            <div id="prog-calculator-display">0</div>
+            <div id="prog-base-display">
+              <div class="base-value active" id="prog-dec">DEC: 0</div>
+              <div class="base-value" id="prog-hex">HEX: 0</div>
+              <div class="base-value" id="prog-oct">OCT: 0</div>
+              <div class="base-value" id="prog-bin">BIN: 0</div>
+            </div>
+          </div>
+          
+          <div id="prog-mode-controls">
+            <button class="prog-mode-btn active" data-base="dec">DEC</button>
+            <button class="prog-mode-btn" data-base="hex">HEX</button>
+            <button class="prog-mode-btn" data-base="oct">OCT</button>
+            <button class="prog-mode-btn" data-base="bin">BIN</button>
+          </div>
+          
+          <div id="prog-word-size">
+            <button class="word-btn active" data-size="64">QWORD</button>
+            <button class="word-btn" data-size="32">DWORD</button>
+            <button class="word-btn" data-size="16">WORD</button>
+            <button class="word-btn" data-size="8">BYTE</button>
+          </div>
+          
+          <div id="programmer-grid">
+            <button class="btn-prog" id="prog-btn-lshift">LSH</button>
+            <button class="btn-prog" id="prog-btn-rshift">RSH</button>
+            <button class="btn-prog" id="prog-btn-or">OR</button>
+            <button class="btn-prog" id="prog-btn-xor">XOR</button>
+            <button class="btn-prog" id="prog-btn-not">NOT</button>
+            
+            <button class="btn-prog" id="prog-btn-and">AND</button>
+            <button class="btn-prog" id="prog-btn-mod">mod</button>
+            <button class="btn-op" id="prog-btn-ce">CE</button>
+            <button class="btn-op" id="prog-btn-c">C</button>
+            <button class="btn-op" id="prog-btn-back">⌫</button>
+            
+            <button class="btn-num btn-hex" disabled>A</button>
+            <button class="btn-num btn-hex" disabled>B</button>
+            <button class="btn-num">7</button>
+            <button class="btn-num">8</button>
+            <button class="btn-num">9</button>
+            
+            <button class="btn-num btn-hex" disabled>C</button>
+            <button class="btn-num btn-hex" disabled>D</button>
+            <button class="btn-num">4</button>
+            <button class="btn-num">5</button>
+            <button class="btn-num">6</button>
+            
+            <button class="btn-num btn-hex" disabled>E</button>
+            <button class="btn-num btn-hex" disabled>F</button>
+            <button class="btn-num">1</button>
+            <button class="btn-num">2</button>
+            <button class="btn-num">3</button>
+            
+            <button class="btn-num">0</button>
+            <button class="btn-prog" id="prog-btn-div">÷</button>
+            <button class="btn-prog" id="prog-btn-mul">×</button>
+            <button class="btn-prog" id="prog-btn-sub">−</button>
+            <button class="btn-prog" id="prog-btn-add">+</button>
+            
+            <button disabled style="visibility:hidden;"></button>
+            <button disabled style="visibility:hidden;"></button>
+            <button disabled style="visibility:hidden;"></button>
+            <button disabled style="visibility:hidden;"></button>
+            <button class="btn-eq" id="prog-btn-eq">=</button>
+          </div>
+        </div>
 
-          <button class="btn-op" id="btn-inv">1/x</button>
-          <button class="btn-op" id="btn-sqr">x²</button>
-          <button class="btn-op" id="btn-sqrt">²√x</button>
-          <button class="btn-op" id="btn-div">÷</button>
+        <!-- Graphing Mode -->
+        <div class="mode-section mode-graphing" id="graph-container">
+          <div id="graph-canvas"></div>
+          <div id="graph-controls">
+            <div id="function-list">
+              <div class="function-entry">
+                <input type="text" class="func-input" value="sin(x)" />
+                <button class="func-color" style="background:#8553f4;"></button>
+              </div>
+            </div>
+            <div id="graph-zoom">
+              <button class="zoom-btn" id="zoom-in">+</button>
+              <button class="zoom-btn" id="zoom-out">-</button>
+              <button class="zoom-btn" id="zoom-fit">Fit</button>
+            </div>
+          </div>
+        </div>
 
-          <button class="btn-num" id="btn-7">7</button>
-          <button class="btn-num" id="btn-8">8</button>
-          <button class="btn-num" id="btn-9">9</button>
-          <button class="btn-op" id="btn-mul">×</button>
+        <!-- Date Calculation Mode -->
+        <div class="mode-section mode-date">
+          <div id="date-display-container">
+            <div id="date-result">Вычисление даты</div>
+          </div>
+          <div id="date-calc-type">
+            <button class="date-type-btn active" data-type="diff">Разница дат</button>
+          </div>
+          <div id="date-inputs">
+            <div class="date-input-group">
+              <label for="date-from">От</label>
+              <input type="date" id="date-from" class="date-field" />
+            </div>
+            <div class="date-input-group">
+              <label for="date-to">До</label>
+              <input type="date" id="date-to" class="date-field" />
+            </div>
+          </div>
+          <div id="date-result-display">
+            <div class="result-row">
+              <span class="result-label">Лет</span>
+              <span class="result-value" id="date-years">0</span>
+            </div>
+            <div class="result-row">
+              <span class="result-label">Месяцев</span>
+              <span class="result-value" id="date-months">0</span>
+            </div>
+            <div class="result-row">
+              <span class="result-label">Дней</span>
+              <span class="result-value" id="date-days">0</span>
+            </div>
+            <div class="result-row">
+              <span class="result-label">Всего дней</span>
+              <span class="result-value" id="date-total-days">0</span>
+            </div>
+          </div>
+        </div>
 
-          <button class="btn-num" id="btn-4">4</button>
-          <button class="btn-num" id="btn-5">5</button>
-          <button class="btn-num" id="btn-6">6</button>
-          <button class="btn-op" id="btn-sub">−</button>
+        <!-- Converter: Length Mode -->
+        <div class="mode-section mode-length converter-mode">
+          <div id="converter-display-container">
+            <div id="converter-result">0</div>
+          </div>
+          <div class="converter-inputs">
+            <div class="converter-input-group">
+              <select id="length-from" class="converter-select">
+                <option value="mm">Миллиметры (mm)</option>
+                <option value="cm">Сантиметры (cm)</option>
+                <option value="m" selected>Метры (m)</option>
+                <option value="km">Километры (km)</option>
+                <option value="in">Дюймы (in)</option>
+                <option value="ft">Футы (ft)</option>
+                <option value="yd">Ярды (yd)</option>
+                <option value="mi">Мили (mi)</option>
+              </select>
+              <input type="number" id="length-from-val" class="converter-value" value="1" />
+            </div>
+            <button id="length-swap" class="swap-btn">⇅</button>
+            <div class="converter-input-group">
+              <select id="length-to" class="converter-select">
+                <option value="mm">Миллиметры (mm)</option>
+                <option value="cm">Сантиметры (cm)</option>
+                <option value="m">Метры (m)</option>
+                <option value="km">Километры (km)</option>
+                <option value="in">Дюймы (in)</option>
+                <option value="ft" selected>Футы (ft)</option>
+                <option value="yd">Ярды (yd)</option>
+                <option value="mi">Мили (mi)</option>
+              </select>
+              <input type="number" id="length-to-val" class="converter-value" readonly />
+            </div>
+          </div>
+        </div>
 
-          <button class="btn-num" id="btn-1">1</button>
-          <button class="btn-num" id="btn-2">2</button>
-          <button class="btn-num" id="btn-3">3</button>
-          <button class="btn-op" id="btn-add">+</button>
+        <!-- Converter: Weight Mode -->
+        <div class="mode-section mode-weight converter-mode">
+          <div id="converter-display-container">
+            <div id="converter-result">0</div>
+          </div>
+          <div class="converter-inputs">
+            <div class="converter-input-group">
+              <select id="weight-from" class="converter-select">
+                <option value="mg">Миллиграммы (mg)</option>
+                <option value="g">Граммы (g)</option>
+                <option value="kg" selected>Килограммы (kg)</option>
+                <option value="t">Тонны (t)</option>
+                <option value="oz">Унции (oz)</option>
+                <option value="lb">Фунты (lb)</option>
+              </select>
+              <input type="number" id="weight-from-val" class="converter-value" value="1" />
+            </div>
+            <button id="weight-swap" class="swap-btn">⇅</button>
+            <div class="converter-input-group">
+              <select id="weight-to" class="converter-select">
+                <option value="mg">Миллиграммы (mg)</option>
+                <option value="g">Граммы (g)</option>
+                <option value="kg">Килограммы (kg)</option>
+                <option value="t">Тонны (t)</option>
+                <option value="oz">Унции (oz)</option>
+                <option value="lb" selected>Фунты (lb)</option>
+              </select>
+              <input type="number" id="weight-to-val" class="converter-value" readonly />
+            </div>
+          </div>
+        </div>
 
-          <button class="btn-op" id="btn-neg">+/-</button>
-          <button class="btn-num" id="btn-0">0</button>
-          <button class="btn-num" id="btn-dec">,</button>
-          <button class="btn-eq" id="btn-eq">=</button>
+        <!-- Converter: Temperature Mode -->
+        <div class="mode-section mode-temperature converter-mode">
+          <div id="converter-display-container">
+            <div id="converter-result">0</div>
+          </div>
+          <div class="converter-inputs">
+            <div class="converter-input-group">
+              <select id="temp-from" class="converter-select">
+                <option value="c" selected>Цельсий (°C)</option>
+                <option value="f">Фаренгейт (°F)</option>
+                <option value="k">Кельвин (K)</option>
+              </select>
+              <input type="number" id="temp-from-val" class="converter-value" value="0" />
+            </div>
+            <button id="temp-swap" class="swap-btn">⇅</button>
+            <div class="converter-input-group">
+              <select id="temp-to" class="converter-select">
+                <option value="c">Цельсий (°C)</option>
+                <option value="f" selected>Фаренгейт (°F)</option>
+                <option value="k">Кельвин (K)</option>
+              </select>
+              <input type="number" id="temp-to-val" class="converter-value" readonly />
+            </div>
+          </div>
+        </div>
+
+        <!-- Converter: Time Mode -->
+        <div class="mode-section mode-time converter-mode">
+          <div id="converter-display-container">
+            <div id="converter-result">0</div>
+          </div>
+          <div class="converter-inputs">
+            <div class="converter-input-group">
+              <select id="time-from" class="converter-select">
+                <option value="ms">Миллисекунды (ms)</option>
+                <option value="s" selected>Секунды (s)</option>
+                <option value="min">Минуты (min)</option>
+                <option value="h">Часы (h)</option>
+                <option value="d">Дни (d)</option>
+                <option value="w">Недели (w)</option>
+                <option value="mth">Месяцы (mth)</option>
+                <option value="y">Годы (y)</option>
+              </select>
+              <input type="number" id="time-from-val" class="converter-value" value="1" />
+            </div>
+            <button id="time-swap" class="swap-btn">⇅</button>
+            <div class="converter-input-group">
+              <select id="time-to" class="converter-select">
+                <option value="ms">Миллисекунды (ms)</option>
+                <option value="s">Секунды (s)</option>
+                <option value="min" selected>Минуты (min)</option>
+                <option value="h">Часы (h)</option>
+                <option value="d">Дни (d)</option>
+                <option value="w">Недели (w)</option>
+                <option value="mth">Месяцы (mth)</option>
+                <option value="y">Годы (y)</option>
+              </select>
+              <input type="number" id="time-to-val" class="converter-value" readonly />
+            </div>
+          </div>
         </div>
       </div>
 
@@ -300,5 +639,10 @@
     </div>
     <!-- Toast notification container -->
     <div id="toast-container"></div>
+    <script type="module" src="/modes/scientific.js" defer></script>
+    <script type="module" src="/modes/programmer.js" defer></script>
+    <script type="module" src="/modes/graphing.js" defer></script>
+    <script type="module" src="/modes/date.js" defer></script>
+    <script type="module" src="/modes/converters.js" defer></script>
   </body>
 </html>

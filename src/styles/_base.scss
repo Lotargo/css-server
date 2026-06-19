@@ -39,18 +39,11 @@ body {
   user-select: none;
 }
 
-/* Custom scrollbars */
-.scrollbar-custom::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+/* Hide scrollbars everywhere but keep scrolling functional */
+* {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
 }
-.scrollbar-custom::-webkit-scrollbar-track {
-  background: transparent;
-}
-.scrollbar-custom::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.12);
-  border-radius: 10px;
-}
-.scrollbar-custom::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.2);
+*::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
 }

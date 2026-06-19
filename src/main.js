@@ -831,6 +831,46 @@ async function setup() {
       });
     });
   }
+
+  // Initialize scientific mode
+  import('./modes/scientific.js').then(module => {
+    module.initScientificMode();
+    log("INFO", "modes", "scientific mode module loaded");
+  }).catch(err => {
+    log("ERROR", "modes", "failed to load scientific mode", err);
+  });
+
+  // Initialize programmer mode
+  import('./modes/programmer.js').then(module => {
+    module.initProgrammerMode();
+    log("INFO", "modes", "programmer mode module loaded");
+  }).catch(err => {
+    log("ERROR", "modes", "failed to load programmer mode", err);
+  });
+
+  // Initialize graphing mode
+  import('./modes/graphing.js').then(module => {
+    module.initGraphingMode();
+    log("INFO", "modes", "graphing mode module loaded");
+  }).catch(err => {
+    log("ERROR", "modes", "failed to load graphing mode", err);
+  });
+
+  // Initialize date mode
+  import('./modes/date.js').then(module => {
+    module.initDateMode();
+    log("INFO", "modes", "date mode module loaded");
+  }).catch(err => {
+    log("ERROR", "modes", "failed to load date mode", err);
+  });
+
+  // Initialize converter modes
+  import('./modes/converters.js').then(module => {
+    module.initConverters();
+    log("INFO", "modes", "converter modes loaded");
+  }).catch(err => {
+    log("ERROR", "modes", "failed to load converter modes", err);
+  });
 }
 
 // --- Drawer and Mode selection ---
@@ -880,15 +920,44 @@ drawerItems.forEach(item => {
     // Close drawer
     toggleDrawer(false);
     
-    if (mode === "standard") {
-      drawerItems.forEach(i => i.classList.remove("active"));
-      item.classList.add("active");
-      const titleEl = document.getElementById("calc-title");
-      if (titleEl) titleEl.textContent = "Обычный";
-    } else {
-      let modeName = item.querySelector("span") ? item.querySelector("span").textContent : "Этот режим";
-      showToast(`Режим "${modeName}" временно заблокирован. Вернитесь к "Обычному" режиму.`);
+    // Set active mode on app container
+    const appContainer = document.getElementById("calculator-app");
+    if (appContainer) {
+      appContainer.dataset.activeMode = mode;
     }
+    
+    // Update active state in drawer
+    drawerItems.forEach(i => i.classList.remove("active"));
+    item.classList.add("active");
+    
+    // Update title
+    const titleEl = document.getElementById("calc-title");
+    if (titleEl) {
+      const modeNames = {
+        standard: "Обычный",
+        scientific: "Инженерный",
+        programmer: "Программист",
+        graphing: "Построение графиков",
+        date: "Вычисление даты",
+        currency: "Валюта",
+        volume: "Объем",
+        length: "Длина",
+        weight: "Вес и масса",
+        temperature: "Температура",
+        energy: "Энергия",
+        area: "Площадь",
+        speed: "Скорость",
+        time: "Время",
+        power: "Мощность",
+        data: "Данные",
+        pressure: "Давление",
+        angle: "Угол",
+        settings: "Параметры"
+      };
+      titleEl.textContent = modeNames[mode] || mode;
+    }
+    
+    log("INFO", "mode", `switched to mode: ${mode}`);
   });
 });
 

@@ -1,0 +1,100 @@
+/* Dropdown Menus for Scientific Mode */
+.sci-dropdown {
+  position: relative;
+  display: inline-block;
+  
+  .dropdown-trigger {
+    background: none;
+    border: 1px solid var(--border-subtle);
+    color: var(--text-sub);
+    font-size: 0.85rem;
+    font-weight: 500;
+    padding: 8px 14px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    height: 32px;
+    
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.05);
+      color: var(--text-main);
+    }
+    
+    &::after {
+      content: '▾';
+      font-size: 0.7rem;
+      margin-left: 4px;
+    }
+  }
+  
+  .dropdown-content {
+    display: none;
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    background-color: #2a2a2a;
+    border: 1px solid var(--border-subtle);
+    border-radius: 6px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    min-width: 140px;
+    padding: 6px 0;
+    opacity: 0;
+    transform: translateY(-8px);
+    transition: opacity 0.15s, transform 0.15s;
+    
+    .dropdown-item {
+      display: block;
+      width: 100%;
+      padding: 10px 16px;
+      background: none;
+      border: none;
+      color: var(--text-main);
+      font-size: 0.9rem;
+      text-align: left;
+      cursor: pointer;
+      transition: background-color 0.1s;
+      
+      &:hover {
+        background-color: rgba(255, 255, 255, 0.08);
+      }
+      
+      &:active {
+        background-color: rgba(133, 83, 244, 0.2);
+      }
+    }
+  }
+  
+  &.open .dropdown-content {
+    display: block;
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Trigonometry dropdown */
+#trig-dropdown .dropdown-content .dropdown-item {
+  font-family: 'Fira Code', monospace;
+  font-size: 0.85rem;
+}
+
+/* Function dropdown */
+#func-dropdown .dropdown-content .dropdown-item {
+  font-family: 'Fira Code', monospace;
+  font-size: 0.85rem;
+  
+  &::before {
+    margin-right: 8px;
+    opacity: 0.6;
+  }
+  
+  &[data-func="floor"]::before { content: '⌊'; }
+  &[data-func="ceil"]::before { content: '⌈'; }
+  &[data-func="round"]::before { content: '⌊⌉'; }
+  &[data-func="rand"]::before { content: '?'; }
+  &[data-func="dms"]::before { content: '→'; }
+  &[data-func="deg"]::before { content: '→'; }
+}

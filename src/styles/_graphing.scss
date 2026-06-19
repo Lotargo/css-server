@@ -1,0 +1,137 @@
+/* Graphing Calculator ALU */
+@property --graph-x {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 0;
+}
+
+@property --graph-result {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 0;
+}
+
+@property --graph-func {
+  syntax: "<custom-ident>";
+  inherits: false;
+  initial-value: sin;
+}
+
+/* Function evaluation routing */
+.graph-task {
+  --graph-x: attr(data-x type(<number>), 0);
+  --graph-func: attr(data-func type(<custom-ident>), sin);
+  --graph-result: if(
+    style(--graph-func: sin): sin(var(--graph-x));
+    style(--graph-func: cos): cos(var(--graph-x));
+    style(--graph-func: tan): tan(var(--graph-x));
+    style(--graph-func: log): log10(var(--graph-x));
+    style(--graph-func: ln): ln(var(--graph-x));
+    style(--graph-func: sqrt): sqrt(var(--graph-x));
+    style(--graph-func: abs): abs(var(--graph-x));
+    style(--graph-func: x2): calc(var(--graph-x) * var(--graph-x));
+    style(--graph-func: x3): calc(var(--graph-x) * var(--graph-x) * var(--graph-x));
+    style(--graph-func: exp): exp(var(--graph-x));
+    else: var(--graph-x)
+  );
+}
+
+/* Graph container */
+#graph-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 16px;
+  
+  #graph-canvas {
+    flex: 1;
+    background-color: #0a0a0a;
+    border: 1px solid var(--border-subtle);
+    border-radius: 8px;
+    position: relative;
+    overflow: hidden;
+    min-height: 250px;
+    
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 50%;
+      width: 1px;
+      height: 100%;
+      background: rgba(255, 255, 255, 0.1);
+    }
+    
+    &::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 50%;
+      width: 100%;
+      height: 1px;
+      background: rgba(255, 255, 255, 0.1);
+    }
+  }
+  
+  #graph-controls {
+    display: flex;
+    gap: 16px;
+    margin-top: 12px;
+    align-items: flex-start;
+    
+    #function-list {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      
+      .function-entry {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        
+        .func-input {
+          flex: 1;
+          background-color: rgba(0, 0, 0, 0.3);
+          border: 1px solid var(--border-subtle);
+          border-radius: 4px;
+          color: var(--text-main);
+          font-family: 'Fira Code', monospace;
+          font-size: 0.9rem;
+          padding: 8px 12px;
+          outline: none;
+          &:focus { border-color: var(--bg-accent); }
+        }
+        
+        .func-color {
+          width: 24px;
+          height: 24px;
+          border-radius: 50%;
+          border: none;
+          cursor: pointer;
+        }
+      }
+    }
+    
+    #graph-zoom {
+      display: flex;
+      gap: 4px;
+      
+      .zoom-btn {
+        width: 32px;
+        height: 32px;
+        background-color: var(--bg-op);
+        border: 1px solid var(--border-subtle);
+        border-radius: 4px;
+        color: var(--text-main);
+        font-size: 1.1rem;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background-color 0.2s;
+        &:hover { background-color: var(--bg-op-hover); }
+      }
+    }
+  }
+}
