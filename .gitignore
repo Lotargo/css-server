@@ -29,3 +29,6 @@ src-tauri/target/
 *.sln
 *.sw?
 .brains/
+
+# DB
+css_server.db*
