@@ -1563,6 +1563,55 @@ body {
   letter-spacing: 0.5px;
   margin-bottom: 2px;
 }
+#graph-container #graph-workspace #graph-side-panel #graph-equations-section #graph-presets {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border-subtle);
+  border-radius: 6px;
+  padding: 6px 10px;
+  margin-bottom: 4px;
+}
+#graph-container #graph-workspace #graph-side-panel #graph-equations-section #graph-presets .preset-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-sub);
+  white-space: nowrap;
+}
+#graph-container #graph-workspace #graph-side-panel #graph-equations-section #graph-presets .preset-buttons {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  padding-bottom: 2px;
+  width: 100%;
+}
+#graph-container #graph-workspace #graph-side-panel #graph-equations-section #graph-presets .preset-buttons::-webkit-scrollbar {
+  height: 3px;
+}
+#graph-container #graph-workspace #graph-side-panel #graph-equations-section #graph-presets .preset-buttons::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+}
+#graph-container #graph-workspace #graph-side-panel #graph-equations-section #graph-presets .preset-buttons .preset-btn {
+  background-color: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-main);
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s;
+}
+#graph-container #graph-workspace #graph-side-panel #graph-equations-section #graph-presets .preset-buttons .preset-btn:hover {
+  background-color: var(--bg-accent);
+  border-color: var(--bg-accent);
+}
+#graph-container #graph-workspace #graph-side-panel #graph-equations-section #graph-presets .preset-buttons .preset-btn:active {
+  transform: scale(0.95);
+}
 #graph-container #graph-workspace #graph-side-panel #graph-equations-section #graph-equations-list {
   flex: 1;
   overflow-y: auto;

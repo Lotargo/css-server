@@ -185,23 +185,79 @@ $graph-result-expr: "calc(var(--graph-scale-y) * (#{$graph-f-val}) + var(--graph
       flex-direction: column;
       gap: 14px;
       
-      #graph-equations-section {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-        min-height: 120px;
-        
-        h3 {
-          font-size: 0.9rem;
-          color: var(--text-sub);
-          font-weight: 600;
-          text-transform: uppercase;
-          letter-spacing: 0.5px;
-          margin-bottom: 2px;
-        }
-        
-        #graph-equations-list {
+        #graph-equations-section {
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+          min-height: 120px;
+          
+          h3 {
+            font-size: 0.9rem;
+            color: var(--text-sub);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 2px;
+          }
+
+          #graph-presets {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border-subtle);
+            border-radius: 6px;
+            padding: 6px 10px;
+            margin-bottom: 4px;
+            
+            .preset-label {
+              font-size: 0.75rem;
+              font-weight: 600;
+              color: var(--text-sub);
+              white-space: nowrap;
+            }
+            
+            .preset-buttons {
+              display: flex;
+              gap: 6px;
+              overflow-x: auto;
+              padding-bottom: 2px;
+              width: 100%;
+              
+              &::-webkit-scrollbar {
+                height: 3px;
+              }
+              &::-webkit-scrollbar-thumb {
+                background: rgba(255, 255, 255, 0.1);
+                border-radius: 2px;
+              }
+              
+              .preset-btn {
+                background-color: rgba(255, 255, 255, 0.05);
+                border: 1px solid var(--border-subtle);
+                color: var(--text-main);
+                padding: 3px 8px;
+                border-radius: 4px;
+                font-size: 0.75rem;
+                font-weight: 500;
+                cursor: pointer;
+                white-space: nowrap;
+                transition: all 0.15s;
+                
+                &:hover {
+                  background-color: var(--bg-accent);
+                  border-color: var(--bg-accent);
+                }
+                
+                &:active {
+                  transform: scale(0.95);
+                }
+              }
+            }
+          }
+          
+          #graph-equations-list {
           flex: 1;
           overflow-y: auto;
           display: flex;

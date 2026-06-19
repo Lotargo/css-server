@@ -199,11 +199,16 @@ async function renderGraph() {
   
   const dpr = window.devicePixelRatio || 1;
   const rect = graphCanvas.getBoundingClientRect();
-  graphCanvas.width = rect.width * dpr;
-  graphCanvas.height = rect.height * dpr;
+  const newWidth = Math.floor(rect.width * dpr);
+  const newHeight = Math.floor(rect.height * dpr);
+  
+  if (graphCanvas.width !== newWidth || graphCanvas.height !== newHeight) {
+    graphCanvas.width = newWidth;
+    graphCanvas.height = newHeight;
+  }
   
   const ctx = graphCanvas.getContext('2d');
-  ctx.scale(dpr, dpr);
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
   const width = rect.width;
   const height = rect.height;
   
@@ -466,6 +471,23 @@ export function initGraphingMode() {
     if (lastInput) lastInput.focus();
   });
   
+  // Set up preset expression buttons
+  document.querySelectorAll(".preset-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const expr = btn.dataset.expr;
+      if (equations.length === 0) {
+        equations.push("");
+        activeInputIndex = 0;
+      }
+      equations[activeInputIndex] = expr;
+      renderEquationsList();
+      renderGraph();
+      
+      const inputs = document.querySelectorAll(".eq-input-field");
+      inputs[activeInputIndex]?.focus();
+    });
+  });
+  
   // Set up math keyboard
   document.querySelectorAll("#graph-keyboard .kb-btn").forEach(btn => {
     btn.addEventListener("click", () => {
@@ -580,6 +602,26 @@ export function initGraphingMode() {
     renderGraph();
   });
   
+  // Mouse wheel zooming (zooms centered on mouse cursor position)
+  graphCanvas?.addEventListener("wheel", (e) => {
+    e.preventDefault();
+    
+    const rect = graphCanvas.getBoundingClientRect();
+    const mouseX = e.clientX - rect.left;
+    const mouseY = e.clientY - rect.top;
+    
+    const { x: mX, y: mY } = getMathCoords(mouseX, mouseY, rect.width, rect.height);
+    const zoomFactor = e.deltaY < 0 ? 0.85 : 1.15;
+    
+    xMin = mX - (mX - xMin) * zoomFactor;
+    xMax = mX + (xMax - mX) * zoomFactor;
+    yMin = mY - (mY - yMin) * zoomFactor;
+    yMax = mY + (yMax - mY) * zoomFactor;
+    
+    updateSettingsInputs();
+    renderGraph();
+  }, { passive: false });
+  
   // Settings popup toggle
   const settingsPopup = document.getElementById("graph-settings-popup");
   const settingsToggle = document.getElementById("graph-settings-toggle");
@@ -656,7 +698,7 @@ export function initGraphingMode() {
     renderGraph();
   });
   
-  // View Toggle button (equation vs graph sidebar toggle)
+  // View Toggle button
   const viewToggle = document.getElementById("graph-view-toggle");
   const sidePanel = document.getElementById("graph-side-panel");
   if (viewToggle && sidePanel) {
@@ -673,12 +715,17 @@ export function initGraphingMode() {
     });
   }
   
-  // ResizeObserver for canvas
+  // ResizeObserver for canvas viewport container (prevents recursive loops)
   try {
     const resizeObserver = new ResizeObserver(() => {
       renderGraph();
     });
-    resizeObserver.observe(graphCanvas);
+    const viewport = document.getElementById("graph-viewport");
+    if (viewport) {
+      resizeObserver.observe(viewport);
+    } else {
+      resizeObserver.observe(graphCanvas);
+    }
   } catch (e) {
     window.addEventListener("resize", renderGraph);
   }
