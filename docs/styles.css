@@ -308,6 +308,7 @@ h1 {
 .network-form label:nth-of-type(3),
 .network-form label:nth-of-type(4),
 .network-form .network-warning,
+.network-presets,
 .network-form button {
   grid-column: 1 / -1;
 }
@@ -343,6 +344,27 @@ h1 {
 .network-warning {
   margin: 2px 0;
   font-size: 0.86rem;
+}
+
+.network-presets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.network-presets button {
+  min-height: 34px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 0 10px;
+  background: var(--panel-strong);
+  color: var(--text);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.network-presets button:hover {
+  background: #303030;
 }
 
 .network-runtime {

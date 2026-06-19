@@ -39,6 +39,21 @@ function runProof() {
 
 document.getElementById("run-proof")?.addEventListener("click", runProof);
 
+const networkPresets = {
+  success: {
+    endpoint: "https://api.github.com/zen",
+    method: "GET",
+    headers: "{}",
+    body: ""
+  },
+  "cors-failure": {
+    endpoint: "http://127.0.0.1:9/cors-boundary",
+    method: "GET",
+    headers: "{}",
+    body: ""
+  }
+};
+
 function setNetworkCard(id, state, text) {
   const card = document.getElementById(id);
   if (!card) return;
@@ -101,12 +116,15 @@ async function runNetworkRequest(event) {
   response.textContent = "Request in flight...";
 
   const startedAt = performance.now();
+  const controller = new AbortController();
+  const timeoutId = window.setTimeout(() => controller.abort(), 8000);
 
   try {
     const requestHeaders = parseHeaders(headers.value);
     const request = {
       method: method.value,
-      headers: requestHeaders
+      headers: requestHeaders,
+      signal: controller.signal
     };
 
     if (!["GET", "HEAD"].includes(method.value) && body.value.trim()) {
@@ -114,6 +132,7 @@ async function runNetworkRequest(event) {
     }
 
     const res = await fetch(endpoint.value, request);
+    window.clearTimeout(timeoutId);
     const elapsed = Math.round(performance.now() - startedAt);
     const contentType = res.headers.get("content-type") || "";
     const contentKind = normalizeContentType(contentType);
@@ -131,6 +150,7 @@ async function runNetworkRequest(event) {
     setMetricCard("network-content-card", contentKind, { content: contentKind });
     response.textContent = previewText(text);
   } catch (error) {
+    window.clearTimeout(timeoutId);
     setNetworkCard("network-request-card", "error", "request failed");
     setNetworkCard("network-transport-card", "error", "blocked");
     statusCard.dataset.status = "0";
@@ -144,3 +164,15 @@ async function runNetworkRequest(event) {
 }
 
 document.getElementById("network-form")?.addEventListener("submit", runNetworkRequest);
+
+document.querySelectorAll("[data-network-preset]").forEach(button => {
+  button.addEventListener("click", () => {
+    const preset = networkPresets[button.dataset.networkPreset];
+    if (!preset) return;
+
+    document.getElementById("network-endpoint").value = preset.endpoint;
+    document.getElementById("network-method").value = preset.method;
+    document.getElementById("network-headers").value = preset.headers;
+    document.getElementById("network-body").value = preset.body;
+  });
+});

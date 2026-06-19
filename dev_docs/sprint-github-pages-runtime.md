@@ -231,7 +231,7 @@ GitHub Actions deployment remains deferred until the static runtime is manually 
 - [ ] Static app works from GitHub Pages.
 - [x] No Tauri dependency is required for the landing/runtime demo.
 - [x] Network Lab succeeds against at least one public CORS-friendly endpoint.
-- [ ] Network Lab handles CORS failure visibly and gracefully.
+- [x] Network Lab handles CORS failure visibly and gracefully.
 - [x] No shared API key is committed or bundled.
 - [x] Browser checks cover desktop and mobile viewports.
 - [x] The project remains understandable to someone arriving from GitHub.

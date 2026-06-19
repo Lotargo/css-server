@@ -91,6 +91,10 @@
             <textarea id="network-body" spellcheck="false" placeholder="Ignored for GET/HEAD"></textarea>
           </label>
           <p class="network-warning">Do not paste shared API secrets here. Browser requests are visible to the user and constrained by CORS.</p>
+          <div class="network-presets" aria-label="Network Lab presets">
+            <button type="button" data-network-preset="success">Preset: public CORS API</button>
+            <button type="button" data-network-preset="cors-failure">Preset: CORS/network failure</button>
+          </div>
           <button class="primary-link" type="submit">Send request</button>
         </form>
 
