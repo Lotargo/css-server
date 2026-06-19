@@ -56,7 +56,7 @@ const { listen, emit } = hasTauri
 const MAX_LOG = 100;
 const logPanel = document.getElementById("log-list");
 
-function log(level, source, message, data) {
+export function log(level, source, message, data) {
   const ts = new Date().toISOString().slice(11, 23);
   const prefix = `[${ts}][${level}][${source}]`;
   const text = data ? `${message} ${JSON.stringify(data)}` : message;

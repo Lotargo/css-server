@@ -61,19 +61,13 @@
 }
 
 /* Bitwise operations */
+$prog-bitwise-result-expr: "if(style(--op: and): #{css-bitwise-and(var(--val-a), var(--val-b), 16)}; style(--op: or): #{css-bitwise-or(var(--val-a), var(--val-b), 16)}; style(--op: xor): #{css-bitwise-xor(var(--val-a), var(--val-b), 16)}; style(--op: not): calc(0 - var(--val-a) - 1); style(--op: lshift): calc(var(--val-a) * 2); style(--op: rshift): calc(floor(var(--val-a) / 2)); else: var(--val-b))";
+
 .prog-bitwise-task {
   --val-a: attr(data-a type(<number>), 0);
   --val-b: attr(data-b type(<number>), 0);
   --op: attr(data-op type(<custom-ident>), and);
-  --result: if(
-    style(--op: and): #{css-bitwise-and(var(--val-a), var(--val-b), 16)};
-    style(--op: or): #{css-bitwise-or(var(--val-a), var(--val-b), 16)};
-    style(--op: xor): #{css-bitwise-xor(var(--val-a), var(--val-b), 16)};
-    style(--op: not): calc(0 - var(--val-a) - 1);
-    style(--op: lshift): calc(var(--val-a) * 2);
-    style(--op: rshift): calc(floor(var(--val-a) / 2));
-    else: var(--val-b)
-  );
+  --result: #{$prog-bitwise-result-expr};
 }
 
 /* Display container */

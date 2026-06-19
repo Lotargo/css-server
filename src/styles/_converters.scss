@@ -23,66 +23,37 @@
   initial-value: 0;
 }
 
-/* Length conversion */
+$conv-length-expr: "if(style(--conv-to: mm): calc(var(--conv-val) * 1000); style(--conv-to: cm): calc(var(--conv-val) * 100); style(--conv-to: m): var(--conv-val); style(--conv-to: km): calc(var(--conv-val) / 1000); style(--conv-to: in): calc(var(--conv-val) * 39.3701); style(--conv-to: ft): calc(var(--conv-val) * 3.28084); style(--conv-to: yd): calc(var(--conv-val) * 1.09361); style(--conv-to: mi): calc(var(--conv-val) / 1609.34); else: var(--conv-val))";
+
 .conv-task-length {
   --conv-val: attr(data-value type(<number>), 0);
   --conv-from: attr(data-from type(<custom-ident>), m);
   --conv-to: attr(data-to type(<custom-ident>), ft);
-  --conv-result: if(
-    style(--conv-to: mm): calc(var(--conv-val) * 1000);
-    style(--conv-to: cm): calc(var(--conv-val) * 100);
-    style(--conv-to: m): var(--conv-val);
-    style(--conv-to: km): calc(var(--conv-val) / 1000);
-    style(--conv-to: in): calc(var(--conv-val) * 39.3701);
-    style(--conv-to: ft): calc(var(--conv-val) * 3.28084);
-    style(--conv-to: yd): calc(var(--conv-val) * 1.09361);
-    style(--conv-to: mi): calc(var(--conv-val) / 1609.34);
-    else: var(--conv-val)
-  );
+  --conv-result: #{$conv-length-expr};
 }
 
-/* Weight conversion */
+$conv-weight-expr: "if(style(--conv-to: mg): calc(var(--conv-val) * 1000000); style(--conv-to: g): calc(var(--conv-val) * 1000); style(--conv-to: kg): var(--conv-val); style(--conv-to: t): calc(var(--conv-val) / 1000); style(--conv-to: oz): calc(var(--conv-val) * 35.274); style(--conv-to: lb): calc(var(--conv-val) * 2.20462); else: var(--conv-val))";
+
 .conv-task-weight {
   --conv-val: attr(data-value type(<number>), 0);
   --conv-to: attr(data-to type(<custom-ident>), lb);
-  --conv-result: if(
-    style(--conv-to: mg): calc(var(--conv-val) * 1000000);
-    style(--conv-to: g): calc(var(--conv-val) * 1000);
-    style(--conv-to: kg): var(--conv-val);
-    style(--conv-to: t): calc(var(--conv-val) / 1000);
-    style(--conv-to: oz): calc(var(--conv-val) * 35.274);
-    style(--conv-to: lb): calc(var(--conv-val) * 2.20462);
-    else: var(--conv-val)
-  );
+  --conv-result: #{$conv-weight-expr};
 }
 
-/* Temperature conversion */
+$conv-temp-expr: "if(style(--conv-to: c): var(--conv-val); style(--conv-to: f): calc(var(--conv-val) * 9 / 5 + 32); style(--conv-to: k): calc(var(--conv-val) + 273.15); else: var(--conv-val))";
+
 .conv-task-temp {
   --conv-val: attr(data-value type(<number>), 0);
   --conv-to: attr(data-to type(<custom-ident>), f);
-  --conv-result: if(
-    style(--conv-to: c): var(--conv-val);
-    style(--conv-to: f): calc(var(--conv-val) * 9 / 5 + 32);
-    style(--conv-to: k): calc(var(--conv-val) + 273.15);
-    else: var(--conv-val)
-  );
+  --conv-result: #{$conv-temp-expr};
 }
 
-/* Time conversion */
+$conv-time-expr: "if(style(--conv-to: ms): calc(var(--conv-val) * 1000); style(--conv-to: s): var(--conv-val); style(--conv-to: min): calc(var(--conv-val) / 60); style(--conv-to: h): calc(var(--conv-val) / 3600); style(--conv-to: d): calc(var(--conv-val) / 86400); style(--conv-to: w): calc(var(--conv-val) / 604800); style(--conv-to: mth): calc(var(--conv-val) / 2629746); style(--conv-to: y): calc(var(--conv-val) / 31556952); else: var(--conv-val))";
+
 .conv-task-time {
   --conv-val: attr(data-value type(<number>), 0);
   --conv-to: attr(data-to type(<custom-ident>), min);
-  --conv-result: if(
-    style(--conv-to: ms): calc(var(--conv-val) * 1000);
-    style(--conv-to: s): var(--conv-val);
-    style(--conv-to: min): calc(var(--conv-val) / 60);
-    style(--conv-to: h): calc(var(--conv-val) / 3600);
-    style(--conv-to: d): calc(var(--conv-val) / 86400);
-    style(--conv-to: w): calc(var(--conv-val) / 604800);
-    style(--conv-to: mth): calc(var(--conv-val) / 2629746);
-    style(--conv-to: y): calc(var(--conv-val) / 31556952);
-    else: var(--conv-val)
-  );
+  --conv-result: #{$conv-time-expr};
 }
 
 /* Converter layout */

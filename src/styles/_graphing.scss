@@ -18,22 +18,12 @@
 }
 
 /* Function evaluation routing */
+$graph-result-expr: "if(style(--graph-func: sin): sin(var(--graph-x)); style(--graph-func: cos): cos(var(--graph-x)); style(--graph-func: tan): tan(var(--graph-x)); style(--graph-func: log): log10(var(--graph-x)); style(--graph-func: ln): ln(var(--graph-x)); style(--graph-func: sqrt): sqrt(var(--graph-x)); style(--graph-func: abs): abs(var(--graph-x)); style(--graph-func: x2): calc(var(--graph-x) * var(--graph-x)); style(--graph-func: x3): calc(var(--graph-x) * var(--graph-x) * var(--graph-x)); style(--graph-func: exp): exp(var(--graph-x)); else: var(--graph-x))";
+
 .graph-task {
   --graph-x: attr(data-x type(<number>), 0);
   --graph-func: attr(data-func type(<custom-ident>), sin);
-  --graph-result: if(
-    style(--graph-func: sin): sin(var(--graph-x));
-    style(--graph-func: cos): cos(var(--graph-x));
-    style(--graph-func: tan): tan(var(--graph-x));
-    style(--graph-func: log): log10(var(--graph-x));
-    style(--graph-func: ln): ln(var(--graph-x));
-    style(--graph-func: sqrt): sqrt(var(--graph-x));
-    style(--graph-func: abs): abs(var(--graph-x));
-    style(--graph-func: x2): calc(var(--graph-x) * var(--graph-x));
-    style(--graph-func: x3): calc(var(--graph-x) * var(--graph-x) * var(--graph-x));
-    style(--graph-func: exp): exp(var(--graph-x));
-    else: var(--graph-x)
-  );
+  --graph-result: #{$graph-result-expr};
 }
 
 /* Graph container */

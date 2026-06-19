@@ -18,50 +18,27 @@
 }
 
 /* Scientific operation routing */
+$sci-result-expr: "if(style(--sci-op: sin): sin(var(--sci-val)); style(--sci-op: cos): cos(var(--sci-val)); style(--sci-op: tan): tan(var(--sci-val)); style(--sci-op: asin): asin(var(--sci-val)); style(--sci-op: acos): acos(var(--sci-val)); style(--sci-op: atan): atan(var(--sci-val)); style(--sci-op: log): log10(var(--sci-val)); style(--sci-op: ln): ln(var(--sci-val)); style(--sci-op: sqrt): sqrt(var(--sci-val)); style(--sci-op: cbrt): cbrt(var(--sci-val)); style(--sci-op: abs): abs(var(--sci-val)); style(--sci-op: exp): exp(var(--sci-val)); style(--sci-op: floor): floor(var(--sci-val)); style(--sci-op: ceil): ceil(var(--sci-val)); style(--sci-op: round): round(var(--sci-val)); else: var(--sci-val))";
+
 .sci-task {
   --sci-val: attr(data-val type(<number>), 0);
   --sci-op: attr(data-op type(<custom-ident>), none);
-  --sci-result: if(
-    style(--sci-op: sin): sin(var(--sci-val));
-    style(--sci-op: cos): cos(var(--sci-val));
-    style(--sci-op: tan): tan(var(--sci-val));
-    style(--sci-op: asin): asin(var(--sci-val));
-    style(--sci-op: acos): acos(var(--sci-val));
-    style(--sci-op: atan): atan(var(--sci-val));
-    style(--sci-op: log): log10(var(--sci-val));
-    style(--sci-op: ln): ln(var(--sci-val));
-    style(--sci-op: sqrt): sqrt(var(--sci-val));
-    style(--sci-op: cbrt): cbrt(var(--sci-val));
-    style(--sci-op: abs): abs(var(--sci-val));
-    style(--sci-op: exp): exp(var(--sci-val));
-    style(--sci-op: floor): floor(var(--sci-val));
-    style(--sci-op: ceil): ceil(var(--sci-val));
-    style(--sci-op: round): round(var(--sci-val));
-    else: var(--sci-val)
-  );
+  --sci-result: #{$sci-result-expr};
 }
 
-/* Trigonometric mode (DEG vs RAD) */
+$sci-trig-deg-expr: "if(style(--sci-op: sin): sin(calc(var(--sci-val) * 3.14159265358979 / 180)); style(--sci-op: cos): cos(calc(var(--sci-val) * 3.14159265358979 / 180)); style(--sci-op: tan): tan(calc(var(--sci-val) * 3.14159265358979 / 180)); else: var(--sci-val))";
+$sci-trig-rad-expr: "if(style(--sci-op: sin): sin(var(--sci-val)); style(--sci-op: cos): cos(var(--sci-val)); style(--sci-op: tan): tan(var(--sci-val)); else: var(--sci-val))";
+
 #calculator-app[data-angle-mode="deg"] .sci-task-trig {
   --sci-val: attr(data-val type(<number>), 0);
   --sci-op: attr(data-op type(<custom-ident>), sin);
-  --sci-result: if(
-    style(--sci-op: sin): sin(calc(var(--sci-val) * 3.14159265358979 / 180));
-    style(--sci-op: cos): cos(calc(var(--sci-val) * 3.14159265358979 / 180));
-    style(--sci-op: tan): tan(calc(var(--sci-val) * 3.14159265358979 / 180));
-    else: var(--sci-val)
-  );
+  --sci-result: #{$sci-trig-deg-expr};
 }
 
 #calculator-app[data-angle-mode="rad"] .sci-task-trig {
   --sci-val: attr(data-val type(<number>), 0);
   --sci-op: attr(data-op type(<custom-ident>), sin);
-  --sci-result: if(
-    style(--sci-op: sin): sin(var(--sci-val));
-    style(--sci-op: cos): cos(var(--sci-val));
-    style(--sci-op: tan): tan(var(--sci-val));
-    else: var(--sci-val)
-  );
+  --sci-result: #{$sci-trig-rad-expr};
 }
 
 /* Grid styling */

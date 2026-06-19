@@ -1073,47 +1073,19 @@ body {
 .sci-task {
   --sci-val: attr(data-val type(<number>), 0);
   --sci-op: attr(data-op type(<custom-ident>), none);
-  --sci-result: if(
-    style(--sci-op: sin): sin(var(--sci-val));
-    style(--sci-op: cos): cos(var(--sci-val));
-    style(--sci-op: tan): tan(var(--sci-val));
-    style(--sci-op: asin): asin(var(--sci-val));
-    style(--sci-op: acos): acos(var(--sci-val));
-    style(--sci-op: atan): atan(var(--sci-val));
-    style(--sci-op: log): log10(var(--sci-val));
-    style(--sci-op: ln): ln(var(--sci-val));
-    style(--sci-op: sqrt): sqrt(var(--sci-val));
-    style(--sci-op: cbrt): cbrt(var(--sci-val));
-    style(--sci-op: abs): abs(var(--sci-val));
-    style(--sci-op: exp): exp(var(--sci-val));
-    style(--sci-op: floor): floor(var(--sci-val));
-    style(--sci-op: ceil): ceil(var(--sci-val));
-    style(--sci-op: round): round(var(--sci-val));
-    else: var(--sci-val)
-  );
+  --sci-result: if(style(--sci-op: sin): sin(var(--sci-val)); style(--sci-op: cos): cos(var(--sci-val)); style(--sci-op: tan): tan(var(--sci-val)); style(--sci-op: asin): asin(var(--sci-val)); style(--sci-op: acos): acos(var(--sci-val)); style(--sci-op: atan): atan(var(--sci-val)); style(--sci-op: log): log10(var(--sci-val)); style(--sci-op: ln): ln(var(--sci-val)); style(--sci-op: sqrt): sqrt(var(--sci-val)); style(--sci-op: cbrt): cbrt(var(--sci-val)); style(--sci-op: abs): abs(var(--sci-val)); style(--sci-op: exp): exp(var(--sci-val)); style(--sci-op: floor): floor(var(--sci-val)); style(--sci-op: ceil): ceil(var(--sci-val)); style(--sci-op: round): round(var(--sci-val)); else: var(--sci-val));
 }
 
-/* Trigonometric mode (DEG vs RAD) */
 #calculator-app[data-angle-mode=deg] .sci-task-trig {
   --sci-val: attr(data-val type(<number>), 0);
   --sci-op: attr(data-op type(<custom-ident>), sin);
-  --sci-result: if(
-    style(--sci-op: sin): sin(calc(var(--sci-val) * 3.14159265358979 / 180));
-    style(--sci-op: cos): cos(calc(var(--sci-val) * 3.14159265358979 / 180));
-    style(--sci-op: tan): tan(calc(var(--sci-val) * 3.14159265358979 / 180));
-    else: var(--sci-val)
-  );
+  --sci-result: if(style(--sci-op: sin): sin(calc(var(--sci-val) * 3.14159265358979 / 180)); style(--sci-op: cos): cos(calc(var(--sci-val) * 3.14159265358979 / 180)); style(--sci-op: tan): tan(calc(var(--sci-val) * 3.14159265358979 / 180)); else: var(--sci-val));
 }
 
 #calculator-app[data-angle-mode=rad] .sci-task-trig {
   --sci-val: attr(data-val type(<number>), 0);
   --sci-op: attr(data-op type(<custom-ident>), sin);
-  --sci-result: if(
-    style(--sci-op: sin): sin(var(--sci-val));
-    style(--sci-op: cos): cos(var(--sci-val));
-    style(--sci-op: tan): tan(var(--sci-val));
-    else: var(--sci-val)
-  );
+  --sci-result: if(style(--sci-op: sin): sin(var(--sci-val)); style(--sci-op: cos): cos(var(--sci-val)); style(--sci-op: tan): tan(var(--sci-val)); else: var(--sci-val));
 }
 
 /* Grid styling */
@@ -1245,15 +1217,7 @@ body {
   --val-a: attr(data-a type(<number>), 0);
   --val-b: attr(data-b type(<number>), 0);
   --op: attr(data-op type(<custom-ident>), and);
-  --result: if(
-    style(--op: and): calc(0 + ((floor(var(--val-a) / 1) - floor(var(--val-a) / 2) * 2) * (floor(var(--val-b) / 1) - floor(var(--val-b) / 2) * 2)) * 1 + ((floor(var(--val-a) / 2) - floor(var(--val-a) / 4) * 2) * (floor(var(--val-b) / 2) - floor(var(--val-b) / 4) * 2)) * 2 + ((floor(var(--val-a) / 4) - floor(var(--val-a) / 8) * 2) * (floor(var(--val-b) / 4) - floor(var(--val-b) / 8) * 2)) * 4 + ((floor(var(--val-a) / 8) - floor(var(--val-a) / 16) * 2) * (floor(var(--val-b) / 8) - floor(var(--val-b) / 16) * 2)) * 8 + ((floor(var(--val-a) / 16) - floor(var(--val-a) / 32) * 2) * (floor(var(--val-b) / 16) - floor(var(--val-b) / 32) * 2)) * 16 + ((floor(var(--val-a) / 32) - floor(var(--val-a) / 64) * 2) * (floor(var(--val-b) / 32) - floor(var(--val-b) / 64) * 2)) * 32 + ((floor(var(--val-a) / 64) - floor(var(--val-a) / 128) * 2) * (floor(var(--val-b) / 64) - floor(var(--val-b) / 128) * 2)) * 64 + ((floor(var(--val-a) / 128) - floor(var(--val-a) / 256) * 2) * (floor(var(--val-b) / 128) - floor(var(--val-b) / 256) * 2)) * 128 + ((floor(var(--val-a) / 256) - floor(var(--val-a) / 512) * 2) * (floor(var(--val-b) / 256) - floor(var(--val-b) / 512) * 2)) * 256 + ((floor(var(--val-a) / 512) - floor(var(--val-a) / 1024) * 2) * (floor(var(--val-b) / 512) - floor(var(--val-b) / 1024) * 2)) * 512 + ((floor(var(--val-a) / 1024) - floor(var(--val-a) / 2048) * 2) * (floor(var(--val-b) / 1024) - floor(var(--val-b) / 2048) * 2)) * 1024 + ((floor(var(--val-a) / 2048) - floor(var(--val-a) / 4096) * 2) * (floor(var(--val-b) / 2048) - floor(var(--val-b) / 4096) * 2)) * 2048 + ((floor(var(--val-a) / 4096) - floor(var(--val-a) / 8192) * 2) * (floor(var(--val-b) / 4096) - floor(var(--val-b) / 8192) * 2)) * 4096 + ((floor(var(--val-a) / 8192) - floor(var(--val-a) / 16384) * 2) * (floor(var(--val-b) / 8192) - floor(var(--val-b) / 16384) * 2)) * 8192 + ((floor(var(--val-a) / 16384) - floor(var(--val-a) / 32768) * 2) * (floor(var(--val-b) / 16384) - floor(var(--val-b) / 32768) * 2)) * 16384 + ((floor(var(--val-a) / 32768) - floor(var(--val-a) / 65536) * 2) * (floor(var(--val-b) / 32768) - floor(var(--val-b) / 65536) * 2)) * 32768);
-    style(--op: or): calc(0 + ((floor(var(--val-a) / 1) - floor(var(--val-a) / 2) * 2) + (floor(var(--val-b) / 1) - floor(var(--val-b) / 2) * 2) - (floor(var(--val-a) / 1) - floor(var(--val-a) / 2) * 2) * (floor(var(--val-b) / 1) - floor(var(--val-b) / 2) * 2)) * 1 + ((floor(var(--val-a) / 2) - floor(var(--val-a) / 4) * 2) + (floor(var(--val-b) / 2) - floor(var(--val-b) / 4) * 2) - (floor(var(--val-a) / 2) - floor(var(--val-a) / 4) * 2) * (floor(var(--val-b) / 2) - floor(var(--val-b) / 4) * 2)) * 2 + ((floor(var(--val-a) / 4) - floor(var(--val-a) / 8) * 2) + (floor(var(--val-b) / 4) - floor(var(--val-b) / 8) * 2) - (floor(var(--val-a) / 4) - floor(var(--val-a) / 8) * 2) * (floor(var(--val-b) / 4) - floor(var(--val-b) / 8) * 2)) * 4 + ((floor(var(--val-a) / 8) - floor(var(--val-a) / 16) * 2) + (floor(var(--val-b) / 8) - floor(var(--val-b) / 16) * 2) - (floor(var(--val-a) / 8) - floor(var(--val-a) / 16) * 2) * (floor(var(--val-b) / 8) - floor(var(--val-b) / 16) * 2)) * 8 + ((floor(var(--val-a) / 16) - floor(var(--val-a) / 32) * 2) + (floor(var(--val-b) / 16) - floor(var(--val-b) / 32) * 2) - (floor(var(--val-a) / 16) - floor(var(--val-a) / 32) * 2) * (floor(var(--val-b) / 16) - floor(var(--val-b) / 32) * 2)) * 16 + ((floor(var(--val-a) / 32) - floor(var(--val-a) / 64) * 2) + (floor(var(--val-b) / 32) - floor(var(--val-b) / 64) * 2) - (floor(var(--val-a) / 32) - floor(var(--val-a) / 64) * 2) * (floor(var(--val-b) / 32) - floor(var(--val-b) / 64) * 2)) * 32 + ((floor(var(--val-a) / 64) - floor(var(--val-a) / 128) * 2) + (floor(var(--val-b) / 64) - floor(var(--val-b) / 128) * 2) - (floor(var(--val-a) / 64) - floor(var(--val-a) / 128) * 2) * (floor(var(--val-b) / 64) - floor(var(--val-b) / 128) * 2)) * 64 + ((floor(var(--val-a) / 128) - floor(var(--val-a) / 256) * 2) + (floor(var(--val-b) / 128) - floor(var(--val-b) / 256) * 2) - (floor(var(--val-a) / 128) - floor(var(--val-a) / 256) * 2) * (floor(var(--val-b) / 128) - floor(var(--val-b) / 256) * 2)) * 128 + ((floor(var(--val-a) / 256) - floor(var(--val-a) / 512) * 2) + (floor(var(--val-b) / 256) - floor(var(--val-b) / 512) * 2) - (floor(var(--val-a) / 256) - floor(var(--val-a) / 512) * 2) * (floor(var(--val-b) / 256) - floor(var(--val-b) / 512) * 2)) * 256 + ((floor(var(--val-a) / 512) - floor(var(--val-a) / 1024) * 2) + (floor(var(--val-b) / 512) - floor(var(--val-b) / 1024) * 2) - (floor(var(--val-a) / 512) - floor(var(--val-a) / 1024) * 2) * (floor(var(--val-b) / 512) - floor(var(--val-b) / 1024) * 2)) * 512 + ((floor(var(--val-a) / 1024) - floor(var(--val-a) / 2048) * 2) + (floor(var(--val-b) / 1024) - floor(var(--val-b) / 2048) * 2) - (floor(var(--val-a) / 1024) - floor(var(--val-a) / 2048) * 2) * (floor(var(--val-b) / 1024) - floor(var(--val-b) / 2048) * 2)) * 1024 + ((floor(var(--val-a) / 2048) - floor(var(--val-a) / 4096) * 2) + (floor(var(--val-b) / 2048) - floor(var(--val-b) / 4096) * 2) - (floor(var(--val-a) / 2048) - floor(var(--val-a) / 4096) * 2) * (floor(var(--val-b) / 2048) - floor(var(--val-b) / 4096) * 2)) * 2048 + ((floor(var(--val-a) / 4096) - floor(var(--val-a) / 8192) * 2) + (floor(var(--val-b) / 4096) - floor(var(--val-b) / 8192) * 2) - (floor(var(--val-a) / 4096) - floor(var(--val-a) / 8192) * 2) * (floor(var(--val-b) / 4096) - floor(var(--val-b) / 8192) * 2)) * 4096 + ((floor(var(--val-a) / 8192) - floor(var(--val-a) / 16384) * 2) + (floor(var(--val-b) / 8192) - floor(var(--val-b) / 16384) * 2) - (floor(var(--val-a) / 8192) - floor(var(--val-a) / 16384) * 2) * (floor(var(--val-b) / 8192) - floor(var(--val-b) / 16384) * 2)) * 8192 + ((floor(var(--val-a) / 16384) - floor(var(--val-a) / 32768) * 2) + (floor(var(--val-b) / 16384) - floor(var(--val-b) / 32768) * 2) - (floor(var(--val-a) / 16384) - floor(var(--val-a) / 32768) * 2) * (floor(var(--val-b) / 16384) - floor(var(--val-b) / 32768) * 2)) * 16384 + ((floor(var(--val-a) / 32768) - floor(var(--val-a) / 65536) * 2) + (floor(var(--val-b) / 32768) - floor(var(--val-b) / 65536) * 2) - (floor(var(--val-a) / 32768) - floor(var(--val-a) / 65536) * 2) * (floor(var(--val-b) / 32768) - floor(var(--val-b) / 65536) * 2)) * 32768);
-    style(--op: xor): calc(0 + ((floor(var(--val-a) / 1) - floor(var(--val-a) / 2) * 2) + (floor(var(--val-b) / 1) - floor(var(--val-b) / 2) * 2) - 2 * (floor(var(--val-a) / 1) - floor(var(--val-a) / 2) * 2) * (floor(var(--val-b) / 1) - floor(var(--val-b) / 2) * 2)) * 1 + ((floor(var(--val-a) / 2) - floor(var(--val-a) / 4) * 2) + (floor(var(--val-b) / 2) - floor(var(--val-b) / 4) * 2) - 2 * (floor(var(--val-a) / 2) - floor(var(--val-a) / 4) * 2) * (floor(var(--val-b) / 2) - floor(var(--val-b) / 4) * 2)) * 2 + ((floor(var(--val-a) / 4) - floor(var(--val-a) / 8) * 2) + (floor(var(--val-b) / 4) - floor(var(--val-b) / 8) * 2) - 2 * (floor(var(--val-a) / 4) - floor(var(--val-a) / 8) * 2) * (floor(var(--val-b) / 4) - floor(var(--val-b) / 8) * 2)) * 4 + ((floor(var(--val-a) / 8) - floor(var(--val-a) / 16) * 2) + (floor(var(--val-b) / 8) - floor(var(--val-b) / 16) * 2) - 2 * (floor(var(--val-a) / 8) - floor(var(--val-a) / 16) * 2) * (floor(var(--val-b) / 8) - floor(var(--val-b) / 16) * 2)) * 8 + ((floor(var(--val-a) / 16) - floor(var(--val-a) / 32) * 2) + (floor(var(--val-b) / 16) - floor(var(--val-b) / 32) * 2) - 2 * (floor(var(--val-a) / 16) - floor(var(--val-a) / 32) * 2) * (floor(var(--val-b) / 16) - floor(var(--val-b) / 32) * 2)) * 16 + ((floor(var(--val-a) / 32) - floor(var(--val-a) / 64) * 2) + (floor(var(--val-b) / 32) - floor(var(--val-b) / 64) * 2) - 2 * (floor(var(--val-a) / 32) - floor(var(--val-a) / 64) * 2) * (floor(var(--val-b) / 32) - floor(var(--val-b) / 64) * 2)) * 32 + ((floor(var(--val-a) / 64) - floor(var(--val-a) / 128) * 2) + (floor(var(--val-b) / 64) - floor(var(--val-b) / 128) * 2) - 2 * (floor(var(--val-a) / 64) - floor(var(--val-a) / 128) * 2) * (floor(var(--val-b) / 64) - floor(var(--val-b) / 128) * 2)) * 64 + ((floor(var(--val-a) / 128) - floor(var(--val-a) / 256) * 2) + (floor(var(--val-b) / 128) - floor(var(--val-b) / 256) * 2) - 2 * (floor(var(--val-a) / 128) - floor(var(--val-a) / 256) * 2) * (floor(var(--val-b) / 128) - floor(var(--val-b) / 256) * 2)) * 128 + ((floor(var(--val-a) / 256) - floor(var(--val-a) / 512) * 2) + (floor(var(--val-b) / 256) - floor(var(--val-b) / 512) * 2) - 2 * (floor(var(--val-a) / 256) - floor(var(--val-a) / 512) * 2) * (floor(var(--val-b) / 256) - floor(var(--val-b) / 512) * 2)) * 256 + ((floor(var(--val-a) / 512) - floor(var(--val-a) / 1024) * 2) + (floor(var(--val-b) / 512) - floor(var(--val-b) / 1024) * 2) - 2 * (floor(var(--val-a) / 512) - floor(var(--val-a) / 1024) * 2) * (floor(var(--val-b) / 512) - floor(var(--val-b) / 1024) * 2)) * 512 + ((floor(var(--val-a) / 1024) - floor(var(--val-a) / 2048) * 2) + (floor(var(--val-b) / 1024) - floor(var(--val-b) / 2048) * 2) - 2 * (floor(var(--val-a) / 1024) - floor(var(--val-a) / 2048) * 2) * (floor(var(--val-b) / 1024) - floor(var(--val-b) / 2048) * 2)) * 1024 + ((floor(var(--val-a) / 2048) - floor(var(--val-a) / 4096) * 2) + (floor(var(--val-b) / 2048) - floor(var(--val-b) / 4096) * 2) - 2 * (floor(var(--val-a) / 2048) - floor(var(--val-a) / 4096) * 2) * (floor(var(--val-b) / 2048) - floor(var(--val-b) / 4096) * 2)) * 2048 + ((floor(var(--val-a) / 4096) - floor(var(--val-a) / 8192) * 2) + (floor(var(--val-b) / 4096) - floor(var(--val-b) / 8192) * 2) - 2 * (floor(var(--val-a) / 4096) - floor(var(--val-a) / 8192) * 2) * (floor(var(--val-b) / 4096) - floor(var(--val-b) / 8192) * 2)) * 4096 + ((floor(var(--val-a) / 8192) - floor(var(--val-a) / 16384) * 2) + (floor(var(--val-b) / 8192) - floor(var(--val-b) / 16384) * 2) - 2 * (floor(var(--val-a) / 8192) - floor(var(--val-a) / 16384) * 2) * (floor(var(--val-b) / 8192) - floor(var(--val-b) / 16384) * 2)) * 8192 + ((floor(var(--val-a) / 16384) - floor(var(--val-a) / 32768) * 2) + (floor(var(--val-b) / 16384) - floor(var(--val-b) / 32768) * 2) - 2 * (floor(var(--val-a) / 16384) - floor(var(--val-a) / 32768) * 2) * (floor(var(--val-b) / 16384) - floor(var(--val-b) / 32768) * 2)) * 16384 + ((floor(var(--val-a) / 32768) - floor(var(--val-a) / 65536) * 2) + (floor(var(--val-b) / 32768) - floor(var(--val-b) / 65536) * 2) - 2 * (floor(var(--val-a) / 32768) - floor(var(--val-a) / 65536) * 2) * (floor(var(--val-b) / 32768) - floor(var(--val-b) / 65536) * 2)) * 32768);
-    style(--op: not): calc(0 - var(--val-a) - 1);
-    style(--op: lshift): calc(var(--val-a) * 2);
-    style(--op: rshift): calc(floor(var(--val-a) / 2));
-    else: var(--val-b)
-  );
+  --result: if(style(--op: and): calc(0 + ((floor(var(--val-a) / 1) - floor(var(--val-a) / 2) * 2) * (floor(var(--val-b) / 1) - floor(var(--val-b) / 2) * 2)) * 1 + ((floor(var(--val-a) / 2) - floor(var(--val-a) / 4) * 2) * (floor(var(--val-b) / 2) - floor(var(--val-b) / 4) * 2)) * 2 + ((floor(var(--val-a) / 4) - floor(var(--val-a) / 8) * 2) * (floor(var(--val-b) / 4) - floor(var(--val-b) / 8) * 2)) * 4 + ((floor(var(--val-a) / 8) - floor(var(--val-a) / 16) * 2) * (floor(var(--val-b) / 8) - floor(var(--val-b) / 16) * 2)) * 8 + ((floor(var(--val-a) / 16) - floor(var(--val-a) / 32) * 2) * (floor(var(--val-b) / 16) - floor(var(--val-b) / 32) * 2)) * 16 + ((floor(var(--val-a) / 32) - floor(var(--val-a) / 64) * 2) * (floor(var(--val-b) / 32) - floor(var(--val-b) / 64) * 2)) * 32 + ((floor(var(--val-a) / 64) - floor(var(--val-a) / 128) * 2) * (floor(var(--val-b) / 64) - floor(var(--val-b) / 128) * 2)) * 64 + ((floor(var(--val-a) / 128) - floor(var(--val-a) / 256) * 2) * (floor(var(--val-b) / 128) - floor(var(--val-b) / 256) * 2)) * 128 + ((floor(var(--val-a) / 256) - floor(var(--val-a) / 512) * 2) * (floor(var(--val-b) / 256) - floor(var(--val-b) / 512) * 2)) * 256 + ((floor(var(--val-a) / 512) - floor(var(--val-a) / 1024) * 2) * (floor(var(--val-b) / 512) - floor(var(--val-b) / 1024) * 2)) * 512 + ((floor(var(--val-a) / 1024) - floor(var(--val-a) / 2048) * 2) * (floor(var(--val-b) / 1024) - floor(var(--val-b) / 2048) * 2)) * 1024 + ((floor(var(--val-a) / 2048) - floor(var(--val-a) / 4096) * 2) * (floor(var(--val-b) / 2048) - floor(var(--val-b) / 4096) * 2)) * 2048 + ((floor(var(--val-a) / 4096) - floor(var(--val-a) / 8192) * 2) * (floor(var(--val-b) / 4096) - floor(var(--val-b) / 8192) * 2)) * 4096 + ((floor(var(--val-a) / 8192) - floor(var(--val-a) / 16384) * 2) * (floor(var(--val-b) / 8192) - floor(var(--val-b) / 16384) * 2)) * 8192 + ((floor(var(--val-a) / 16384) - floor(var(--val-a) / 32768) * 2) * (floor(var(--val-b) / 16384) - floor(var(--val-b) / 32768) * 2)) * 16384 + ((floor(var(--val-a) / 32768) - floor(var(--val-a) / 65536) * 2) * (floor(var(--val-b) / 32768) - floor(var(--val-b) / 65536) * 2)) * 32768); style(--op: or): calc(0 + ((floor(var(--val-a) / 1) - floor(var(--val-a) / 2) * 2) + (floor(var(--val-b) / 1) - floor(var(--val-b) / 2) * 2) - (floor(var(--val-a) / 1) - floor(var(--val-a) / 2) * 2) * (floor(var(--val-b) / 1) - floor(var(--val-b) / 2) * 2)) * 1 + ((floor(var(--val-a) / 2) - floor(var(--val-a) / 4) * 2) + (floor(var(--val-b) / 2) - floor(var(--val-b) / 4) * 2) - (floor(var(--val-a) / 2) - floor(var(--val-a) / 4) * 2) * (floor(var(--val-b) / 2) - floor(var(--val-b) / 4) * 2)) * 2 + ((floor(var(--val-a) / 4) - floor(var(--val-a) / 8) * 2) + (floor(var(--val-b) / 4) - floor(var(--val-b) / 8) * 2) - (floor(var(--val-a) / 4) - floor(var(--val-a) / 8) * 2) * (floor(var(--val-b) / 4) - floor(var(--val-b) / 8) * 2)) * 4 + ((floor(var(--val-a) / 8) - floor(var(--val-a) / 16) * 2) + (floor(var(--val-b) / 8) - floor(var(--val-b) / 16) * 2) - (floor(var(--val-a) / 8) - floor(var(--val-a) / 16) * 2) * (floor(var(--val-b) / 8) - floor(var(--val-b) / 16) * 2)) * 8 + ((floor(var(--val-a) / 16) - floor(var(--val-a) / 32) * 2) + (floor(var(--val-b) / 16) - floor(var(--val-b) / 32) * 2) - (floor(var(--val-a) / 16) - floor(var(--val-a) / 32) * 2) * (floor(var(--val-b) / 16) - floor(var(--val-b) / 32) * 2)) * 16 + ((floor(var(--val-a) / 32) - floor(var(--val-a) / 64) * 2) + (floor(var(--val-b) / 32) - floor(var(--val-b) / 64) * 2) - (floor(var(--val-a) / 32) - floor(var(--val-a) / 64) * 2) * (floor(var(--val-b) / 32) - floor(var(--val-b) / 64) * 2)) * 32 + ((floor(var(--val-a) / 64) - floor(var(--val-a) / 128) * 2) + (floor(var(--val-b) / 64) - floor(var(--val-b) / 128) * 2) - (floor(var(--val-a) / 64) - floor(var(--val-a) / 128) * 2) * (floor(var(--val-b) / 64) - floor(var(--val-b) / 128) * 2)) * 64 + ((floor(var(--val-a) / 128) - floor(var(--val-a) / 256) * 2) + (floor(var(--val-b) / 128) - floor(var(--val-b) / 256) * 2) - (floor(var(--val-a) / 128) - floor(var(--val-a) / 256) * 2) * (floor(var(--val-b) / 128) - floor(var(--val-b) / 256) * 2)) * 128 + ((floor(var(--val-a) / 256) - floor(var(--val-a) / 512) * 2) + (floor(var(--val-b) / 256) - floor(var(--val-b) / 512) * 2) - (floor(var(--val-a) / 256) - floor(var(--val-a) / 512) * 2) * (floor(var(--val-b) / 256) - floor(var(--val-b) / 512) * 2)) * 256 + ((floor(var(--val-a) / 512) - floor(var(--val-a) / 1024) * 2) + (floor(var(--val-b) / 512) - floor(var(--val-b) / 1024) * 2) - (floor(var(--val-a) / 512) - floor(var(--val-a) / 1024) * 2) * (floor(var(--val-b) / 512) - floor(var(--val-b) / 1024) * 2)) * 512 + ((floor(var(--val-a) / 1024) - floor(var(--val-a) / 2048) * 2) + (floor(var(--val-b) / 1024) - floor(var(--val-b) / 2048) * 2) - (floor(var(--val-a) / 1024) - floor(var(--val-a) / 2048) * 2) * (floor(var(--val-b) / 1024) - floor(var(--val-b) / 2048) * 2)) * 1024 + ((floor(var(--val-a) / 2048) - floor(var(--val-a) / 4096) * 2) + (floor(var(--val-b) / 2048) - floor(var(--val-b) / 4096) * 2) - (floor(var(--val-a) / 2048) - floor(var(--val-a) / 4096) * 2) * (floor(var(--val-b) / 2048) - floor(var(--val-b) / 4096) * 2)) * 2048 + ((floor(var(--val-a) / 4096) - floor(var(--val-a) / 8192) * 2) + (floor(var(--val-b) / 4096) - floor(var(--val-b) / 8192) * 2) - (floor(var(--val-a) / 4096) - floor(var(--val-a) / 8192) * 2) * (floor(var(--val-b) / 4096) - floor(var(--val-b) / 8192) * 2)) * 4096 + ((floor(var(--val-a) / 8192) - floor(var(--val-a) / 16384) * 2) + (floor(var(--val-b) / 8192) - floor(var(--val-b) / 16384) * 2) - (floor(var(--val-a) / 8192) - floor(var(--val-a) / 16384) * 2) * (floor(var(--val-b) / 8192) - floor(var(--val-b) / 16384) * 2)) * 8192 + ((floor(var(--val-a) / 16384) - floor(var(--val-a) / 32768) * 2) + (floor(var(--val-b) / 16384) - floor(var(--val-b) / 32768) * 2) - (floor(var(--val-a) / 16384) - floor(var(--val-a) / 32768) * 2) * (floor(var(--val-b) / 16384) - floor(var(--val-b) / 32768) * 2)) * 16384 + ((floor(var(--val-a) / 32768) - floor(var(--val-a) / 65536) * 2) + (floor(var(--val-b) / 32768) - floor(var(--val-b) / 65536) * 2) - (floor(var(--val-a) / 32768) - floor(var(--val-a) / 65536) * 2) * (floor(var(--val-b) / 32768) - floor(var(--val-b) / 65536) * 2)) * 32768); style(--op: xor): calc(0 + ((floor(var(--val-a) / 1) - floor(var(--val-a) / 2) * 2) + (floor(var(--val-b) / 1) - floor(var(--val-b) / 2) * 2) - 2 * (floor(var(--val-a) / 1) - floor(var(--val-a) / 2) * 2) * (floor(var(--val-b) / 1) - floor(var(--val-b) / 2) * 2)) * 1 + ((floor(var(--val-a) / 2) - floor(var(--val-a) / 4) * 2) + (floor(var(--val-b) / 2) - floor(var(--val-b) / 4) * 2) - 2 * (floor(var(--val-a) / 2) - floor(var(--val-a) / 4) * 2) * (floor(var(--val-b) / 2) - floor(var(--val-b) / 4) * 2)) * 2 + ((floor(var(--val-a) / 4) - floor(var(--val-a) / 8) * 2) + (floor(var(--val-b) / 4) - floor(var(--val-b) / 8) * 2) - 2 * (floor(var(--val-a) / 4) - floor(var(--val-a) / 8) * 2) * (floor(var(--val-b) / 4) - floor(var(--val-b) / 8) * 2)) * 4 + ((floor(var(--val-a) / 8) - floor(var(--val-a) / 16) * 2) + (floor(var(--val-b) / 8) - floor(var(--val-b) / 16) * 2) - 2 * (floor(var(--val-a) / 8) - floor(var(--val-a) / 16) * 2) * (floor(var(--val-b) / 8) - floor(var(--val-b) / 16) * 2)) * 8 + ((floor(var(--val-a) / 16) - floor(var(--val-a) / 32) * 2) + (floor(var(--val-b) / 16) - floor(var(--val-b) / 32) * 2) - 2 * (floor(var(--val-a) / 16) - floor(var(--val-a) / 32) * 2) * (floor(var(--val-b) / 16) - floor(var(--val-b) / 32) * 2)) * 16 + ((floor(var(--val-a) / 32) - floor(var(--val-a) / 64) * 2) + (floor(var(--val-b) / 32) - floor(var(--val-b) / 64) * 2) - 2 * (floor(var(--val-a) / 32) - floor(var(--val-a) / 64) * 2) * (floor(var(--val-b) / 32) - floor(var(--val-b) / 64) * 2)) * 32 + ((floor(var(--val-a) / 64) - floor(var(--val-a) / 128) * 2) + (floor(var(--val-b) / 64) - floor(var(--val-b) / 128) * 2) - 2 * (floor(var(--val-a) / 64) - floor(var(--val-a) / 128) * 2) * (floor(var(--val-b) / 64) - floor(var(--val-b) / 128) * 2)) * 64 + ((floor(var(--val-a) / 128) - floor(var(--val-a) / 256) * 2) + (floor(var(--val-b) / 128) - floor(var(--val-b) / 256) * 2) - 2 * (floor(var(--val-a) / 128) - floor(var(--val-a) / 256) * 2) * (floor(var(--val-b) / 128) - floor(var(--val-b) / 256) * 2)) * 128 + ((floor(var(--val-a) / 256) - floor(var(--val-a) / 512) * 2) + (floor(var(--val-b) / 256) - floor(var(--val-b) / 512) * 2) - 2 * (floor(var(--val-a) / 256) - floor(var(--val-a) / 512) * 2) * (floor(var(--val-b) / 256) - floor(var(--val-b) / 512) * 2)) * 256 + ((floor(var(--val-a) / 512) - floor(var(--val-a) / 1024) * 2) + (floor(var(--val-b) / 512) - floor(var(--val-b) / 1024) * 2) - 2 * (floor(var(--val-a) / 512) - floor(var(--val-a) / 1024) * 2) * (floor(var(--val-b) / 512) - floor(var(--val-b) / 1024) * 2)) * 512 + ((floor(var(--val-a) / 1024) - floor(var(--val-a) / 2048) * 2) + (floor(var(--val-b) / 1024) - floor(var(--val-b) / 2048) * 2) - 2 * (floor(var(--val-a) / 1024) - floor(var(--val-a) / 2048) * 2) * (floor(var(--val-b) / 1024) - floor(var(--val-b) / 2048) * 2)) * 1024 + ((floor(var(--val-a) / 2048) - floor(var(--val-a) / 4096) * 2) + (floor(var(--val-b) / 2048) - floor(var(--val-b) / 4096) * 2) - 2 * (floor(var(--val-a) / 2048) - floor(var(--val-a) / 4096) * 2) * (floor(var(--val-b) / 2048) - floor(var(--val-b) / 4096) * 2)) * 2048 + ((floor(var(--val-a) / 4096) - floor(var(--val-a) / 8192) * 2) + (floor(var(--val-b) / 4096) - floor(var(--val-b) / 8192) * 2) - 2 * (floor(var(--val-a) / 4096) - floor(var(--val-a) / 8192) * 2) * (floor(var(--val-b) / 4096) - floor(var(--val-b) / 8192) * 2)) * 4096 + ((floor(var(--val-a) / 8192) - floor(var(--val-a) / 16384) * 2) + (floor(var(--val-b) / 8192) - floor(var(--val-b) / 16384) * 2) - 2 * (floor(var(--val-a) / 8192) - floor(var(--val-a) / 16384) * 2) * (floor(var(--val-b) / 8192) - floor(var(--val-b) / 16384) * 2)) * 8192 + ((floor(var(--val-a) / 16384) - floor(var(--val-a) / 32768) * 2) + (floor(var(--val-b) / 16384) - floor(var(--val-b) / 32768) * 2) - 2 * (floor(var(--val-a) / 16384) - floor(var(--val-a) / 32768) * 2) * (floor(var(--val-b) / 16384) - floor(var(--val-b) / 32768) * 2)) * 16384 + ((floor(var(--val-a) / 32768) - floor(var(--val-a) / 65536) * 2) + (floor(var(--val-b) / 32768) - floor(var(--val-b) / 65536) * 2) - 2 * (floor(var(--val-a) / 32768) - floor(var(--val-a) / 65536) * 2) * (floor(var(--val-b) / 32768) - floor(var(--val-b) / 65536) * 2)) * 32768); style(--op: not): calc(0 - var(--val-a) - 1); style(--op: lshift): calc(var(--val-a) * 2); style(--op: rshift): calc(floor(var(--val-a) / 2)); else: var(--val-b));
 }
 
 /* Display container */
@@ -1440,19 +1404,7 @@ body {
 .graph-task {
   --graph-x: attr(data-x type(<number>), 0);
   --graph-func: attr(data-func type(<custom-ident>), sin);
-  --graph-result: if(
-    style(--graph-func: sin): sin(var(--graph-x));
-    style(--graph-func: cos): cos(var(--graph-x));
-    style(--graph-func: tan): tan(var(--graph-x));
-    style(--graph-func: log): log10(var(--graph-x));
-    style(--graph-func: ln): ln(var(--graph-x));
-    style(--graph-func: sqrt): sqrt(var(--graph-x));
-    style(--graph-func: abs): abs(var(--graph-x));
-    style(--graph-func: x2): calc(var(--graph-x) * var(--graph-x));
-    style(--graph-func: x3): calc(var(--graph-x) * var(--graph-x) * var(--graph-x));
-    style(--graph-func: exp): exp(var(--graph-x));
-    else: var(--graph-x)
-  );
+  --graph-result: if(style(--graph-func: sin): sin(var(--graph-x)); style(--graph-func: cos): cos(var(--graph-x)); style(--graph-func: tan): tan(var(--graph-x)); style(--graph-func: log): log10(var(--graph-x)); style(--graph-func: ln): ln(var(--graph-x)); style(--graph-func: sqrt): sqrt(var(--graph-x)); style(--graph-func: abs): abs(var(--graph-x)); style(--graph-func: x2): calc(var(--graph-x) * var(--graph-x)); style(--graph-func: x3): calc(var(--graph-x) * var(--graph-x) * var(--graph-x)); style(--graph-func: exp): exp(var(--graph-x)); else: var(--graph-x));
 }
 
 /* Graph container */
@@ -1698,66 +1650,29 @@ body {
   inherits: false;
   initial-value: 0;
 }
-/* Length conversion */
 .conv-task-length {
   --conv-val: attr(data-value type(<number>), 0);
   --conv-from: attr(data-from type(<custom-ident>), m);
   --conv-to: attr(data-to type(<custom-ident>), ft);
-  --conv-result: if(
-    style(--conv-to: mm): calc(var(--conv-val) * 1000);
-    style(--conv-to: cm): calc(var(--conv-val) * 100);
-    style(--conv-to: m): var(--conv-val);
-    style(--conv-to: km): calc(var(--conv-val) / 1000);
-    style(--conv-to: in): calc(var(--conv-val) * 39.3701);
-    style(--conv-to: ft): calc(var(--conv-val) * 3.28084);
-    style(--conv-to: yd): calc(var(--conv-val) * 1.09361);
-    style(--conv-to: mi): calc(var(--conv-val) / 1609.34);
-    else: var(--conv-val)
-  );
+  --conv-result: if(style(--conv-to: mm): calc(var(--conv-val) * 1000); style(--conv-to: cm): calc(var(--conv-val) * 100); style(--conv-to: m): var(--conv-val); style(--conv-to: km): calc(var(--conv-val) / 1000); style(--conv-to: in): calc(var(--conv-val) * 39.3701); style(--conv-to: ft): calc(var(--conv-val) * 3.28084); style(--conv-to: yd): calc(var(--conv-val) * 1.09361); style(--conv-to: mi): calc(var(--conv-val) / 1609.34); else: var(--conv-val));
 }
 
-/* Weight conversion */
 .conv-task-weight {
   --conv-val: attr(data-value type(<number>), 0);
   --conv-to: attr(data-to type(<custom-ident>), lb);
-  --conv-result: if(
-    style(--conv-to: mg): calc(var(--conv-val) * 1000000);
-    style(--conv-to: g): calc(var(--conv-val) * 1000);
-    style(--conv-to: kg): var(--conv-val);
-    style(--conv-to: t): calc(var(--conv-val) / 1000);
-    style(--conv-to: oz): calc(var(--conv-val) * 35.274);
-    style(--conv-to: lb): calc(var(--conv-val) * 2.20462);
-    else: var(--conv-val)
-  );
+  --conv-result: if(style(--conv-to: mg): calc(var(--conv-val) * 1000000); style(--conv-to: g): calc(var(--conv-val) * 1000); style(--conv-to: kg): var(--conv-val); style(--conv-to: t): calc(var(--conv-val) / 1000); style(--conv-to: oz): calc(var(--conv-val) * 35.274); style(--conv-to: lb): calc(var(--conv-val) * 2.20462); else: var(--conv-val));
 }
 
-/* Temperature conversion */
 .conv-task-temp {
   --conv-val: attr(data-value type(<number>), 0);
   --conv-to: attr(data-to type(<custom-ident>), f);
-  --conv-result: if(
-    style(--conv-to: c): var(--conv-val);
-    style(--conv-to: f): calc(var(--conv-val) * 9 / 5 + 32);
-    style(--conv-to: k): calc(var(--conv-val) + 273.15);
-    else: var(--conv-val)
-  );
+  --conv-result: if(style(--conv-to: c): var(--conv-val); style(--conv-to: f): calc(var(--conv-val) * 9 / 5 + 32); style(--conv-to: k): calc(var(--conv-val) + 273.15); else: var(--conv-val));
 }
 
-/* Time conversion */
 .conv-task-time {
   --conv-val: attr(data-value type(<number>), 0);
   --conv-to: attr(data-to type(<custom-ident>), min);
-  --conv-result: if(
-    style(--conv-to: ms): calc(var(--conv-val) * 1000);
-    style(--conv-to: s): var(--conv-val);
-    style(--conv-to: min): calc(var(--conv-val) / 60);
-    style(--conv-to: h): calc(var(--conv-val) / 3600);
-    style(--conv-to: d): calc(var(--conv-val) / 86400);
-    style(--conv-to: w): calc(var(--conv-val) / 604800);
-    style(--conv-to: mth): calc(var(--conv-val) / 2629746);
-    style(--conv-to: y): calc(var(--conv-val) / 31556952);
-    else: var(--conv-val)
-  );
+  --conv-result: if(style(--conv-to: ms): calc(var(--conv-val) * 1000); style(--conv-to: s): var(--conv-val); style(--conv-to: min): calc(var(--conv-val) / 60); style(--conv-to: h): calc(var(--conv-val) / 3600); style(--conv-to: d): calc(var(--conv-val) / 86400); style(--conv-to: w): calc(var(--conv-val) / 604800); style(--conv-to: mth): calc(var(--conv-val) / 2629746); style(--conv-to: y): calc(var(--conv-val) / 31556952); else: var(--conv-val));
 }
 
 /* Converter layout */
