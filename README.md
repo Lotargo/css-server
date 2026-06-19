@@ -18,6 +18,10 @@ The project started with a calculator because arithmetic, converters, graphing, 
 --result: calc(var(--a) + var(--b));
 ```
 
+CSS-Server is not a replacement for a real backend, and it should not be sold as one. Its value is in the narrow places where normal backend deployment is unavailable, excessive, or intentionally avoided. A static host such as GitHub Pages cannot run private server code, keep secrets, open sockets, or persist durable process state. But the browser still has a runtime, a DOM, CSS evaluation, user-triggered network requests, and enough visible state to model surprising pieces of application behavior.
+
+The point is to ask what remains possible when the backend is absent, constrained, or deliberately pushed to the edge.
+
 The public GitHub Pages direction is deliberately static:
 
 - GitHub Pages serves files only.
@@ -37,11 +41,12 @@ The public site source lives entirely in [`docs/`](docs/):
 docs/index.html
 docs/styles.css
 docs/main.js
+docs/src/index.html
 ```
 
 It can be served directly by GitHub Pages from the `docs/` folder. The first runtime demo includes:
 
-- a live CSS computation proof;
+- an embedded calculator proof module plus a standalone calculator page;
 - a Network Lab that performs user-triggered outbound `fetch`;
 - CSS status/latency/payload/content classification from DOM attributes;
 - explicit safety and deployment boundaries on the landing page itself.
@@ -49,16 +54,18 @@ It can be served directly by GitHub Pages from the `docs/` folder. The first run
 ### Local calculator proof module
 
 ```bash
-git clone https://github.com/your-username/css-server.git
+git clone https://github.com/Lotargo/css-server.git
 cd css-server
 ```
 
 **Windows:**
+
 ```bat
 run.bat
 ```
 
 **Linux / macOS:**
+
 ```bash
 chmod +x run.sh && ./run.sh
 ```
@@ -79,21 +86,21 @@ curl -X POST http://localhost:8080/add -d '{"a":5,"b":10}'
 
 ## Calculator modes
 
-| Mode | CSS-powered math |
-|---|---|
-| **Standard** | Add, subtract, multiply, divide, percent, square root, square |
-| **Scientific** | sin, cos, tan, log, ln, sqrt, exp, abs — DEG/RAD switchable |
-| **Programmer** | AND, OR, XOR, NOT, bit shifts — decomposed per-bit in CSS |
-| **Graphing** | Plots function equations point by point via CSS, renders on `<canvas>` |
-| **Date** | Difference between two dates in days, months, years |
-| **Converters** | Currency, length, volume, weight, temperature, time |
-| **Settings** | Theme (system/dark/light), angle mode, precision, sidebar |
+| Mode           | CSS-powered math                                                       |
+| -------------- | ---------------------------------------------------------------------- |
+| **Standard**   | Add, subtract, multiply, divide, percent, square root, square          |
+| **Scientific** | sin, cos, tan, log, ln, sqrt, exp, abs — DEG/RAD switchable            |
+| **Programmer** | AND, OR, XOR, NOT, bit shifts — decomposed per-bit in CSS              |
+| **Graphing**   | Plots function equations point by point via CSS, renders on `<canvas>` |
+| **Date**       | Difference between two dates in days, months, years                    |
+| **Converters** | Currency, length, volume, weight, temperature, time                    |
+| **Settings**   | Theme (system/dark/light), angle mode, precision, sidebar              |
 
 ## Who is this for?
 
 **For developers** — a demonstration of how far modern CSS has come: typed `attr()`, `if()` conditionals, `calc()` with `@property`, Style Queries, `:has()` routing, and native math functions all working together as a computation layer.
 
-**For runtime experimenters** — a static-site boundary test: backend-like computation and outbound API workbench behavior without server-side execution on GitHub Pages.
+**For runtime experimenters** — a static-site boundary test: backend-adjacent runtime behavior and outbound API workbench behavior without server-side execution on GitHub Pages.
 
 **For everyone else** — a fully featured local calculator proof module with themes, calculation history, memory, and a built-in HTTP server.
 
@@ -106,7 +113,7 @@ npm run build:css        # Compile SCSS manually
 node --test tests/e2e.test.js    # E2E tests (6 tests, zero external deps)
 ```
 
-## Backend architecture
+## Local backend architecture
 
 - **Rust** (Tauri) runs an HTTP server on `:8080`, injects requests as DOM nodes
 - **CSS** reads typed values via `attr()`, computes via `calc()` + `if()` branching, validates, then triggers an animation on success
@@ -120,9 +127,10 @@ Communication is Tauri events only — not a single `#[tauri::command]`.
 
 ```
 ├── docs/                   # GitHub Pages static runtime site
-│   ├── index.html          # Landing + live CSS proof + Network Lab
+│   ├── index.html          # Landing + calculator proof + Network Lab
 │   ├── main.js             # Browser transport/orchestration only
 │   ├── styles.css          # Self-contained site CSS and CSS compute demo
+│   └── src/                # Standalone public calculator page
 ├── src/                    # Local calculator proof module
 │   ├── index.html          # SPA with all calculator modes
 │   ├── main.js             # Bridge, settings, pipeline
