@@ -205,7 +205,7 @@ GitHub Actions deployment remains deferred until the static runtime is manually 
 **Goal:** Keep the "CSS computes" promise alive in the network demo.
 
 - [x] Let CSS classify response status ranges.
-- [ ] Let CSS validate simple response fields where feasible.
+- [x] Let CSS validate simple response fields where feasible.
 - [x] Let CSS compute derived metrics such as latency bands, payload size bands, and result badges.
 - [ ] Keep JSON parsing in JavaScript only as I/O normalization, not business decision logic.
 - [x] Document every JS boundary that exists because browser APIs require it.

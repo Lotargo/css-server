@@ -360,7 +360,7 @@ h1 {
 
 .network-metrics {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 10px;
 }
 
@@ -449,6 +449,22 @@ h1 {
 .metric-card[data-kind="body"][data-body="empty"] {
   border-color: #f87171;
   color: #fecaca;
+}
+
+.metric-card[data-kind="content"][data-content="json"],
+.metric-card[data-kind="content"][data-content="text"] {
+  border-color: #34d399;
+  color: #a7f3d0;
+}
+
+.metric-card[data-kind="content"][data-content="html"] {
+  border-color: #60a5fa;
+  color: #bfdbfe;
+}
+
+.metric-card[data-kind="content"][data-content="unknown"] {
+  border-color: #fbbf24;
+  color: #fde68a;
 }
 
 .network-response {

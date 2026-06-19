@@ -70,6 +70,14 @@ function parseHeaders(rawHeaders) {
   return parsed;
 }
 
+function normalizeContentType(contentType) {
+  const value = contentType.toLowerCase();
+  if (value.includes("json")) return "json";
+  if (value.includes("html")) return "html";
+  if (value.includes("text")) return "text";
+  return "unknown";
+}
+
 async function runNetworkRequest(event) {
   event.preventDefault();
 
@@ -89,6 +97,7 @@ async function runNetworkRequest(event) {
   setMetricCard("network-latency-card", "latency pending", { ms: -1 });
   setMetricCard("network-payload-card", "payload pending", { bytes: -1 });
   setMetricCard("network-body-card", "body pending", { body: "unknown" });
+  setMetricCard("network-content-card", "content pending", { content: "unknown" });
   response.textContent = "Request in flight...";
 
   const startedAt = performance.now();
@@ -106,6 +115,8 @@ async function runNetworkRequest(event) {
 
     const res = await fetch(endpoint.value, request);
     const elapsed = Math.round(performance.now() - startedAt);
+    const contentType = res.headers.get("content-type") || "";
+    const contentKind = normalizeContentType(contentType);
     const text = await res.text();
 
     setNetworkCard("network-request-card", "done", "request sent");
@@ -117,6 +128,7 @@ async function runNetworkRequest(event) {
     setMetricCard("network-body-card", text.length > 0 ? "body non-empty" : "body empty", {
       body: text.length > 0 ? "nonempty" : "empty"
     });
+    setMetricCard("network-content-card", contentKind, { content: contentKind });
     response.textContent = previewText(text);
   } catch (error) {
     setNetworkCard("network-request-card", "error", "request failed");
@@ -126,6 +138,7 @@ async function runNetworkRequest(event) {
     setMetricCard("network-latency-card", "latency failed", { ms: -1 });
     setMetricCard("network-payload-card", "payload failed", { bytes: -1 });
     setMetricCard("network-body-card", "body unavailable", { body: "unknown" });
+    setMetricCard("network-content-card", "content unavailable", { content: "unknown" });
     response.textContent = error instanceof Error ? error.message : String(error);
   }
 }
