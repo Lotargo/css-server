@@ -12,7 +12,7 @@
 
 ### Steps
 
-- [ ] **Step 1: Create graphing ALU CSS module**
+- [x] **Step 1: Create graphing ALU CSS module**
 
 Create `src/styles/_graphing.scss`:
 
@@ -156,7 +156,7 @@ Create `src/styles/_graphing.scss`:
 }
 ```
 
-- [ ] **Step 2: Update main.scss imports**
+- [x] **Step 2: Update main.scss imports**
 
 ```scss
 @use "base";
@@ -171,11 +171,11 @@ Create `src/styles/_graphing.scss`:
 @use "graphing";
 ```
 
-- [ ] **Step 3: Test graphing mode display**
+- [x] **Step 3: Test graphing mode display**
 
 Verify graph canvas with grid lines, function input field, zoom controls.
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 git add src/styles/_graphing.scss src/styles/main.scss
@@ -197,7 +197,7 @@ git commit -m "feat: add graphing calculator ALU CSS module"
 
 ### Steps
 
-- [ ] **Step 1: Create graphing mode event handler**
+- [x] **Step 1: Create graphing mode event handler**
 
 Create `src/modes/graphing.js`:
 
@@ -313,13 +313,13 @@ export function initGraphingMode() {
 }
 ```
 
-- [ ] **Step 2: Add script tag to HTML**
+- [x] **Step 2: Add script tag to HTML**
 
 ```html
 <script type="module" src="/modes/graphing.js" defer></script>
 ```
 
-- [ ] **Step 3: Import and initialize in main.js**
+- [x] **Step 3: Import and initialize in main.js**
 
 ```javascript
 import('./modes/graphing.js').then(module => {
@@ -330,11 +330,11 @@ import('./modes/graphing.js').then(module => {
 });
 ```
 
-- [ ] **Step 4: Test graphing operations**
+- [x] **Step 4: Test graphing operations**
 
 Test: sin(x) plot, function change to cos(x), zoom in/out/fit.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add src/modes/graphing.js src/index.html src/main.js

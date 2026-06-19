@@ -12,7 +12,7 @@
 
 ### Steps
 
-- [ ] **Step 1: Create scientific ALU CSS module**
+- [x] **Step 1: Create scientific ALU CSS module**
 
 Create `src/styles/_scientific.scss`:
 
@@ -178,7 +178,7 @@ Create `src/styles/_scientific.scss`:
 }
 ```
 
-- [ ] **Step 2: Update main.scss imports**
+- [x] **Step 2: Update main.scss imports**
 
 ```scss
 @use "base";
@@ -191,11 +191,11 @@ Create `src/styles/_scientific.scss`:
 @use "scientific";
 ```
 
-- [ ] **Step 3: Test scientific mode display**
+- [x] **Step 3: Test scientific mode display**
 
 Open the application, switch to Engineering mode, verify the grid shows 5 columns with scientific buttons.
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 git add src/styles/_scientific.scss src/styles/main.scss
@@ -217,7 +217,7 @@ git commit -m "feat: add scientific calculator ALU CSS module"
 
 ### Steps
 
-- [ ] **Step 1: Create scientific mode event handler**
+- [x] **Step 1: Create scientific mode event handler**
 
 Create `src/modes/scientific.js`:
 
@@ -407,7 +407,7 @@ export function initScientificMode() {
 }
 ```
 
-- [ ] **Step 2: Add script tag to HTML**
+- [x] **Step 2: Add script tag to HTML**
 
 Before `</body>`:
 
@@ -415,7 +415,7 @@ Before `</body>`:
 <script type="module" src="/modes/scientific.js" defer></script>
 ```
 
-- [ ] **Step 3: Import and initialize in main.js**
+- [x] **Step 3: Import and initialize in main.js**
 
 At end of `setup()`:
 
@@ -428,11 +428,11 @@ import('./modes/scientific.js').then(module => {
 });
 ```
 
-- [ ] **Step 4: Test scientific operations**
+- [x] **Step 4: Test scientific operations**
 
 Test: sin(30°), cos, tan, log, ln, √, |x|, exp, x², 1/x, DEG/RAD toggle.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add src/modes/scientific.js src/index.html src/main.js

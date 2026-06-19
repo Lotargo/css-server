@@ -12,7 +12,7 @@
 
 ### Steps
 
-- [ ] **Step 1: Create converters ALU CSS module**
+- [x] **Step 1: Create converters ALU CSS module**
 
 Create `src/styles/_converters.scss`:
 
@@ -188,7 +188,7 @@ Create `src/styles/_converters.scss`:
 }
 ```
 
-- [ ] **Step 2: Update main.scss imports**
+- [x] **Step 2: Update main.scss imports**
 
 ```scss
 @use "base";
@@ -205,11 +205,11 @@ Create `src/styles/_converters.scss`:
 @use "converters";
 ```
 
-- [ ] **Step 3: Test converter mode display**
+- [x] **Step 3: Test converter mode display**
 
 Verify converter result display, select dropdowns, input field, swap button.
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 git add src/styles/_converters.scss src/styles/main.scss
@@ -231,7 +231,7 @@ git commit -m "feat: add unit converter ALU CSS module"
 
 ### Steps
 
-- [ ] **Step 1: Create converter event handler**
+- [x] **Step 1: Create converter event handler**
 
 Create `src/modes/converters.js`:
 
@@ -321,13 +321,13 @@ export function initConverters() {
 }
 ```
 
-- [ ] **Step 2: Add script tag to HTML**
+- [x] **Step 2: Add script tag to HTML**
 
 ```html
 <script type="module" src="/modes/converters.js" defer></script>
 ```
 
-- [ ] **Step 3: Import and initialize in main.js**
+- [x] **Step 3: Import and initialize in main.js**
 
 ```javascript
 import('./modes/converters.js').then(module => {
@@ -338,11 +338,11 @@ import('./modes/converters.js').then(module => {
 });
 ```
 
-- [ ] **Step 4: Test converter operations**
+- [x] **Step 4: Test converter operations**
 
 Test: Length (1m → ft), Weight, Temperature, Time conversions, swap button.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add src/modes/converters.js src/index.html src/main.js

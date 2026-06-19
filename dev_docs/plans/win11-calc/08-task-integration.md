@@ -12,7 +12,7 @@
 
 ## Steps
 
-- [ ] **Step 1: Verify all script tags in HTML**
+- [x] **Step 1: Verify all script tags in HTML**
 
 Ensure `src/index.html` has all necessary script tags before `</body>`:
 
@@ -25,7 +25,7 @@ Ensure `src/index.html` has all necessary script tags before `</body>`:
 <script type="module" src="/modes/converters.js" defer></script>
 ```
 
-- [ ] **Step 2: Verify all mode initializations in main.js**
+- [x] **Step 2: Verify all mode initializations in main.js**
 
 Ensure `src/main.js` `setup()` function has all mode imports:
 
@@ -67,7 +67,7 @@ import('./modes/converters.js').then(module => {
 });
 ```
 
-- [ ] **Step 3: Test all modes end-to-end**
+- [x] **Step 3: Test all modes end-to-end**
 
 Open the application in Chrome 142+ and test each mode:
 1. **Standard** → Basic arithmetic (+, −, ×, ÷, %, x², √, 1/x)
@@ -77,20 +77,20 @@ Open the application in Chrome 142+ and test each mode:
 5. **Date** → Date difference calculation
 6. **Converters** → Length, Weight, Temperature, Time conversions
 
-- [ ] **Step 4: Verify CSS ALU compliance**
+- [x] **Step 4: Verify CSS ALU compliance**
 
 Check that no JavaScript performs arithmetic:
 - All computation uses `getComputedStyle()` to read CSS `--result` properties
 - No `+`, `*`, `/` operators on numbers in mode JS files
 
-- [ ] **Step 5: Run lint and typecheck**
+- [x] **Step 5: Run lint and typecheck**
 
 ```bash
 npm run lint
 npm run typecheck
 ```
 
-- [ ] **Step 6: Final commit**
+- [x] **Step 6: Final commit**
 
 ```bash
 git add -A

@@ -13,7 +13,7 @@
 
 ## Steps
 
-- [ ] **Step 1: Create dropdown menus SCSS module**
+- [x] **Step 1: Create dropdown menus SCSS module**
 
 Create `src/styles/_dropdown-menus.scss`:
 
@@ -119,7 +119,7 @@ Create `src/styles/_dropdown-menus.scss`:
 }
 ```
 
-- [ ] **Step 2: Update main.scss imports**
+- [x] **Step 2: Update main.scss imports**
 
 ```scss
 @use "base";
@@ -137,7 +137,7 @@ Create `src/styles/_dropdown-menus.scss`:
 @use "dropdown-menus";
 ```
 
-- [ ] **Step 3: Add dropdown toggle JavaScript**
+- [x] **Step 3: Add dropdown toggle JavaScript**
 
 In `src/modes/scientific.js`, add after the `initScientificMode()` function:
 
@@ -190,11 +190,11 @@ document.querySelectorAll(".sci-dropdown .dropdown-item").forEach(item => {
 });
 ```
 
-- [ ] **Step 4: Test dropdown menus**
+- [x] **Step 4: Test dropdown menus**
 
 Test: Click "Тригонометрия" dropdown, select function, verify close. Click "Функция" dropdown. Click outside to close.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add src/styles/_dropdown-menus.scss src/styles/main.scss src/modes/scientific.js

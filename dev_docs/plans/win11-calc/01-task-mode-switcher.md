@@ -13,7 +13,7 @@
 
 ## Steps
 
-- [ ] **Step 1: Add data-active-mode attribute to app container**
+- [x] **Step 1: Add data-active-mode attribute to app container**
 
 In `src/index.html`, add `data-active-mode="standard"` to the root container:
 
@@ -21,7 +21,7 @@ In `src/index.html`, add `data-active-mode="standard"` to the root container:
 <div id="calculator-app" data-active-mode="standard">
 ```
 
-- [ ] **Step 2: Create mode-switcher SCSS**
+- [x] **Step 2: Create mode-switcher SCSS**
 
 Create `src/styles/_mode-switcher.scss`:
 
@@ -77,7 +77,7 @@ Create `src/styles/_mode-switcher.scss`:
 }
 ```
 
-- [ ] **Step 3: Update main.scss imports**
+- [x] **Step 3: Update main.scss imports**
 
 In `src/styles/main.scss`, add the new import:
 
@@ -91,7 +91,7 @@ In `src/styles/main.scss`, add the new import:
 @use "mode-switcher";
 ```
 
-- [ ] **Step 4: Update drawer click handler to set mode**
+- [x] **Step 4: Update drawer click handler to set mode**
 
 In `src/main.js`, replace the drawer item click handler (lines 876-893):
 
@@ -145,15 +145,15 @@ drawerItems.forEach(item => {
 });
 ```
 
-- [ ] **Step 5: Add mode-specific sections to HTML**
+- [x] **Step 5: Add mode-specific sections to HTML**
 
 In `src/index.html`, add placeholder sections after the standard calculator grid (after line 201). See `01-html-sections.md` for full HTML.
 
-- [ ] **Step 6: Test mode switching**
+- [x] **Step 6: Test mode switching**
 
 Open the application in Chrome 142+, click the hamburger menu, and verify each mode switches correctly without JavaScript errors. Check that the title updates and the correct mode section appears.
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```bash
 git add src/index.html src/main.js src/styles/main.scss src/styles/_mode-switcher.scss

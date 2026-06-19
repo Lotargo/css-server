@@ -12,7 +12,7 @@
 
 ### Steps
 
-- [ ] **Step 1: Create date ALU CSS module**
+- [x] **Step 1: Create date ALU CSS module**
 
 Create `src/styles/_date.scss`:
 
@@ -144,7 +144,7 @@ Create `src/styles/_date.scss`:
 }
 ```
 
-- [ ] **Step 2: Update main.scss imports**
+- [x] **Step 2: Update main.scss imports**
 
 ```scss
 @use "base";
@@ -160,11 +160,11 @@ Create `src/styles/_date.scss`:
 @use "date";
 ```
 
-- [ ] **Step 3: Test date mode display**
+- [x] **Step 3: Test date mode display**
 
 Verify date inputs, calculation type toggle, result rows.
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 git add src/styles/_date.scss src/styles/main.scss
@@ -186,7 +186,7 @@ git commit -m "feat: add date calculation ALU CSS module"
 
 ### Steps
 
-- [ ] **Step 1: Create date mode event handler**
+- [x] **Step 1: Create date mode event handler**
 
 Create `src/modes/date.js`:
 
@@ -274,13 +274,13 @@ export function initDateMode() {
 }
 ```
 
-- [ ] **Step 2: Add script tag to HTML**
+- [x] **Step 2: Add script tag to HTML**
 
 ```html
 <script type="module" src="/modes/date.js" defer></script>
 ```
 
-- [ ] **Step 3: Import and initialize in main.js**
+- [x] **Step 3: Import and initialize in main.js**
 
 ```javascript
 import('./modes/date.js').then(module => {
@@ -291,11 +291,11 @@ import('./modes/date.js').then(module => {
 });
 ```
 
-- [ ] **Step 4: Test date operations**
+- [x] **Step 4: Test date operations**
 
 Test: default dates, date change calculation, years/months/days breakdown.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add src/modes/date.js src/index.html src/main.js
