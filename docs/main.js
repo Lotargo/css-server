@@ -1,294 +1,42 @@
-let docsDisplayValue = "0";
-let docsExpressionValue = "";
-let docsAccumulator = null;
-let docsPendingOp = null;
-let docsShouldResetDisplay = false;
-let docsMemoryList = [];
+const calculatorOverlay = document.getElementById("calculator-overlay");
+const calculatorFrame = document.getElementById("calculator-frame");
+const openCalculatorButton = document.getElementById("open-calculator");
+const closeCalculatorButton = document.getElementById("close-calculator");
 
-const docsDisplay = document.getElementById("docs-calculator-display");
-const docsPreview = document.getElementById("docs-expression-preview");
-const docsAluLane = document.getElementById("docs-alu-lane");
-const docsAluPreview = document.getElementById("docs-alu-preview");
-const docsMemoryButtons = {
-  mc: document.getElementById("docs-btn-mc"),
-  mr: document.getElementById("docs-btn-mr"),
-  mPlus: document.getElementById("docs-btn-m-plus"),
-  mMinus: document.getElementById("docs-btn-m-minus"),
-  ms: document.getElementById("docs-btn-ms"),
-  mList: document.getElementById("docs-btn-m-list")
-};
+function openCalculator() {
+  if (!calculatorOverlay || !calculatorFrame) return;
 
-function formatNumber(value) {
-  const number = Number.parseFloat(value);
-  if (Number.isNaN(number)) return "NaN";
-  if (!Number.isFinite(number)) return String(number);
-  const text = number.toString();
-  if (text.length > 12) {
-    if (Math.abs(number) < 1e-6 || Math.abs(number) > 1e12) {
-      return number.toExponential(6);
-    }
-    return String(Number.parseFloat(number.toFixed(10)));
+  if (!calculatorFrame.getAttribute("src")) {
+    calculatorFrame.setAttribute("src", "./src/index.html");
   }
-  return Number.isInteger(number) ? String(number) : String(Number.parseFloat(number.toFixed(8)));
+
+  calculatorOverlay.classList.add("open");
+  calculatorOverlay.setAttribute("aria-hidden", "false");
+  document.body.classList.add("calculator-open");
+  closeCalculatorButton?.focus();
 }
 
-function getDocsOpSymbol(op) {
-  const map = {
-    add: "+",
-    sub: "−",
-    mul: "×",
-    div: "÷",
-    inv: "1/x",
-    sqr: "x²",
-    sqrt: "²√x",
-    pct: "%"
-  };
-  return map[op] || op;
+function closeCalculator() {
+  if (!calculatorOverlay) return;
+
+  calculatorOverlay.classList.remove("open");
+  calculatorOverlay.setAttribute("aria-hidden", "true");
+  document.body.classList.remove("calculator-open");
+  openCalculatorButton?.focus();
 }
 
-function updateDocsCalculatorUi() {
-  if (!docsDisplay || !docsPreview) return;
+openCalculatorButton?.addEventListener("click", openCalculator);
+closeCalculatorButton?.addEventListener("click", closeCalculator);
 
-  docsDisplay.textContent = docsDisplayValue.replace(".", ",");
-  docsPreview.textContent = docsExpressionValue;
-
-  const hasMemory = docsMemoryList.length > 0;
-  if (docsMemoryButtons.mc) docsMemoryButtons.mc.disabled = !hasMemory;
-  if (docsMemoryButtons.mr) docsMemoryButtons.mr.disabled = !hasMemory;
-  if (docsMemoryButtons.mList) docsMemoryButtons.mList.disabled = !hasMemory;
-}
-
-function freezeDocsCalculator(freeze) {
-  document.querySelectorAll("#docs-calculator-grid button, #docs-memory-bar button").forEach(button => {
-    button.disabled = freeze;
-  });
-
-  if (!freeze) updateDocsCalculatorUi();
-}
-
-function performDocsCssArithmetic(valA, valB, op) {
-  if (!docsAluLane) return Promise.resolve(0);
-
-  const task = document.createElement("div");
-  task.className = "docs-math-task";
-  task.dataset.a = String(valA);
-  task.dataset.b = String(valB);
-  task.dataset.op = op;
-  task.dataset.opSymbol = getDocsOpSymbol(op);
-  docsAluLane.replaceChildren(task);
-
-  if (docsAluPreview) {
-    docsAluPreview.textContent = `data-a="${valA}" data-b="${valB}" data-op="${op}"`;
-  }
-
-  return new Promise(resolve => {
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        const cssResult = getComputedStyle(task).getPropertyValue("--result").trim();
-        resolve(Number.parseFloat(cssResult));
-      });
-    });
-  });
-}
-
-function handleDocsNumberInput(value) {
-  if (value === ",") {
-    if (docsShouldResetDisplay) {
-      docsDisplayValue = "0.";
-      docsShouldResetDisplay = false;
-    } else if (!docsDisplayValue.includes(".")) {
-      docsDisplayValue += ".";
-    }
-  } else if (docsDisplayValue === "0" || docsShouldResetDisplay) {
-    docsDisplayValue = value;
-    docsShouldResetDisplay = false;
-  } else {
-    docsDisplayValue += value;
-  }
-
-  updateDocsCalculatorUi();
-}
-
-async function handleDocsOperationInput(id) {
-  const currentValue = Number.parseFloat(docsDisplayValue);
-
-  if (id === "docs-btn-c") {
-    docsDisplayValue = "0";
-    docsExpressionValue = "";
-    docsAccumulator = null;
-    docsPendingOp = null;
-    docsShouldResetDisplay = false;
-    updateDocsCalculatorUi();
-    return;
-  }
-
-  if (id === "docs-btn-ce") {
-    docsDisplayValue = "0";
-    updateDocsCalculatorUi();
-    return;
-  }
-
-  if (id === "docs-btn-back") {
-    docsDisplayValue = docsDisplayValue.slice(0, -1);
-    if (docsDisplayValue === "" || docsDisplayValue === "-") docsDisplayValue = "0";
-    updateDocsCalculatorUi();
-    return;
-  }
-
-  if (id === "docs-btn-neg") {
-    if (docsDisplayValue !== "0") {
-      docsDisplayValue = docsDisplayValue.startsWith("-")
-        ? docsDisplayValue.substring(1)
-        : `-${docsDisplayValue}`;
-      updateDocsCalculatorUi();
-    }
-    return;
-  }
-
-  if (id === "docs-btn-pct") {
-    freezeDocsCalculator(true);
-    const result = docsAccumulator !== null && docsPendingOp
-      ? await performDocsCssArithmetic(docsAccumulator, currentValue, "pct")
-      : await performDocsCssArithmetic(currentValue, 100, "div");
-    docsDisplayValue = String(result);
-    docsShouldResetDisplay = true;
-    freezeDocsCalculator(false);
-    updateDocsCalculatorUi();
-    return;
-  }
-
-  if (["docs-btn-inv", "docs-btn-sqr", "docs-btn-sqrt"].includes(id)) {
-    const op = id === "docs-btn-inv" ? "inv" : id === "docs-btn-sqr" ? "sqr" : "sqrt";
-    const preview = id === "docs-btn-inv"
-      ? `1/(${formatNumber(currentValue)})`
-      : id === "docs-btn-sqr"
-        ? `sqr(${formatNumber(currentValue)})`
-        : `√(${formatNumber(currentValue)})`;
-
-    freezeDocsCalculator(true);
-    const result = await performDocsCssArithmetic(currentValue, 0, op);
-    docsExpressionValue = `${preview} =`;
-    docsDisplayValue = String(result);
-    docsShouldResetDisplay = true;
-    freezeDocsCalculator(false);
-    updateDocsCalculatorUi();
-    return;
-  }
-
-  const opMap = {
-    "docs-btn-add": "add",
-    "docs-btn-sub": "sub",
-    "docs-btn-mul": "mul",
-    "docs-btn-div": "div"
-  };
-  const op = opMap[id];
-  if (!op) return;
-
-  if (docsAccumulator === null) {
-    docsAccumulator = currentValue;
-    docsPendingOp = op;
-    docsExpressionValue = `${formatNumber(docsAccumulator)} ${getDocsOpSymbol(op)}`;
-    docsShouldResetDisplay = true;
-    updateDocsCalculatorUi();
-    return;
-  }
-
-  if (docsPendingOp && !docsShouldResetDisplay) {
-    const previousOp = docsPendingOp;
-    freezeDocsCalculator(true);
-    const result = await performDocsCssArithmetic(docsAccumulator, currentValue, previousOp);
-    docsAccumulator = result;
-    docsPendingOp = op;
-    docsExpressionValue = `${formatNumber(docsAccumulator)} ${getDocsOpSymbol(op)}`;
-    docsDisplayValue = String(result);
-    docsShouldResetDisplay = true;
-    freezeDocsCalculator(false);
-    updateDocsCalculatorUi();
-    return;
-  }
-
-  docsPendingOp = op;
-  docsExpressionValue = `${formatNumber(docsAccumulator)} ${getDocsOpSymbol(op)}`;
-  updateDocsCalculatorUi();
-}
-
-async function handleDocsEquals() {
-  if (docsAccumulator === null || docsPendingOp === null) return;
-
-  const currentValue = Number.parseFloat(docsDisplayValue);
-  const op = docsPendingOp;
-
-  freezeDocsCalculator(true);
-  const result = await performDocsCssArithmetic(docsAccumulator, currentValue, op);
-  docsExpressionValue = `${formatNumber(docsAccumulator)} ${getDocsOpSymbol(op)} ${formatNumber(currentValue)} =`;
-  docsDisplayValue = String(result);
-  docsAccumulator = null;
-  docsPendingOp = null;
-  docsShouldResetDisplay = true;
-  freezeDocsCalculator(false);
-  updateDocsCalculatorUi();
-}
-
-document.querySelectorAll("#docs-calculator-grid button").forEach(button => {
-  button.addEventListener("click", async () => {
-    if (button.classList.contains("docs-btn-num")) {
-      handleDocsNumberInput(button.textContent.trim());
-    } else if (button.classList.contains("docs-btn-op")) {
-      await handleDocsOperationInput(button.id);
-    } else if (button.classList.contains("docs-btn-eq")) {
-      await handleDocsEquals();
-    }
-  });
+calculatorOverlay?.addEventListener("click", event => {
+  if (event.target === calculatorOverlay) closeCalculator();
 });
 
-docsMemoryButtons.ms?.addEventListener("click", () => {
-  docsMemoryList.unshift(Number.parseFloat(docsDisplayValue));
-  docsShouldResetDisplay = true;
-  updateDocsCalculatorUi();
-});
-
-docsMemoryButtons.mc?.addEventListener("click", () => {
-  docsMemoryList = [];
-  updateDocsCalculatorUi();
-});
-
-docsMemoryButtons.mr?.addEventListener("click", () => {
-  if (docsMemoryList.length === 0) return;
-  docsDisplayValue = String(docsMemoryList[0]);
-  docsShouldResetDisplay = true;
-  updateDocsCalculatorUi();
-});
-
-docsMemoryButtons.mPlus?.addEventListener("click", async () => {
-  const currentValue = Number.parseFloat(docsDisplayValue);
-  if (docsMemoryList.length === 0) {
-    docsMemoryList.push(currentValue);
-  } else {
-    docsMemoryList[0] = await performDocsCssArithmetic(docsMemoryList[0], currentValue, "add");
+document.addEventListener("keydown", event => {
+  if (event.key === "Escape" && calculatorOverlay?.classList.contains("open")) {
+    closeCalculator();
   }
-  docsShouldResetDisplay = true;
-  updateDocsCalculatorUi();
 });
-
-docsMemoryButtons.mMinus?.addEventListener("click", async () => {
-  const currentValue = Number.parseFloat(docsDisplayValue);
-  if (docsMemoryList.length === 0) {
-    docsMemoryList.push(await performDocsCssArithmetic(0, currentValue, "sub"));
-  } else {
-    docsMemoryList[0] = await performDocsCssArithmetic(docsMemoryList[0], currentValue, "sub");
-  }
-  docsShouldResetDisplay = true;
-  updateDocsCalculatorUi();
-});
-
-docsMemoryButtons.mList?.addEventListener("click", () => {
-  if (!docsAluPreview) return;
-  docsAluPreview.textContent = docsMemoryList.length
-    ? `memory[0]="${formatNumber(docsMemoryList[0])}"`
-    : "memory empty";
-});
-
-updateDocsCalculatorUi();
 
 const networkPresets = {
   success: {

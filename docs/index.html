@@ -20,82 +20,24 @@
           </div>
         </div>
 
-        <section class="runtime-calculator" id="runtime-proof" aria-label="CSS calculator proof module">
-          <div id="docs-calculator-app" data-theme="dark">
-            <div id="docs-calculator-pane">
-              <header id="docs-calc-header">
-                <div class="docs-header-left">
-                  <button class="docs-header-icon-btn" type="button" title="Calculator proof module" aria-label="Calculator proof module">
-                    <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                      <rect x="4" y="2" width="16" height="20" rx="2" ry="2"></rect>
-                      <line x1="8" y1="6" x2="16" y2="6"></line>
-                      <line x1="8" y1="10" x2="8" y2="10"></line>
-                      <line x1="12" y1="10" x2="12" y2="10"></line>
-                      <line x1="16" y1="10" x2="16" y2="10"></line>
-                    </svg>
-                  </button>
-                  <h2 id="docs-calc-title">Обычный</h2>
-                </div>
-                <span class="docs-calc-badge">CSS ALU</span>
-              </header>
-
-              <div id="docs-calc-display-container">
-                <div id="docs-expression-preview"></div>
-                <div id="docs-calculator-display">0</div>
+        <section class="runtime-calculator" id="runtime-proof" aria-label="Full calculator proof module">
+          <div class="calculator-launcher">
+            <div class="launcher-window" aria-hidden="true">
+              <div class="launcher-titlebar">
+                <span></span>
+                <span></span>
+                <span></span>
               </div>
-
-              <div id="docs-memory-bar">
-                <button class="docs-btn-mem" id="docs-btn-mc" type="button" disabled>MC</button>
-                <button class="docs-btn-mem" id="docs-btn-mr" type="button" disabled>MR</button>
-                <button class="docs-btn-mem" id="docs-btn-m-plus" type="button">M+</button>
-                <button class="docs-btn-mem" id="docs-btn-m-minus" type="button">M-</button>
-                <button class="docs-btn-mem" id="docs-btn-ms" type="button">MS</button>
-                <button class="docs-btn-mem" id="docs-btn-m-list" type="button" disabled>M</button>
+              <iframe class="launcher-frame" src="./src/index.html" title="CSS-Server calculator preview" loading="eager"></iframe>
+            </div>
+            <div class="launcher-copy">
+              <p class="kicker">Full proof module</p>
+              <h2>Windows-style calculator, running as static files.</h2>
+              <p>The same browser-only calculator copy lives under <code>docs/src/</code>; the landing page opens it in an isolated frame so its full app CSS and runtime stay intact.</p>
+              <div class="launcher-actions">
+                <button class="primary-link" id="open-calculator" type="button">Open calculator</button>
+                <a class="secondary-link" href="./src/index.html">Standalone page</a>
               </div>
-
-              <div id="docs-calculator-grid">
-                <button class="docs-btn-op" id="docs-btn-pct" type="button">%</button>
-                <button class="docs-btn-op" id="docs-btn-ce" type="button">CE</button>
-                <button class="docs-btn-op" id="docs-btn-c" type="button">C</button>
-                <button class="docs-btn-op" id="docs-btn-back" type="button" title="Backspace" aria-label="Backspace">
-                  <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                    <path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"></path>
-                    <line x1="18" y1="9" x2="12" y2="15"></line>
-                    <line x1="12" y1="9" x2="18" y2="15"></line>
-                  </svg>
-                </button>
-
-                <button class="docs-btn-op" id="docs-btn-inv" type="button">1/x</button>
-                <button class="docs-btn-op" id="docs-btn-sqr" type="button">x²</button>
-                <button class="docs-btn-op" id="docs-btn-sqrt" type="button">²√x</button>
-                <button class="docs-btn-op" id="docs-btn-div" type="button">÷</button>
-
-                <button class="docs-btn-num" id="docs-btn-7" type="button">7</button>
-                <button class="docs-btn-num" id="docs-btn-8" type="button">8</button>
-                <button class="docs-btn-num" id="docs-btn-9" type="button">9</button>
-                <button class="docs-btn-op" id="docs-btn-mul" type="button">×</button>
-
-                <button class="docs-btn-num" id="docs-btn-4" type="button">4</button>
-                <button class="docs-btn-num" id="docs-btn-5" type="button">5</button>
-                <button class="docs-btn-num" id="docs-btn-6" type="button">6</button>
-                <button class="docs-btn-op" id="docs-btn-sub" type="button">−</button>
-
-                <button class="docs-btn-num" id="docs-btn-1" type="button">1</button>
-                <button class="docs-btn-num" id="docs-btn-2" type="button">2</button>
-                <button class="docs-btn-num" id="docs-btn-3" type="button">3</button>
-                <button class="docs-btn-op" id="docs-btn-add" type="button">+</button>
-
-                <button class="docs-btn-op" id="docs-btn-neg" type="button">+/-</button>
-                <button class="docs-btn-num" id="docs-btn-0" type="button">0</button>
-                <button class="docs-btn-num" id="docs-btn-dec" type="button">,</button>
-                <button class="docs-btn-eq" id="docs-btn-eq" type="button">=</button>
-              </div>
-
-              <div class="docs-alu-strip" aria-live="polite">
-                <span class="cell-label">computedStyle(--result)</span>
-                <code id="docs-alu-preview">idle</code>
-              </div>
-              <div id="docs-alu-lane" aria-hidden="true"></div>
             </div>
           </div>
         </section>
@@ -204,5 +146,23 @@
         </nav>
       </section>
     </main>
+
+    <div class="calculator-overlay" id="calculator-overlay" aria-hidden="true">
+      <div class="calculator-dialog" role="dialog" aria-modal="true" aria-labelledby="calculator-dialog-title">
+        <header class="calculator-dialog-header">
+          <div>
+            <p class="kicker">Proof module</p>
+            <h2 id="calculator-dialog-title">CSS-Server Calculator</h2>
+          </div>
+          <button class="calculator-close" id="close-calculator" type="button" aria-label="Close calculator">
+            <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+        </header>
+        <iframe id="calculator-frame" title="CSS-Server full calculator"></iframe>
+      </div>
+    </div>
   </body>
 </html>
