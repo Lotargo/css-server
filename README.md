@@ -1,4 +1,4 @@
-# CSS-Server — Glass Calculator
+# CSS-Server — Static Runtime
 
 [![Version](https://img.shields.io/badge/version-0.1.0-blue)](package.json)
 [![License](https://img.shields.io/badge/license-Apache%202.0-green)](LICENSE)
@@ -6,19 +6,48 @@
 [![Tauri](https://img.shields.io/badge/tauri-2-purple)](src-tauri/Cargo.toml)
 [![Chromium](https://img.shields.io/badge/chromium-133%2B-red)](dev_docs/blueprint.md)
 
-A calculator where **CSS does the math**. Not a gimmick — a fully working Windows 11 Calculator clone with every mode, from basic arithmetic to graphing, all computed by CSS `calc()`, `if()`, and `@property`.
+A static browser runtime where **CSS does the computation**. The calculator is the proof module; the GitHub Pages site in `docs/` is the public runtime shell showing local CSS/HTML computation plus outbound HTTP transport without a backend process.
 
-## The idea
+## Why CSS-Server exists
 
-Normally in a web app: HTML is structure, CSS is styling, JavaScript is logic. Here it's reversed — **CSS is the processor**, JavaScript and Rust are just the I/O bus. Every single calculation, from `2+2` to trigonometry to bitwise AND, lives in CSS rules:
+Normally in a web app: HTML is structure, CSS is styling, JavaScript is logic. CSS-Server flips that model: **DOM is memory, CSS is the processor, JavaScript/Rust are constrained I/O buses**.
+
+The project started with a calculator because arithmetic, converters, graphing, and settings are a compact test of deterministic behavior. If CSS/HTML can run that proof module, the same substrate can be attached to other I/O surfaces.
 
 ```css
 --result: calc(var(--a) + var(--b));
 ```
 
-The architecture maps the Harvard computer model onto web standards: **DOM as memory**, **CSS as ALU**, **JS/Rust as a deliberately dumb system bus**. The entire request pipeline is visible — DOM nodes physically move through layout zones, animations show each computation's lifecycle.
+The public GitHub Pages direction is deliberately static:
+
+- GitHub Pages serves files only.
+- The browser performs computation locally.
+- JavaScript uses normal outbound Web APIs such as `fetch`.
+- CSS/HTML hold visible task state and classify computed results.
+- No shared API secrets are bundled.
+- No inbound server is claimed or hidden.
 
 ## Try it
+
+### GitHub Pages runtime
+
+The public site source lives entirely in [`docs/`](docs/):
+
+```text
+docs/index.html
+docs/styles.css
+docs/main.js
+docs/notes/
+```
+
+It can be served directly by GitHub Pages from the `docs/` folder. The first runtime demo includes:
+
+- a live CSS computation proof;
+- a Network Lab that performs user-triggered outbound `fetch`;
+- CSS status/latency/payload/content classification from DOM attributes;
+- safety and deployment boundary notes.
+
+### Local calculator proof module
 
 ```bash
 git clone https://github.com/your-username/css-server.git
@@ -65,7 +94,9 @@ curl -X POST http://localhost:8080/add -d '{"a":5,"b":10}'
 
 **For developers** — a demonstration of how far modern CSS has come: typed `attr()`, `if()` conditionals, `calc()` with `@property`, Style Queries, `:has()` routing, and native math functions all working together as a computation layer.
 
-**For everyone else** — a fully featured calculator with dark theme, calculation history, memory, and a built-in HTTP server.
+**For runtime experimenters** — a static-site boundary test: backend-like computation and outbound API workbench behavior without server-side execution on GitHub Pages.
+
+**For everyone else** — a fully featured local calculator proof module with themes, calculation history, memory, and a built-in HTTP server.
 
 ## Developer quick start
 
@@ -89,7 +120,12 @@ Communication is Tauri events only — not a single `#[tauri::command]`.
 ## Project structure
 
 ```
-├── src/                    # Frontend (HTML + SCSS + JS bridge)
+├── docs/                   # GitHub Pages static runtime site
+│   ├── index.html          # Landing + live CSS proof + Network Lab
+│   ├── main.js             # Browser transport/orchestration only
+│   ├── styles.css          # Self-contained site CSS and CSS compute demo
+│   └── notes/              # Site-facing boundary docs
+├── src/                    # Local calculator proof module
 │   ├── index.html          # SPA with all calculator modes
 │   ├── main.js             # Bridge, settings, pipeline
 │   ├── styles/             # 14 SCSS partials
@@ -98,21 +134,20 @@ Communication is Tauri events only — not a single `#[tauri::command]`.
 │   └── modes/              # JS handlers per mode
 ├── src-tauri/              # Rust backend (HTTP, IPC, SQLite)
 ├── dev_docs/               # Architecture & sprint documentation
-├── dist/pages/             # GitHub Pages static build
-├── docs/                   # GitHub Pages landing site
 ├── tests/e2e.test.js       # E2E tests (node:test)
 └── .brains/                # Dev session tracking
 ```
 
-## GitHub Pages (no Tauri needed)
+## GitHub Pages Boundary
 
-The full calculator runs in any browser without a desktop runtime:
+CSS-Server does not claim that GitHub Pages runs backend code. Pages serves static assets from `docs/`; the browser executes the runtime locally.
 
-```bash
-npm run build:static   # → dist/pages/
-```
+Network Lab uses normal browser `fetch`. That means:
 
-Deploy to `https://<user>.github.io/css-server/`.
+- CORS applies;
+- user-triggered requests are visible;
+- shared provider API keys must not be committed or bundled;
+- abusive traffic generation, scraping at scale, spam, mining, or stealth behavior are out of scope.
 
 ## Docs
 
@@ -122,6 +157,7 @@ All documentation in [`dev_docs/`](dev_docs/):
 |---|---|
 | [`blueprint.md`](dev_docs/blueprint.md) | Architecture, pipeline, browser support matrix |
 | [`manifest.md`](dev_docs/manifest.md) | Core principles and philosophy |
+| [`sprint-github-pages-runtime.md`](dev_docs/sprint-github-pages-runtime.md) | Static runtime and Network Lab sprint |
 | [`sprint-doc.md`](dev_docs/sprint-doc.md) | Backlog, definition of done, verification |
 | [`DISCLAIMER.md`](dev_docs/DISCLAIMER.md) | Limitations, risks |
 

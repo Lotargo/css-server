@@ -207,7 +207,7 @@ GitHub Actions deployment remains deferred until the static runtime is manually 
 - [x] Let CSS classify response status ranges.
 - [x] Let CSS validate simple response fields where feasible.
 - [x] Let CSS compute derived metrics such as latency bands, payload size bands, and result badges.
-- [ ] Keep JSON parsing in JavaScript only as I/O normalization, not business decision logic.
+- [x] Keep JSON parsing in JavaScript only as I/O normalization, not business decision logic.
 - [x] Document every JS boundary that exists because browser APIs require it.
 
 ---
@@ -216,25 +216,25 @@ GitHub Actions deployment remains deferred until the static runtime is manually 
 
 **Goal:** Explain the project in a way that is provocative, clear, and policy-safe.
 
-- [ ] Add "Why CSS-Server exists" to README.
-- [ ] Add "GitHub Pages Runtime" section to the manifest or link this document.
-- [ ] Explain that GitHub Pages hosts static files only.
-- [ ] Explain that computation happens in the browser.
-- [ ] Explain that outbound API calls use normal browser Web APIs.
-- [ ] Include a safety/acceptable-use note.
+- [x] Add "Why CSS-Server exists" to README.
+- [x] Add "GitHub Pages Runtime" section to the manifest or link this document.
+- [x] Explain that GitHub Pages hosts static files only.
+- [x] Explain that computation happens in the browser.
+- [x] Explain that outbound API calls use normal browser Web APIs.
+- [x] Include a safety/acceptable-use note.
 
 ---
 
 ## 12. Phase G: Verification
 
-- [ ] Static app works from a local static server.
+- [x] Static app works from a local static server.
 - [ ] Static app works from GitHub Pages.
-- [ ] No Tauri dependency is required for the landing/runtime demo.
-- [ ] Network Lab succeeds against at least one public CORS-friendly endpoint.
+- [x] No Tauri dependency is required for the landing/runtime demo.
+- [x] Network Lab succeeds against at least one public CORS-friendly endpoint.
 - [ ] Network Lab handles CORS failure visibly and gracefully.
-- [ ] No shared API key is committed or bundled.
-- [ ] Browser checks cover desktop and mobile viewports.
-- [ ] The project remains understandable to someone arriving from GitHub.
+- [x] No shared API key is committed or bundled.
+- [x] Browser checks cover desktop and mobile viewports.
+- [x] The project remains understandable to someone arriving from GitHub.
 
 ---
 

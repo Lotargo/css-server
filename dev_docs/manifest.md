@@ -55,6 +55,23 @@ Every process has a finite lifecycle managed by CSS animations.
 
 ---
 
+## GitHub Pages Runtime
+
+CSS-Server is no longer framed only as a local desktop calculator shell. The calculator remains the proof module, while the GitHub Pages site demonstrates the broader claim: static hosting can deliver a browser-native runtime where backend-like computation happens locally.
+
+This boundary is explicit:
+
+- GitHub Pages serves static files only.
+- The browser owns execution.
+- CSS/HTML act as the visible computation and state substrate.
+- JavaScript provides transparent outbound transport through normal Web APIs such as `fetch`.
+- API secrets are not bundled into the frontend.
+- No inbound server, hidden process, mining, spam, scraping at scale, or abusive traffic generation is part of the architecture.
+
+Network Lab exists to make this boundary inspectable. JavaScript normalizes browser I/O into DOM attributes; CSS classifies status families, response metrics, and simple response fields from those attributes.
+
+---
+
 ## Call to Action
 
 CSS-Server exists to make server internals visible. We invite engineers to reconsider the assumption that backend logic must be invisible. The web platform has evolved beyond its origins — it is now a capable computation environment that renders its own execution.
