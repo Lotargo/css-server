@@ -55,6 +55,100 @@ body {
   user-select: none;
 }
 
+body.public-calculator {
+  min-height: 100vh;
+  height: auto;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(12px, 2.6vw, 32px);
+  overflow: auto;
+  background: #151515;
+}
+
+body.public-calculator #calculator-app {
+  width: min(1180px, calc(100vw - clamp(24px, 5.2vw, 64px)));
+  height: min(720px, calc(100vh - clamp(24px, 5.2vw, 64px)));
+  min-height: min(620px, calc(100vh - 24px));
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 26px 80px rgba(0, 0, 0, 0.32);
+}
+
+body.public-calculator #calculator-app[data-active-mode=date],
+body.public-calculator #calculator-app[data-active-mode=currency],
+body.public-calculator #calculator-app[data-active-mode=volume],
+body.public-calculator #calculator-app[data-active-mode=length],
+body.public-calculator #calculator-app[data-active-mode=weight],
+body.public-calculator #calculator-app[data-active-mode=temperature],
+body.public-calculator #calculator-app[data-active-mode=time],
+body.public-calculator #calculator-app[data-active-mode=settings] {
+  width: min(840px, calc(100vw - clamp(24px, 5.2vw, 64px)));
+  height: min(640px, calc(100vh - clamp(24px, 5.2vw, 64px)));
+  min-height: min(560px, calc(100vh - 24px));
+}
+
+body.public-calculator #calc-header .header-right {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+body.public-calculator #landing-back-link {
+  width: auto;
+  min-width: 40px;
+  gap: 6px;
+  padding: 0 10px;
+  text-decoration: none;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+body.public-calculator #landing-back-link span {
+  line-height: 1;
+}
+
+body.public-calculator #calculator-grid,
+body.public-calculator #scientific-grid,
+body.public-calculator #programmer-grid {
+  flex: 0 0 auto;
+  align-content: stretch;
+}
+
+body.public-calculator #calculator-grid button,
+body.public-calculator #scientific-grid button,
+body.public-calculator #programmer-grid button {
+  height: 54px;
+  min-height: 44px;
+  max-height: 60px;
+}
+
+@media (min-width: 769px) {
+  body.public-calculator #calculator-app[data-active-mode=standard],
+  body.public-calculator #calculator-app[data-active-mode=scientific],
+  body.public-calculator #calculator-app[data-active-mode=programmer] {
+    grid-template-columns: minmax(520px, 1.05fr) minmax(320px, 0.72fr);
+  }
+}
+
+@media (max-width: 768px) {
+  body.public-calculator {
+    display: block;
+    padding: 0;
+  }
+
+  body.public-calculator #calculator-app {
+    width: 100%;
+    height: 100vh;
+    min-height: 100vh;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+  }
+}
+
 /* Hide scrollbars everywhere but keep scrolling functional */
 * {
   -ms-overflow-style: none; /* IE and Edge */

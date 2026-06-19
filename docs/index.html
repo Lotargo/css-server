@@ -15,8 +15,13 @@
           <h1 id="hero-title">CSS as a compute layer, not just paint.</h1>
           <p class="lead">CSS-Server tests how far modern browser CSS can be pushed: DOM nodes hold task state, typed custom properties carry values, selectors route states, and CSS resolves parts of the computation in the open.</p>
           <div class="hero-actions">
-            <a class="primary-link" href="#runtime-proof">Open proof module</a>
-            <a class="secondary-link" href="#network-lab">Try static fetch</a>
+            <a class="primary-link" href="#project-intro">Get started</a>
+            <a class="secondary-link icon-link" href="https://github.com/Lotargo/Necromancer" target="_blank" rel="noreferrer">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true">
+                <path d="M12 .5A11.5 11.5 0 0 0 8.36 22.9c.58.1.79-.25.79-.56v-2.15c-3.22.7-3.9-1.38-3.9-1.38-.53-1.34-1.29-1.7-1.29-1.7-1.05-.72.08-.7.08-.7 1.17.08 1.78 1.2 1.78 1.2 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.74-1.55-2.57-.29-5.27-1.28-5.27-5.73 0-1.27.45-2.3 1.2-3.11-.12-.3-.52-1.48.11-3.07 0 0 .98-.31 3.2 1.19a11.1 11.1 0 0 1 5.83 0c2.22-1.5 3.19-1.19 3.19-1.19.64 1.59.24 2.77.12 3.07.75.81 1.2 1.84 1.2 3.11 0 4.46-2.71 5.43-5.29 5.72.42.36.79 1.07.79 2.16v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 12 .5Z"></path>
+              </svg>
+              <span>View on GitHub</span>
+            </a>
           </div>
         </div>
 
@@ -35,12 +40,38 @@
               <h2>A calculator is small enough to inspect and large enough to fail honestly.</h2>
               <p>Arithmetic, modes, converters, graphing, settings, history, and diagnostics create enough state to prove whether CSS can carry real deterministic behavior. This is why the demo is a calculator: it exposes the runtime instead of hiding it behind a toy counter.</p>
               <div class="launcher-actions">
-                <button class="primary-link" id="open-calculator" type="button">Open calculator</button>
+                <button class="primary-link" id="open-calculator" type="button" data-open-calculator>Open calculator</button>
                 <a class="secondary-link" href="./src/index.html">Standalone page</a>
               </div>
             </div>
           </div>
         </section>
+      </section>
+
+      <section class="project-intro" id="project-intro" aria-labelledby="intro-title">
+        <div>
+          <p class="kicker">Read this first</p>
+          <h2 id="intro-title">This is not impressive because it is a calculator.</h2>
+        </div>
+        <div class="project-intro-copy">
+          <p>A calculator is the easiest part to misunderstand here. Anyone can build a calculator with JavaScript, call it a demo, and move on. CSS-Server is about the stranger question underneath: can CSS participate in computation as a visible runtime layer instead of only decorating the result?</p>
+          <p>The project treats DOM nodes as task cells, typed attributes as input channels, custom properties as registers, selectors as routing, and modern CSS functions as part of the evaluation pipeline. JavaScript still exists, but it is deliberately pushed toward orchestration, browser I/O, and observation. In the local Tauri build, Rust provides the desktop boundary, HTTP endpoint, and persistence; CSS remains the experimental substrate where the computation can be expressed.</p>
+          <p>That makes the calculator a proof module, not the product. Its job is to create enough real state, edge cases, modes, and diagnostics to show where this idea works, where it breaks, and why almost nobody builds projects this way.</p>
+          <div class="intro-points" aria-label="Runtime proof points">
+            <article>
+              <span>State</span>
+              <p>DOM nodes act as visible task cells instead of hidden runtime memory.</p>
+            </article>
+            <article>
+              <span>Compute</span>
+              <p>Typed CSS values and modern functions resolve part of the logic path.</p>
+            </article>
+            <article>
+              <span>Boundary</span>
+              <p>JavaScript and Rust stay in the I/O layer where CSS cannot operate.</p>
+            </article>
+          </div>
+        </div>
       </section>
 
       <section class="explain-strip" aria-labelledby="what-title">
@@ -159,11 +190,32 @@
         </div>
       </section>
 
+      <section class="why-build" aria-labelledby="why-title">
+        <div>
+          <p class="kicker">Why build this?</p>
+          <h2 id="why-title">Useful where a normal backend is absent, excessive, or deliberately avoided.</h2>
+        </div>
+        <div class="why-build-copy">
+          <p>CSS-Server is not a replacement for a real backend, and it should not be sold as one. Its value is in the narrow places where normal backend deployment is unavailable, excessive, or intentionally avoided.</p>
+          <p>A static host such as GitHub Pages cannot run private server code, keep secrets, open sockets, or persist durable process state. But the browser still has a runtime, a DOM, CSS evaluation, user-triggered network requests, and enough visible state to model surprising pieces of application behavior.</p>
+          <p>That makes this project useful as a boundary experiment, a teaching tool, and a prototype surface for frontend developers who want to explore logic without waiting for a backend contract to exist. It can classify responses, route state, expose calculations, and make the runtime inspectable.</p>
+          <p>The point is not that CSS should replace backend systems. The point is to ask what remains possible when the backend is absent, constrained, or deliberately pushed to the edge.</p>
+        </div>
+      </section>
+
       <section class="proof-modules" aria-label="Proof modules">
         <div>
           <p class="kicker">Project shape</p>
           <h2>One project, two boundaries.</h2>
           <p>The GitHub Pages landing is the public static shell. The local Tauri build is the heavier proof: Rust accepts HTTP requests, SQLite stores history, JavaScript observes browser events, and CSS remains the computation substrate where the experiment allows it.</p>
+          <div class="profile-actions">
+            <a class="secondary-link icon-link" href="https://github.com/Lotargo" target="_blank" rel="noreferrer">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true">
+                <path d="M12 .5A11.5 11.5 0 0 0 8.36 22.9c.58.1.79-.25.79-.56v-2.15c-3.22.7-3.9-1.38-3.9-1.38-.53-1.34-1.29-1.7-1.29-1.7-1.05-.72.08-.7.08-.7 1.17.08 1.78 1.2 1.78 1.2 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.74-1.55-2.57-.29-5.27-1.28-5.27-5.73 0-1.27.45-2.3 1.2-3.11-.12-.3-.52-1.48.11-3.07 0 0 .98-.31 3.2 1.19a11.1 11.1 0 0 1 5.83 0c2.22-1.5 3.19-1.19 3.19-1.19.64 1.59.24 2.77.12 3.07.75.81 1.2 1.84 1.2 3.11 0 4.46-2.71 5.43-5.29 5.72.42.36.79 1.07.79 2.16v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 12 .5Z"></path>
+              </svg>
+              <span>Lotargo on GitHub</span>
+            </a>
+          </div>
         </div>
       </section>
     </main>

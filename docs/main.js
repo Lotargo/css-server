@@ -2,9 +2,12 @@ const calculatorOverlay = document.getElementById("calculator-overlay");
 const calculatorFrame = document.getElementById("calculator-frame");
 const openCalculatorButton = document.getElementById("open-calculator");
 const closeCalculatorButton = document.getElementById("close-calculator");
+let calculatorOpener = null;
 
-function openCalculator() {
+function openCalculator(event) {
   if (!calculatorOverlay || !calculatorFrame) return;
+
+  calculatorOpener = event?.currentTarget || openCalculatorButton;
 
   if (!calculatorFrame.getAttribute("src")) {
     calculatorFrame.setAttribute("src", "./src/index.html");
@@ -22,10 +25,12 @@ function closeCalculator() {
   calculatorOverlay.classList.remove("open");
   calculatorOverlay.setAttribute("aria-hidden", "true");
   document.body.classList.remove("calculator-open");
-  openCalculatorButton?.focus();
+  calculatorOpener?.focus();
 }
 
-openCalculatorButton?.addEventListener("click", openCalculator);
+document.querySelectorAll("[data-open-calculator]").forEach(button => {
+  button.addEventListener("click", openCalculator);
+});
 closeCalculatorButton?.addEventListener("click", closeCalculator);
 
 calculatorOverlay?.addEventListener("click", event => {
