@@ -1,0 +1,64 @@
+/* Mode Switching Infrastructure */
+#calculator-app {
+  --current-mode: standard;
+}
+
+/* Hide all mode-specific sections by default */
+.mode-section {
+  display: none !important;
+}
+
+/* Show only the active mode section */
+#calculator-app[data-active-mode="standard"] .mode-standard,
+#calculator-app[data-active-mode="scientific"] .mode-scientific,
+#calculator-app[data-active-mode="programmer"] .mode-programmer,
+#calculator-app[data-active-mode="graphing"] .mode-graphing,
+#calculator-app[data-active-mode="date"] .mode-date,
+#calculator-app[data-active-mode="currency"] .mode-currency,
+#calculator-app[data-active-mode="volume"] .mode-volume,
+#calculator-app[data-active-mode="length"] .mode-length,
+#calculator-app[data-active-mode="weight"] .mode-weight,
+#calculator-app[data-active-mode="temperature"] .mode-temperature,
+#calculator-app[data-active-mode="energy"] .mode-energy,
+#calculator-app[data-active-mode="area"] .mode-area,
+#calculator-app[data-active-mode="speed"] .mode-speed,
+#calculator-app[data-active-mode="time"] .mode-time,
+#calculator-app[data-active-mode="power"] .mode-power,
+#calculator-app[data-active-mode="data"] .mode-data,
+#calculator-app[data-active-mode="pressure"] .mode-pressure,
+#calculator-app[data-active-mode="angle"] .mode-angle,
+#calculator-app[data-active-mode="settings"] .mode-settings {
+  display: flex !important;
+  flex-direction: column;
+  flex: 1;
+  height: 100%;
+}
+
+/* Mode title mapping */
+#calculator-app[data-active-mode="scientific"] #calc-title::after { content: "Инженерный"; }
+#calculator-app[data-active-mode="programmer"] #calc-title::after { content: "Программист"; }
+#calculator-app[data-active-mode="graphing"] #calc-title::after { content: "Построение графиков"; }
+#calculator-app[data-active-mode="date"] #calc-title::after { content: "Вычисление даты"; }
+#calculator-app[data-active-mode="currency"] #calc-title::after { content: "Валюта"; }
+#calculator-app[data-active-mode="volume"] #calc-title::after { content: "Объем"; }
+#calculator-app[data-active-mode="length"] #calc-title::after { content: "Длина"; }
+#calculator-app[data-active-mode="weight"] #calc-title::after { content: "Вес и масса"; }
+#calculator-app[data-active-mode="temperature"] #calc-title::after { content: "Температура"; }
+#calculator-app[data-active-mode="time"] #calc-title::after { content: "Время"; }
+#calculator-app[data-active-mode="energy"] #calc-title::after { content: "Энергия"; }
+#calculator-app[data-active-mode="area"] #calc-title::after { content: "Площадь"; }
+#calculator-app[data-active-mode="speed"] #calc-title::after { content: "Скорость"; }
+#calculator-app[data-active-mode="power"] #calc-title::after { content: "Мощность"; }
+#calculator-app[data-active-mode="data"] #calc-title::after { content: "Данные"; }
+#calculator-app[data-active-mode="pressure"] #calc-title::after { content: "Давление"; }
+#calculator-app[data-active-mode="angle"] #calc-title::after { content: "Угол"; }
+#calculator-app[data-active-mode="settings"] #calc-title::after { content: "Параметры"; }
+
+/* Hide default title text when using ::after */
+#calculator-app:not([data-active-mode="standard"]) #calc-title {
+  font-size: 0;
+  &::after {
+    font-size: 1.25rem;
+    font-weight: 600;
+  }
+}

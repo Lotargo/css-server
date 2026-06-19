@@ -1,0 +1,125 @@
+/* Date Calculation ALU */
+@property --date-from {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 0;
+}
+
+@property --date-to {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 0;
+}
+
+@property --date-diff {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 0;
+}
+
+/* Date difference calculation */
+.date-task {
+  --date-from: attr(data-date-from type(<number>), 0);
+  --date-to: attr(data-date-to type(<number>), 0);
+  --date-diff: calc(var(--date-to) - var(--date-from));
+}
+
+/* Date display container */
+#date-display-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: flex-end;
+  padding: 24px;
+  flex: 0 0 120px;
+  text-align: right;
+  word-break: break-all;
+  overflow: hidden;
+  
+  #date-result {
+    font-size: 2.8rem;
+    font-weight: 500;
+    color: var(--text-main);
+    line-height: 1.15;
+    letter-spacing: -0.5px;
+    max-width: 100%;
+  }
+}
+
+/* Calculation type toggle */
+#date-calc-type {
+  display: flex;
+  gap: 8px;
+  padding: 0 14px 12px 14px;
+  
+  .date-type-btn {
+    background: none;
+    border: 1px solid var(--border-subtle);
+    color: var(--text-sub);
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding: 8px 14px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+    &:hover { background-color: rgba(255, 255, 255, 0.05); color: var(--text-main); }
+    &.active { background-color: var(--bg-accent); color: var(--text-main); border-color: var(--bg-accent); }
+  }
+}
+
+/* Date inputs */
+#date-inputs {
+  display: flex;
+  gap: 16px;
+  padding: 0 14px 16px 14px;
+  
+  .date-input-group {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    
+    label {
+      font-size: 0.8rem;
+      color: var(--text-sub);
+      font-weight: 600;
+    }
+    
+    .date-field {
+      background-color: rgba(0, 0, 0, 0.3);
+      border: 1px solid var(--border-subtle);
+      border-radius: 4px;
+      color: var(--text-main);
+      font-size: 0.9rem;
+      padding: 10px 12px;
+      outline: none;
+      &:focus { border-color: var(--bg-accent); }
+      &::-webkit-calendar-picker-indicator { filter: invert(1); }
+    }
+  }
+}
+
+/* Result display */
+#date-result-display {
+  padding: 0 14px;
+  
+  .result-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border-subtle);
+    &:last-child { border-bottom: none; }
+    
+    .result-label {
+      font-size: 0.85rem;
+      color: var(--text-sub);
+    }
+    
+    .result-value {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--text-main);
+      font-family: 'Fira Code', monospace;
+    }
+  }
+}

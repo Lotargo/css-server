@@ -1,0 +1,139 @@
+/* Scientific Calculator ALU */
+@property --sci-val {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 0;
+}
+
+@property --sci-result {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 0;
+}
+
+@property --sci-op {
+  syntax: "<custom-ident>";
+  inherits: false;
+  initial-value: none;
+}
+
+/* Scientific operation routing */
+$sci-result-expr: "if(style(--sci-op: sin): sin(var(--sci-val)); style(--sci-op: cos): cos(var(--sci-val)); style(--sci-op: tan): tan(var(--sci-val)); style(--sci-op: asin): asin(var(--sci-val)); style(--sci-op: acos): acos(var(--sci-val)); style(--sci-op: atan): atan(var(--sci-val)); style(--sci-op: log): log10(var(--sci-val)); style(--sci-op: ln): ln(var(--sci-val)); style(--sci-op: sqrt): sqrt(var(--sci-val)); style(--sci-op: cbrt): cbrt(var(--sci-val)); style(--sci-op: abs): abs(var(--sci-val)); style(--sci-op: exp): exp(var(--sci-val)); style(--sci-op: floor): floor(var(--sci-val)); style(--sci-op: ceil): ceil(var(--sci-val)); style(--sci-op: round): round(var(--sci-val)); else: var(--sci-val))";
+
+.sci-task {
+  --sci-val: attr(data-val type(<number>), 0);
+  --sci-op: attr(data-op type(<custom-ident>), none);
+  --sci-result: #{$sci-result-expr};
+}
+
+$sci-trig-deg-expr: "if(style(--sci-op: sin): sin(calc(var(--sci-val) * 3.14159265358979 / 180)); style(--sci-op: cos): cos(calc(var(--sci-val) * 3.14159265358979 / 180)); style(--sci-op: tan): tan(calc(var(--sci-val) * 3.14159265358979 / 180)); else: var(--sci-val))";
+$sci-trig-rad-expr: "if(style(--sci-op: sin): sin(var(--sci-val)); style(--sci-op: cos): cos(var(--sci-val)); style(--sci-op: tan): tan(var(--sci-val)); else: var(--sci-val))";
+
+#calculator-app[data-angle-mode="deg"] .sci-task-trig {
+  --sci-val: attr(data-val type(<number>), 0);
+  --sci-op: attr(data-op type(<custom-ident>), sin);
+  --sci-result: #{$sci-trig-deg-expr};
+}
+
+#calculator-app[data-angle-mode="rad"] .sci-task-trig {
+  --sci-val: attr(data-val type(<number>), 0);
+  --sci-op: attr(data-op type(<custom-ident>), sin);
+  --sci-result: #{$sci-trig-rad-expr};
+}
+
+/* Grid styling */
+#scientific-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 2px;
+  padding: 0 14px 14px 14px;
+  flex: 1;
+  
+  button {
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    border-radius: 4px;
+    font-size: clamp(0.85rem, 1.8vw, 1.05rem);
+    font-weight: 450;
+    color: var(--text-main);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.15s, border-color 0.15s, transform 0.05s;
+    height: clamp(36px, 6.5vh, 48px);
+    &:active { transform: scale(0.98); }
+    &:hover { background-color: rgba(255, 255, 255, 0.05); }
+  }
+  
+  .btn-num {
+    background-color: var(--bg-num);
+    &:hover { background-color: var(--bg-num-hover); }
+    &:active { background-color: var(--bg-num-active); }
+  }
+  
+  .btn-sci {
+    background-color: var(--bg-op);
+    font-size: clamp(0.75rem, 1.5vw, 0.95rem);
+    &:hover { background-color: var(--bg-op-hover); }
+    &:active { background-color: var(--bg-op-active); }
+  }
+  
+  .btn-eq {
+    background-color: var(--bg-accent);
+    font-size: clamp(1.1rem, 2vw, 1.3rem);
+    border-color: rgba(255, 255, 255, 0.08);
+    &:hover { background-color: var(--bg-accent-hover); }
+    &:active { background-color: var(--bg-accent-active); }
+  }
+}
+
+/* Mode controls */
+#sci-mode-controls {
+  display: flex;
+  gap: 8px;
+  padding: 0 14px 8px 14px;
+  align-items: center;
+  
+  .sci-mode-btn {
+    background: none;
+    border: 1px solid var(--border-subtle);
+    color: var(--text-sub);
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+    &:hover { background-color: rgba(255, 255, 255, 0.05); color: var(--text-main); }
+    &.active { background-color: var(--bg-accent); color: var(--text-main); border-color: var(--bg-accent); }
+  }
+}
+
+/* Display container */
+#sci-display-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: flex-end;
+  padding: clamp(12px, 2.5vh, 24px);
+  flex: 0 0 clamp(80px, 18vh, 140px);
+  text-align: right;
+  word-break: break-all;
+  overflow: hidden;
+  
+  #sci-expression-preview {
+    font-size: clamp(0.75rem, 1.5vh, 0.9rem);
+    color: var(--text-sub);
+    min-height: clamp(16px, 2vh, 20px);
+    margin-bottom: clamp(2px, 0.8vh, 6px);
+  }
+  
+  #sci-calculator-display {
+    font-size: clamp(1.8rem, 6vh, 2.8rem);
+    font-weight: 500;
+    color: var(--text-main);
+    line-height: 1.15;
+    letter-spacing: -0.5px;
+    max-width: 100%;
+  }
+}

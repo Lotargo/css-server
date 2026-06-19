@@ -1,0 +1,45 @@
+/* ---- Pipeline Animations ---- */
+
+@keyframes slide-to-db {
+  0% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(60px);
+    opacity: 0;
+  }
+}
+
+@keyframes pulse-db-write {
+  0% {
+    box-shadow: 0 0 4px rgba(168, 85, 247, 0.4);
+    filter: brightness(1);
+  }
+  100% {
+    box-shadow: 0 0 12px rgba(168, 85, 247, 0.8);
+    filter: brightness(1.2);
+  }
+}
+
+@keyframes slide-from-db-to-outbound {
+  0% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(80px);
+    opacity: 0;
+  }
+}
+
+@keyframes drop-to-trash {
+  0% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(40px) rotate(5deg);
+    opacity: 0;
+  }
+}

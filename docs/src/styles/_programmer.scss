@@ -1,0 +1,210 @@
+/* Programmer Calculator ALU */
+@property --prog-val {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 0;
+}
+
+@property --prog-result {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 0;
+}
+
+// SCSS functions to generate bitwise operations mathematically in CSS
+@function css-bitwise-and($var-a, $var-b, $bits: 16) {
+  $sum: "0";
+  @for $i from 0 to $bits {
+    $p2: 1;
+    @for $j from 0 to $i {
+      $p2: $p2 * 2;
+    }
+    $p2_next: $p2 * 2;
+    $bit-a: "floor(#{$var-a} / #{$p2}) - floor(#{$var-a} / #{$p2_next}) * 2";
+    $bit-b: "floor(#{$var-b} / #{$p2}) - floor(#{$var-b} / #{$p2_next}) * 2";
+    $bit-and: "((#{$bit-a}) * (#{$bit-b}))";
+    $sum: "#{$sum} + #{$bit-and} * #{$p2}";
+  }
+  @return "calc(#{$sum})";
+}
+
+@function css-bitwise-or($var-a, $var-b, $bits: 16) {
+  $sum: "0";
+  @for $i from 0 to $bits {
+    $p2: 1;
+    @for $j from 0 to $i {
+      $p2: $p2 * 2;
+    }
+    $p2_next: $p2 * 2;
+    $bit-a: "floor(#{$var-a} / #{$p2}) - floor(#{$var-a} / #{$p2_next}) * 2";
+    $bit-b: "floor(#{$var-b} / #{$p2}) - floor(#{$var-b} / #{$p2_next}) * 2";
+    $bit-or: "((#{$bit-a}) + (#{$bit-b}) - (#{$bit-a}) * (#{$bit-b}))";
+    $sum: "#{$sum} + #{$bit-or} * #{$p2}";
+  }
+  @return "calc(#{$sum})";
+}
+
+@function css-bitwise-xor($var-a, $var-b, $bits: 16) {
+  $sum: "0";
+  @for $i from 0 to $bits {
+    $p2: 1;
+    @for $j from 0 to $i {
+      $p2: $p2 * 2;
+    }
+    $p2_next: $p2 * 2;
+    $bit-a: "floor(#{$var-a} / #{$p2}) - floor(#{$var-a} / #{$p2_next}) * 2";
+    $bit-b: "floor(#{$var-b} / #{$p2}) - floor(#{$var-b} / #{$p2_next}) * 2";
+    $bit-xor: "((#{$bit-a}) + (#{$bit-b}) - 2 * (#{$bit-a}) * (#{$bit-b}))";
+    $sum: "#{$sum} + #{$bit-xor} * #{$p2}";
+  }
+  @return "calc(#{$sum})";
+}
+
+/* Bitwise operations */
+$prog-bitwise-result-expr: "if(style(--op: and): #{css-bitwise-and(var(--val-a), var(--val-b), 16)}; style(--op: or): #{css-bitwise-or(var(--val-a), var(--val-b), 16)}; style(--op: xor): #{css-bitwise-xor(var(--val-a), var(--val-b), 16)}; style(--op: not): calc(0 - var(--val-a) - 1); style(--op: lshift): calc(var(--val-a) * 2); style(--op: rshift): calc(floor(var(--val-a) / 2)); else: var(--val-b))";
+
+.prog-bitwise-task {
+  --val-a: attr(data-a type(<number>), 0);
+  --val-b: attr(data-b type(<number>), 0);
+  --op: attr(data-op type(<custom-ident>), and);
+  --result: #{$prog-bitwise-result-expr};
+}
+
+/* Display container */
+#prog-display-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: flex-end;
+  padding: clamp(10px, 2vh, 24px);
+  flex: 0 0 clamp(110px, 24vh, 180px);
+  text-align: right;
+  word-break: break-all;
+  overflow: hidden;
+  
+  #prog-expression-preview {
+    font-size: clamp(0.72rem, 1.3vh, 0.9rem);
+    color: var(--text-sub);
+    min-height: clamp(16px, 2vh, 20px);
+    margin-bottom: clamp(2px, 0.8vh, 6px);
+  }
+  
+  #prog-calculator-display {
+    font-size: clamp(1.8rem, 5.5vh, 2.8rem);
+    font-weight: 500;
+    color: var(--text-main);
+    line-height: 1.15;
+    letter-spacing: -0.5px;
+    max-width: 100%;
+  }
+  
+  #prog-base-display {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    margin-top: clamp(4px, 1vh, 8px);
+    font-size: clamp(0.7rem, 1.4vh, 0.8rem);
+    color: var(--text-sub);
+    font-family: 'Fira Code', monospace;
+    
+    .base-value {
+      padding: 1px 0;
+      &.active { color: var(--text-main); font-weight: 600; }
+    }
+  }
+}
+
+/* Mode controls */
+#prog-mode-controls {
+  display: flex;
+  gap: 8px;
+  padding: 0 14px 8px 14px;
+  
+  .prog-mode-btn {
+    background: none;
+    border: 1px solid var(--border-subtle);
+    color: var(--text-sub);
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+    &:hover { background-color: rgba(255, 255, 255, 0.05); color: var(--text-main); }
+    &.active { background-color: var(--bg-accent); color: var(--text-main); border-color: var(--bg-accent); }
+  }
+}
+
+/* Word size */
+#prog-word-size {
+  display: flex;
+  gap: 8px;
+  padding: 0 14px 8px 14px;
+  
+  .word-btn {
+    background: none;
+    border: 1px solid var(--border-subtle);
+    color: var(--text-sub);
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 4px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+    &:hover { background-color: rgba(255, 255, 255, 0.05); color: var(--text-main); }
+    &.active { background-color: rgba(133, 83, 244, 0.2); color: var(--text-main); border-color: var(--bg-accent); }
+  }
+}
+
+/* Programmer grid */
+#programmer-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 2px;
+  padding: 0 14px 14px 14px;
+  flex: 1;
+  
+  button {
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    border-radius: 4px;
+    font-size: clamp(0.85rem, 1.8vw, 1.05rem);
+    font-weight: 450;
+    color: var(--text-main);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.15s, transform 0.05s;
+    height: clamp(36px, 6.5vh, 48px);
+    &:active { transform: scale(0.98); }
+    &:hover { background-color: rgba(255, 255, 255, 0.05); }
+    &:disabled { opacity: 0.3; cursor: not-allowed; }
+  }
+  
+  .btn-num {
+    background-color: var(--bg-num);
+    &:hover { background-color: var(--bg-num-hover); }
+  }
+  
+  .btn-prog {
+    background-color: var(--bg-op);
+    font-size: clamp(0.75rem, 1.5vw, 0.95rem);
+    &:hover { background-color: var(--bg-op-hover); }
+    &.btn-hex {
+      background-color: #1a1a2e;
+      color: #7c3aed;
+      &:disabled { background-color: #1a1a2e; color: #7c3aed; opacity: 0.2; }
+    }
+  }
+  
+  .btn-op {
+    background-color: var(--bg-op);
+    &:hover { background-color: var(--bg-op-hover); }
+  }
+  
+  .btn-eq {
+    background-color: var(--bg-accent);
+    font-size: clamp(1.1rem, 2vw, 1.3rem);
+    &:hover { background-color: var(--bg-accent-hover); }
+  }
+}

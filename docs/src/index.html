@@ -1,0 +1,968 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="styles.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CSS-Server — Glass Calculator</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <script type="module" src="/main.js" defer></script>
+  </head>
+  <body>
+    <div id="calculator-app" data-active-mode="standard" data-theme="dark" data-theme-preference="system" data-angle-mode="rad" data-result-precision="12" class="sidebar-open">
+      <!-- Left Pane: Main Calculator -->
+      <div id="calculator-pane">
+        <!-- Navigation Drawer Overlay -->
+        <div id="drawer-overlay"></div>
+
+        <!-- Sliding Navigation Drawer -->
+        <div id="nav-drawer" class="scrollbar-custom">
+          <div class="drawer-section">
+            <h3>Калькулятор</h3>
+            <button class="drawer-item active" data-mode="standard">
+              <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" class="drawer-icon">
+                <rect x="4" y="2" width="16" height="20" rx="2" ry="2"></rect>
+                <line x1="8" y1="6" x2="16" y2="6"></line>
+                <line x1="16" y1="14" x2="16" y2="18"></line>
+                <line x1="16" y1="10" x2="16" y2="10"></line>
+                <line x1="12" y1="10" x2="12" y2="10"></line>
+                <line x1="8" y1="10" x2="8" y2="10"></line>
+                <line x1="12" y1="14" x2="12" y2="14"></line>
+                <line x1="8" y1="14" x2="8" y2="14"></line>
+                <line x1="12" y1="18" x2="12" y2="18"></line>
+                <line x1="8" y1="18" x2="8" y2="18"></line>
+              </svg>
+              <span>Обычный</span>
+            </button>
+            <button class="drawer-item" data-mode="scientific">
+              <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" class="drawer-icon">
+                <path d="M10 2v7.31L4.75 19.3a1 1 0 0 0 .88 1.47h12.74a1 1 0 0 0 .88-1.47L14 9.31V2z"></path>
+                <line x1="8.5" y1="2" x2="15.5" y2="2"></line>
+                <line x1="14" y1="9" x2="10" y2="9"></line>
+              </svg>
+              <span>Инженерный</span>
+            </button>
+            <button class="drawer-item" data-mode="graphing">
+              <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" class="drawer-icon">
+                <path d="M3 3v18h18"></path>
+                <path d="M18.7 8l-5.1 5.2-2.8-2.7L7 14.3"></path>
+              </svg>
+              <span>Построение графиков</span>
+            </button>
+            <button class="drawer-item" data-mode="programmer">
+              <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" class="drawer-icon">
+                <polyline points="16 18 22 12 16 6"></polyline>
+                <polyline points="8 6 2 12 8 18"></polyline>
+              </svg>
+              <span>Программист</span>
+            </button>
+            <button class="drawer-item" data-mode="date">
+              <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" class="drawer-icon">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                <line x1="16" y1="2" x2="16" y2="6"></line>
+                <line x1="8" y1="2" x2="8" y2="6"></line>
+                <line x1="3" y1="10" x2="21" y2="10"></line>
+              </svg>
+              <span>Вычисление даты</span>
+            </button>
+          </div>
+
+          <div class="drawer-section">
+            <h3>Преобразователь</h3>
+            <button class="drawer-item" data-mode="currency">
+              <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" class="drawer-icon">
+                <line x1="12" y1="1" x2="12" y2="23"></line>
+                <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+              </svg>
+              <span>Валюта</span>
+            </button>
+            <button class="drawer-item" data-mode="volume">
+              <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" class="drawer-icon">
+                <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                <line x1="12" y1="22.08" x2="12" y2="12"></line>
+              </svg>
+              <span>Объем</span>
+            </button>
+            <button class="drawer-item" data-mode="length">
+              <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" class="drawer-icon">
+                <path d="M5 3H19A2 2 0 0 1 21 5V19A2 2 0 0 1 19 21H5A2 2 0 0 1 3 19V5A2 2 0 0 1 5 3Z"></path>
+                <line x1="3" y1="8" x2="8" y2="8"></line>
+                <line x1="3" y1="12" x2="11" y2="12"></line>
+                <line x1="3" y1="16" x2="8" y2="16"></line>
+              </svg>
+              <span>Длина</span>
+            </button>
+          </div>
+
+          <div class="drawer-footer">
+            <button class="drawer-item" data-mode="settings">
+              <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" class="drawer-icon">
+                <circle cx="12" cy="12" r="3"></circle>
+                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+              </svg>
+              <span>Параметры</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Header with Hamburger and Mode -->
+        <header id="calc-header">
+          <div class="header-left">
+            <button id="menu-btn" class="header-icon-btn" title="Open Navigation Drawer">
+              <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="3" y1="12" x2="21" y2="12"></line>
+                <line x1="3" y1="6" x2="21" y2="6"></line>
+                <line x1="3" y1="18" x2="21" y2="18"></line>
+              </svg>
+            </button>
+            <h1 id="calc-title">Обычный</h1>
+            <button id="compact-btn" class="header-icon-btn" title="Keep on top / Compact Mode">
+              <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round" class="icon-expand">
+                <polyline points="15 3 21 3 21 9"></polyline>
+                <polyline points="9 21 3 21 3 15"></polyline>
+                <line x1="21" y1="3" x2="14" y2="10"></line>
+                <line x1="3" y1="21" x2="10" y2="14"></line>
+              </svg>
+              <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round" class="icon-shrink" style="display: none;">
+                <polyline points="4 14 10 14 10 20"></polyline>
+                <polyline points="20 10 14 10 14 4"></polyline>
+                <line x1="14" y1="10" x2="21" y2="3"></line>
+                <line x1="10" y1="14" x2="3" y2="21"></line>
+              </svg>
+            </button>
+          </div>
+          <div class="header-right">
+            <!-- Toggle Sidebar button (shown on small screens) -->
+            <button id="sidebar-toggle-btn" class="header-icon-btn" title="History & Memory">
+              <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <polyline points="12 6 12 12 16 14"></polyline>
+              </svg>
+            </button>
+          </div>
+        </header>
+
+        <!-- Standard Mode -->
+        <div class="mode-section mode-standard">
+          <!-- Display Area -->
+          <div id="calc-display-container">
+            <div id="expression-preview"></div>
+            <div id="calculator-display">0</div>
+          </div>
+
+          <!-- Memory Buttons Row -->
+          <div id="memory-bar">
+            <button class="btn-mem" id="btn-mc" disabled>MC</button>
+            <button class="btn-mem" id="btn-mr" disabled>MR</button>
+            <button class="btn-mem" id="btn-m-plus">M+</button>
+            <button class="btn-mem" id="btn-m-minus">M-</button>
+            <button class="btn-mem" id="btn-ms">MS</button>
+            <button class="btn-mem" id="btn-m-list" disabled>M▼</button>
+          </div>
+
+          <!-- Calculator Grid of Keys -->
+          <div id="calculator-grid">
+            <button class="btn-op" id="btn-pct">%</button>
+            <button class="btn-op" id="btn-ce">CE</button>
+            <button class="btn-op" id="btn-c">C</button>
+            <button class="btn-op" id="btn-back" title="Backspace">
+              <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"></path>
+                <line x1="18" y1="9" x2="12" y2="15"></line>
+                <line x1="12" y1="9" x2="18" y2="15"></line>
+              </svg>
+            </button>
+
+            <button class="btn-op" id="btn-inv">1/x</button>
+            <button class="btn-op" id="btn-sqr">x²</button>
+            <button class="btn-op" id="btn-sqrt">²√x</button>
+            <button class="btn-op" id="btn-div">÷</button>
+
+            <button class="btn-num" id="btn-7">7</button>
+            <button class="btn-num" id="btn-8">8</button>
+            <button class="btn-num" id="btn-9">9</button>
+            <button class="btn-op" id="btn-mul">×</button>
+
+            <button class="btn-num" id="btn-4">4</button>
+            <button class="btn-num" id="btn-5">5</button>
+            <button class="btn-num" id="btn-6">6</button>
+            <button class="btn-op" id="btn-sub">−</button>
+
+            <button class="btn-num" id="btn-1">1</button>
+            <button class="btn-num" id="btn-2">2</button>
+            <button class="btn-num" id="btn-3">3</button>
+            <button class="btn-op" id="btn-add">+</button>
+
+            <button class="btn-op" id="btn-neg">+/-</button>
+            <button class="btn-num" id="btn-0">0</button>
+            <button class="btn-num" id="btn-dec">,</button>
+            <button class="btn-eq" id="btn-eq">=</button>
+          </div>
+        </div>
+
+        <!-- Scientific Mode -->
+        <div class="mode-section mode-scientific">
+          <div id="sci-display-container">
+            <div id="sci-expression-preview"></div>
+            <div id="sci-calculator-display">0</div>
+          </div>
+          
+          <div id="sci-mode-controls">
+            <button class="sci-mode-btn active" data-angle="deg">DEG</button>
+            <button class="sci-mode-btn" data-angle="rad">RAD</button>
+            
+            <div class="sci-dropdown" id="trig-dropdown">
+              <button class="dropdown-trigger">Тригонометрия</button>
+              <div class="dropdown-content">
+                <button class="dropdown-item" data-func="sin">sin</button>
+                <button class="dropdown-item" data-func="cos">cos</button>
+                <button class="dropdown-item" data-func="tan">tan</button>
+                <button class="dropdown-item" data-func="csc">csc</button>
+                <button class="dropdown-item" data-func="sec">sec</button>
+                <button class="dropdown-item" data-func="cot">cot</button>
+              </div>
+            </div>
+            
+            <div class="sci-dropdown" id="func-dropdown">
+              <button class="dropdown-trigger">Функции</button>
+              <div class="dropdown-content">
+                <button class="dropdown-item" data-func="floor">floor</button>
+                <button class="dropdown-item" data-func="ceil">ceil</button>
+                <button class="dropdown-item" data-func="round">round</button>
+              </div>
+            </div>
+          </div>
+          
+          <div id="scientific-grid">
+            <button class="btn-sci" id="btn-pi">π</button>
+            <button class="btn-sci" id="btn-e">e</button>
+            <button class="btn-sci" id="sci-btn-c">C</button>
+            <button class="btn-sci" id="sci-btn-back">⌫</button>
+            <button class="btn-sci" id="sci-btn-div">÷</button>
+            
+            <button class="btn-sci" id="btn-sin">sin</button>
+            <button class="btn-sci" id="btn-cos">cos</button>
+            <button class="btn-sci" id="btn-tan">tan</button>
+            <button class="btn-sci" id="btn-x2">x²</button>
+            <button class="btn-sci" id="btn-1/x">1/x</button>
+            
+            <button class="btn-sci" id="btn-csc">csc</button>
+            <button class="btn-sci" id="btn-sec">sec</button>
+            <button class="btn-sci" id="btn-cot">cot</button>
+            <button class="btn-sci" id="btn-sqrt2">√</button>
+            <button class="btn-sci" id="sci-btn-mul">×</button>
+            
+            <button class="btn-sci" id="btn-log">log</button>
+            <button class="btn-sci" id="btn-ln">ln</button>
+            <button class="btn-sci" id="btn-abs">|x|</button>
+            <button class="btn-sci" id="btn-exp">exp</button>
+            <button class="btn-sci" id="sci-btn-sub">−</button>
+            
+            <button class="btn-num">7</button>
+            <button class="btn-num">8</button>
+            <button class="btn-num">9</button>
+            <button class="btn-sci" id="sci-btn-neg">+/-</button>
+            <button class="btn-sci" id="sci-btn-add">+</button>
+            
+            <button class="btn-num">4</button>
+            <button class="btn-num">5</button>
+            <button class="btn-num">6</button>
+            <button class="btn-num">0</button>
+            <button class="btn-sci" style="visibility:hidden;"></button>
+            
+            <button class="btn-num">1</button>
+            <button class="btn-num">2</button>
+            <button class="btn-num">3</button>
+            <button class="btn-num">,</button>
+            <button class="btn-eq" id="sci-btn-eq">=</button>
+          </div>
+        </div>
+
+        <!-- Programmer Mode -->
+        <div class="mode-section mode-programmer">
+          <div id="prog-display-container">
+            <div id="prog-expression-preview"></div>
+            <div id="prog-calculator-display">0</div>
+            <div id="prog-base-display">
+              <div class="base-value active" id="prog-dec">DEC: 0</div>
+              <div class="base-value" id="prog-hex">HEX: 0</div>
+              <div class="base-value" id="prog-oct">OCT: 0</div>
+              <div class="base-value" id="prog-bin">BIN: 0</div>
+            </div>
+          </div>
+          
+          <div id="prog-mode-controls">
+            <button class="prog-mode-btn active" data-base="dec">DEC</button>
+            <button class="prog-mode-btn" data-base="hex">HEX</button>
+            <button class="prog-mode-btn" data-base="oct">OCT</button>
+            <button class="prog-mode-btn" data-base="bin">BIN</button>
+          </div>
+          
+          <div id="prog-word-size">
+            <button class="word-btn active" data-size="64">QWORD</button>
+            <button class="word-btn" data-size="32">DWORD</button>
+            <button class="word-btn" data-size="16">WORD</button>
+            <button class="word-btn" data-size="8">BYTE</button>
+          </div>
+          
+          <div id="programmer-grid">
+            <button class="btn-prog" id="prog-btn-lshift">LSH</button>
+            <button class="btn-prog" id="prog-btn-rshift">RSH</button>
+            <button class="btn-prog" id="prog-btn-or">OR</button>
+            <button class="btn-prog" id="prog-btn-xor">XOR</button>
+            <button class="btn-prog" id="prog-btn-not">NOT</button>
+            
+            <button class="btn-prog" id="prog-btn-and">AND</button>
+            <button class="btn-prog" id="prog-btn-mod">mod</button>
+            <button class="btn-op" id="prog-btn-ce">CE</button>
+            <button class="btn-op" id="prog-btn-c">C</button>
+            <button class="btn-op" id="prog-btn-back">⌫</button>
+            
+            <button class="btn-num btn-hex" disabled>A</button>
+            <button class="btn-num btn-hex" disabled>B</button>
+            <button class="btn-num">7</button>
+            <button class="btn-num">8</button>
+            <button class="btn-num">9</button>
+            
+            <button class="btn-num btn-hex" disabled>C</button>
+            <button class="btn-num btn-hex" disabled>D</button>
+            <button class="btn-num">4</button>
+            <button class="btn-num">5</button>
+            <button class="btn-num">6</button>
+            
+            <button class="btn-num btn-hex" disabled>E</button>
+            <button class="btn-num btn-hex" disabled>F</button>
+            <button class="btn-num">1</button>
+            <button class="btn-num">2</button>
+            <button class="btn-num">3</button>
+            
+            <button class="btn-num">0</button>
+            <button class="btn-prog" id="prog-btn-div">÷</button>
+            <button class="btn-prog" id="prog-btn-mul">×</button>
+            <button class="btn-prog" id="prog-btn-sub">−</button>
+            <button class="btn-prog" id="prog-btn-add">+</button>
+            
+            <button disabled style="visibility:hidden;"></button>
+            <button disabled style="visibility:hidden;"></button>
+            <button disabled style="visibility:hidden;"></button>
+            <button disabled style="visibility:hidden;"></button>
+            <button class="btn-eq" id="prog-btn-eq">=</button>
+          </div>
+        </div>
+
+        <!-- Graphing Mode -->
+        <div class="mode-section mode-graphing" id="graph-container">
+          <!-- Graph Toolbar Header -->
+          <div id="graph-toolbar">
+            <span class="graph-toolbar-title">Построение графиков</span>
+            <div class="graph-toolbar-actions">
+              <button id="graph-canvas-toggle" class="toolbar-btn active" title="Показать график">
+                <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><path d="M3 3v18h18M18.7 8l-5.1 5.2-2.8-2.7L7 14.3"/></svg>
+              </button>
+              <button id="graph-input-toggle" class="toolbar-btn" title="Показать ввод функций">
+                <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><path d="M4 19h16"/><path d="M7 16l4-10"/><path d="M11 16l4-10"/><path d="M8 10h8"/></svg>
+              </button>
+              <button id="graph-settings-toggle" class="toolbar-btn" title="Параметры графика">
+                <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- Split Workspace Layout -->
+          <div id="graph-workspace">
+            <!-- Left Side: Canvas View -->
+            <div id="graph-viewport">
+              <canvas id="graph-canvas"></canvas>
+              
+              <!-- Floating Zoom Controls -->
+              <div id="graph-zoom-overlay">
+                <button class="zoom-btn" id="zoom-in" title="Приблизить">+</button>
+                <button class="zoom-btn" id="zoom-out" title="Отдалить">-</button>
+                <button class="zoom-btn" id="zoom-fit" title="Сбросить масштаб">Fit</button>
+              </div>
+            </div>
+
+            <!-- Right Side: Equations & Keyboard Panel -->
+            <div id="graph-side-panel">
+              <!-- Equations List -->
+              <div id="graph-equations-section">
+                <h3>Функции</h3>
+                <!-- Quick templates list -->
+                <div id="graph-presets">
+                  <span class="preset-label">Шаблоны:</span>
+                  <div class="preset-buttons scrollbar-custom">
+                    <button class="preset-btn" data-expr="sin(x)">sin(x)</button>
+                    <button class="preset-btn" data-expr="cos(x)">cos(x)</button>
+                    <button class="preset-btn" data-expr="tan(x)">tan(x)</button>
+                    <button class="preset-btn" data-expr="x^2">x²</button>
+                    <button class="preset-btn" data-expr="x^3">x³</button>
+                    <button class="preset-btn" data-expr="log(x)">log(x)</button>
+                    <button class="preset-btn" data-expr="ln(x)">ln(x)</button>
+                    <button class="preset-btn" data-expr="abs(x)">|x|</button>
+                    <button class="preset-btn" data-expr="sqrt(x)">√x</button>
+                    <button class="preset-btn" data-expr="exp(x)">exp(x)</button>
+                  </div>
+                </div>
+                <div id="graph-equations-list" class="scrollbar-custom">
+                  <!-- Generated dynamically in JS -->
+                </div>
+                <button id="add-equation-btn">+ Добавить выражение</button>
+              </div>
+
+              <!-- Math Keyboard for Graphing -->
+              <div id="graph-keyboard">
+                <div class="keyboard-row">
+                  <button class="kb-btn" data-key="2nd">2<sup>nd</sup></button>
+                  <button class="kb-btn" data-key="pi">π</button>
+                  <button class="kb-btn" data-key="e">e</button>
+                  <button class="kb-btn btn-danger" data-key="clear">C</button>
+                  <button class="kb-btn" data-key="backspace">⌫</button>
+                </div>
+                <div class="keyboard-row">
+                  <button class="kb-btn" data-key="x^2">x²</button>
+                  <button class="kb-btn" data-key="1/x">1/x</button>
+                  <button class="kb-btn" data-key="abs">|x|</button>
+                  <button class="kb-btn btn-accent" data-key="x">x</button>
+                  <button class="kb-btn btn-accent" data-key="y">y</button>
+                </div>
+                <div class="keyboard-row">
+                  <button class="kb-btn" data-key="sqrt">²√x</button>
+                  <button class="kb-btn" data-key="(">(</button>
+                  <button class="kb-btn" data-key=")">)</button>
+                  <button class="kb-btn" data-key="=">=</button>
+                  <button class="kb-btn" data-key="/">÷</button>
+                </div>
+                <div class="keyboard-row">
+                  <button class="kb-btn" data-key="x^y">x<sup>y</sup></button>
+                  <button class="kb-btn btn-num" data-key="7">7</button>
+                  <button class="kb-btn btn-num" data-key="8">8</button>
+                  <button class="kb-btn btn-num" data-key="9">9</button>
+                  <button class="kb-btn" data-key="*">×</button>
+                </div>
+                <div class="keyboard-row">
+                  <button class="kb-btn" data-key="10^x">10<sup>x</sup></button>
+                  <button class="kb-btn btn-num" data-key="4">4</button>
+                  <button class="kb-btn btn-num" data-key="5">5</button>
+                  <button class="kb-btn btn-num" data-key="6">6</button>
+                  <button class="kb-btn" data-key="-">−</button>
+                </div>
+                <div class="keyboard-row">
+                  <button class="kb-btn" data-key="log">log</button>
+                  <button class="kb-btn btn-num" data-key="1">1</button>
+                  <button class="kb-btn btn-num" data-key="2">2</button>
+                  <button class="kb-btn btn-num" data-key="3">3</button>
+                  <button class="kb-btn" data-key="+">+</button>
+                </div>
+                <div class="keyboard-row">
+                  <button class="kb-btn" data-key="ln">ln</button>
+                  <button class="kb-btn" data-key="neg">+/-</button>
+                  <button class="kb-btn btn-num" data-key="0">0</button>
+                  <button class="kb-btn" data-key=",">,</button>
+                  <button class="kb-btn btn-enter" data-key="enter">↵</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Settings modal / popover ("Параметры графика") -->
+          <div id="graph-settings-popup">
+            <div class="settings-header">
+              <h4>Параметры графика</h4>
+              <button id="close-settings-btn">✕</button>
+            </div>
+            <div class="settings-content">
+              <div class="settings-section-title">Окно</div>
+              <div class="settings-grid">
+                <div class="settings-input-group">
+                  <label for="settings-xmin">Мин. X</label>
+                  <input type="number" id="settings-xmin" step="any" value="-10" />
+                </div>
+                <div class="settings-input-group">
+                  <label for="settings-xmax">Макс. X</label>
+                  <input type="number" id="settings-xmax" step="any" value="10" />
+                </div>
+                <div class="settings-input-group">
+                  <label for="settings-ymin">Мин. Y</label>
+                  <input type="number" id="settings-ymin" step="any" value="-10" />
+                </div>
+                <div class="settings-input-group">
+                  <label for="settings-ymax">Макс. Y</label>
+                  <input type="number" id="settings-ymax" step="any" value="10" />
+                </div>
+              </div>
+
+              <div class="settings-section-title">Единицы</div>
+              <div class="settings-units-toggle">
+                <button class="unit-toggle-btn active" data-unit="rad">Радианы</button>
+                <button class="unit-toggle-btn" data-unit="deg">Градусы</button>
+              </div>
+
+              <button id="settings-reset-btn">Сбросить представление</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Date Calculation Mode -->
+        <div class="mode-section mode-date">
+          <div id="date-display-container">
+            <div id="date-result">Вычисление даты</div>
+          </div>
+          <div id="date-calc-type">
+            <button class="date-type-btn active" data-type="diff">Разница дат</button>
+          </div>
+          <div id="date-inputs">
+            <div class="date-input-group">
+              <label for="date-from">От</label>
+              <input type="date" id="date-from" class="date-field" />
+            </div>
+            <div class="date-input-group">
+              <label for="date-to">До</label>
+              <input type="date" id="date-to" class="date-field" />
+            </div>
+          </div>
+          <div id="date-result-display">
+            <div class="result-row">
+              <span class="result-label">Лет</span>
+              <span class="result-value" id="date-years">0</span>
+            </div>
+            <div class="result-row">
+              <span class="result-label">Месяцев</span>
+              <span class="result-value" id="date-months">0</span>
+            </div>
+            <div class="result-row">
+              <span class="result-label">Дней</span>
+              <span class="result-value" id="date-days">0</span>
+            </div>
+            <div class="result-row">
+              <span class="result-label">Всего дней</span>
+              <span class="result-value" id="date-total-days">0</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Converter: Currency Mode -->
+        <div class="mode-section mode-currency converter-mode">
+          <div id="converter-display-container">
+            <div id="converter-result">0</div>
+          </div>
+          <div class="converter-inputs">
+            <div class="converter-input-group">
+              <select id="currency-from" class="converter-select">
+                <option value="usd" selected>Доллар США (USD)</option>
+                <option value="eur">Евро (EUR)</option>
+                <option value="gbp">Фунт стерлингов (GBP)</option>
+                <option value="jpy">Иена (JPY)</option>
+                <option value="rub">Рубль (RUB)</option>
+                <option value="cny">Юань (CNY)</option>
+                <option value="krw">Вона (KRW)</option>
+              </select>
+              <input type="number" id="currency-from-val" class="converter-value" value="1" />
+            </div>
+            <button id="currency-swap" class="swap-btn">⇅</button>
+            <div class="converter-input-group">
+              <select id="currency-to" class="converter-select">
+                <option value="usd">Доллар США (USD)</option>
+                <option value="eur" selected>Евро (EUR)</option>
+                <option value="gbp">Фунт стерлингов (GBP)</option>
+                <option value="jpy">Иена (JPY)</option>
+                <option value="rub">Рубль (RUB)</option>
+                <option value="cny">Юань (CNY)</option>
+                <option value="krw">Вона (KRW)</option>
+              </select>
+              <input type="number" id="currency-to-val" class="converter-value" readonly />
+            </div>
+          </div>
+        </div>
+
+        <!-- Converter: Volume Mode -->
+        <div class="mode-section mode-volume converter-mode">
+          <div id="converter-display-container">
+            <div id="converter-result">0</div>
+          </div>
+          <div class="converter-inputs">
+            <div class="converter-input-group">
+              <select id="volume-from" class="converter-select">
+                <option value="ml">Миллилитры (ml)</option>
+                <option value="l" selected>Литры (l)</option>
+                <option value="m3">Кубические метры (m³)</option>
+                <option value="tsp">Чайные ложки (tsp)</option>
+                <option value="tbsp">Столовые ложки (tbsp)</option>
+                <option value="floz">Жидкие унции (fl oz)</option>
+                <option value="cup">Чашки (cup)</option>
+                <option value="pt">Пинты (pt)</option>
+                <option value="qt">Кварты (qt)</option>
+                <option value="gal">Галлоны (gal)</option>
+              </select>
+              <input type="number" id="volume-from-val" class="converter-value" value="1" />
+            </div>
+            <button id="volume-swap" class="swap-btn">⇅</button>
+            <div class="converter-input-group">
+              <select id="volume-to" class="converter-select">
+                <option value="ml">Миллилитры (ml)</option>
+                <option value="l">Литры (l)</option>
+                <option value="m3">Кубические метры (m³)</option>
+                <option value="tsp">Чайные ложки (tsp)</option>
+                <option value="tbsp">Столовые ложки (tbsp)</option>
+                <option value="floz">Жидкие унции (fl oz)</option>
+                <option value="cup">Чашки (cup)</option>
+                <option value="pt">Пинты (pt)</option>
+                <option value="qt">Кварты (qt)</option>
+                <option value="gal" selected>Галлоны (gal)</option>
+              </select>
+              <input type="number" id="volume-to-val" class="converter-value" readonly />
+            </div>
+          </div>
+        </div>
+
+        <!-- Converter: Length Mode -->
+        <div class="mode-section mode-length converter-mode">
+          <div id="converter-display-container">
+            <div id="converter-result">0</div>
+          </div>
+          <div class="converter-inputs">
+            <div class="converter-input-group">
+              <select id="length-from" class="converter-select">
+                <option value="mm">Миллиметры (mm)</option>
+                <option value="cm">Сантиметры (cm)</option>
+                <option value="m" selected>Метры (m)</option>
+                <option value="km">Километры (km)</option>
+                <option value="in">Дюймы (in)</option>
+                <option value="ft">Футы (ft)</option>
+                <option value="yd">Ярды (yd)</option>
+                <option value="mi">Мили (mi)</option>
+              </select>
+              <input type="number" id="length-from-val" class="converter-value" value="1" />
+            </div>
+            <button id="length-swap" class="swap-btn">⇅</button>
+            <div class="converter-input-group">
+              <select id="length-to" class="converter-select">
+                <option value="mm">Миллиметры (mm)</option>
+                <option value="cm">Сантиметры (cm)</option>
+                <option value="m">Метры (m)</option>
+                <option value="km">Километры (km)</option>
+                <option value="in">Дюймы (in)</option>
+                <option value="ft" selected>Футы (ft)</option>
+                <option value="yd">Ярды (yd)</option>
+                <option value="mi">Мили (mi)</option>
+              </select>
+              <input type="number" id="length-to-val" class="converter-value" readonly />
+            </div>
+          </div>
+        </div>
+
+        <!-- Converter: Weight Mode -->
+        <div class="mode-section mode-weight converter-mode">
+          <div id="converter-display-container">
+            <div id="converter-result">0</div>
+          </div>
+          <div class="converter-inputs">
+            <div class="converter-input-group">
+              <select id="weight-from" class="converter-select">
+                <option value="mg">Миллиграммы (mg)</option>
+                <option value="g">Граммы (g)</option>
+                <option value="kg" selected>Килограммы (kg)</option>
+                <option value="t">Тонны (t)</option>
+                <option value="oz">Унции (oz)</option>
+                <option value="lb">Фунты (lb)</option>
+              </select>
+              <input type="number" id="weight-from-val" class="converter-value" value="1" />
+            </div>
+            <button id="weight-swap" class="swap-btn">⇅</button>
+            <div class="converter-input-group">
+              <select id="weight-to" class="converter-select">
+                <option value="mg">Миллиграммы (mg)</option>
+                <option value="g">Граммы (g)</option>
+                <option value="kg">Килограммы (kg)</option>
+                <option value="t">Тонны (t)</option>
+                <option value="oz">Унции (oz)</option>
+                <option value="lb" selected>Фунты (lb)</option>
+              </select>
+              <input type="number" id="weight-to-val" class="converter-value" readonly />
+            </div>
+          </div>
+        </div>
+
+        <!-- Converter: Temperature Mode -->
+        <div class="mode-section mode-temperature converter-mode">
+          <div id="converter-display-container">
+            <div id="converter-result">0</div>
+          </div>
+          <div class="converter-inputs">
+            <div class="converter-input-group">
+              <select id="temp-from" class="converter-select">
+                <option value="c" selected>Цельсий (°C)</option>
+                <option value="f">Фаренгейт (°F)</option>
+                <option value="k">Кельвин (K)</option>
+              </select>
+              <input type="number" id="temp-from-val" class="converter-value" value="0" />
+            </div>
+            <button id="temp-swap" class="swap-btn">⇅</button>
+            <div class="converter-input-group">
+              <select id="temp-to" class="converter-select">
+                <option value="c">Цельсий (°C)</option>
+                <option value="f" selected>Фаренгейт (°F)</option>
+                <option value="k">Кельвин (K)</option>
+              </select>
+              <input type="number" id="temp-to-val" class="converter-value" readonly />
+            </div>
+          </div>
+        </div>
+
+        <!-- Converter: Time Mode -->
+        <div class="mode-section mode-time converter-mode">
+          <div id="converter-display-container">
+            <div id="converter-result">0</div>
+          </div>
+          <div class="converter-inputs">
+            <div class="converter-input-group">
+              <select id="time-from" class="converter-select">
+                <option value="ms">Миллисекунды (ms)</option>
+                <option value="s" selected>Секунды (s)</option>
+                <option value="min">Минуты (min)</option>
+                <option value="h">Часы (h)</option>
+                <option value="d">Дни (d)</option>
+                <option value="w">Недели (w)</option>
+                <option value="mth">Месяцы (mth)</option>
+                <option value="y">Годы (y)</option>
+              </select>
+              <input type="number" id="time-from-val" class="converter-value" value="1" />
+            </div>
+            <button id="time-swap" class="swap-btn">⇅</button>
+            <div class="converter-input-group">
+              <select id="time-to" class="converter-select">
+                <option value="ms">Миллисекунды (ms)</option>
+                <option value="s">Секунды (s)</option>
+                <option value="min" selected>Минуты (min)</option>
+                <option value="h">Часы (h)</option>
+                <option value="d">Дни (d)</option>
+                <option value="w">Недели (w)</option>
+                <option value="mth">Месяцы (mth)</option>
+                <option value="y">Годы (y)</option>
+              </select>
+              <input type="number" id="time-to-val" class="converter-value" readonly />
+            </div>
+          </div>
+        </div>
+
+        <!-- Settings Mode -->
+        <div class="mode-section mode-settings">
+          <section class="settings-panel" aria-labelledby="settings-heading">
+            <header class="settings-heading">
+              <h2 id="settings-heading">Параметры</h2>
+              <p>Настройки интерфейса и поведения калькулятора.</p>
+            </header>
+
+            <section class="settings-group" aria-labelledby="appearance-heading">
+              <div class="settings-group-title">
+                <h3 id="appearance-heading">Внешний вид</h3>
+              </div>
+              <div class="settings-card">
+                <div class="setting-row">
+                  <div class="setting-copy">
+                    <span class="setting-label">Тема приложения</span>
+                    <span class="setting-description">Используется для всех режимов и боковых панелей.</span>
+                  </div>
+                  <div class="settings-radio-stack" role="radiogroup" aria-label="Тема приложения">
+                    <label class="settings-radio">
+                      <input type="radio" name="app-theme" value="system" id="app-theme-system" checked />
+                      <span>Системная</span>
+                    </label>
+                    <label class="settings-radio">
+                      <input type="radio" name="app-theme" value="dark" id="app-theme-dark" />
+                      <span>Темная</span>
+                    </label>
+                    <label class="settings-radio">
+                      <input type="radio" name="app-theme" value="light" id="app-theme-light" />
+                      <span>Светлая</span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <section class="settings-group" aria-labelledby="preferences-heading">
+              <div class="settings-group-title">
+                <h3 id="preferences-heading">Предпочтения</h3>
+              </div>
+              <div class="settings-card">
+                <div class="setting-row">
+                  <div class="setting-copy">
+                    <span class="setting-label">Углы</span>
+                    <span class="setting-description">Общий режим для инженерного калькулятора и графиков.</span>
+                  </div>
+                  <div class="settings-segment" role="radiogroup" aria-label="Режим углов">
+                    <label>
+                      <input type="radio" name="settings-angle" value="deg" id="settings-angle-deg" />
+                      <span>DEG</span>
+                    </label>
+                    <label>
+                      <input type="radio" name="settings-angle" value="rad" id="settings-angle-rad" checked />
+                      <span>RAD</span>
+                    </label>
+                    <label>
+                      <input type="radio" name="settings-angle" value="grad" id="settings-angle-grad" />
+                      <span>GRAD</span>
+                    </label>
+                  </div>
+                </div>
+
+                <div class="setting-row">
+                  <div class="setting-copy">
+                    <span class="setting-label">Точность результата</span>
+                    <span class="setting-description">Количество значащих цифр для отображения результатов.</span>
+                  </div>
+                  <select id="settings-result-precision" class="settings-select">
+                    <option value="8">8</option>
+                    <option value="10">10</option>
+                    <option value="12" selected>12</option>
+                    <option value="15">15</option>
+                  </select>
+                </div>
+
+                <div class="setting-row">
+                  <div class="setting-copy">
+                    <span class="setting-label">Боковая панель</span>
+                    <span class="setting-description">Показывать журнал, память и серверную диагностику в широком окне.</span>
+                  </div>
+                  <label class="settings-switch">
+                    <input type="checkbox" id="settings-sidebar-visible" checked />
+                    <span aria-hidden="true"></span>
+                  </label>
+                </div>
+              </div>
+            </section>
+
+            <section class="settings-group" aria-labelledby="about-heading">
+              <div class="settings-group-title">
+                <h3 id="about-heading">Сведения</h3>
+              </div>
+              <div class="settings-card settings-about-card">
+                <div class="settings-about-main">
+                  <div class="settings-app-mark" aria-hidden="true">CSS</div>
+                  <div>
+                    <span class="setting-label">CSS-Server — Glass Calculator</span>
+                    <span class="setting-description">Версия 0.1.0 · Glass Calculator Parity</span>
+                  </div>
+                </div>
+                <p class="settings-manifesto">CSS/HTML остаются вычислительной подложкой проекта; JavaScript и Rust помогают с вводом, состоянием, диагностикой и мостами.</p>
+                <div class="settings-doc-links">
+                  <a href="../README.md">README.md</a>
+                  <a href="../dev_docs/manifest.md">dev_docs/manifest.md</a>
+                  <a href="../dev_docs/DISCLAIMER.md">dev_docs/DISCLAIMER.md</a>
+                </div>
+                <button id="settings-reset-app" class="settings-reset-btn" type="button">Сбросить параметры</button>
+              </div>
+            </section>
+          </section>
+        </div>
+      </div>
+
+      <!-- Right Pane: Sidebar Panel -->
+      <aside id="sidebar-pane">
+        <!-- Sidebar Navigation Tabs -->
+        <nav id="sidebar-tabs">
+          <button class="tab-btn active" data-tab="history">Журнал</button>
+          <button class="tab-btn" data-tab="memory">Память</button>
+          <button class="tab-btn" data-tab="server">Сервер</button>
+        </nav>
+
+        <!-- Tab Content Panes -->
+        <div id="tab-contents">
+          <!-- History Tab -->
+          <div id="history-tab" class="tab-content active">
+            <div id="history-container">
+              <div id="history-empty">Журнала еще нет.</div>
+              <div id="history-list" class="scrollbar-custom"></div>
+            </div>
+            <div id="history-footer">
+              <button id="clear-history-btn" title="Clear all history" disabled>
+                <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="3 6 5 6 21 6"></polyline>
+                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- Memory Tab -->
+          <div id="memory-tab" class="tab-content">
+            <div id="memory-container">
+              <div id="memory-empty">В памяти ничего не сохранено.</div>
+              <div id="memory-list" class="scrollbar-custom"></div>
+            </div>
+          </div>
+
+          <!-- Server Tab -->
+          <div id="server-tab" class="tab-content">
+            <!-- Server Status & Controls -->
+            <div class="server-status-card">
+              <div class="status-indicator">
+                <span class="status-dot online"></span>
+                <span class="status-text">CSS-Server v0.1.0</span>
+              </div>
+              <div class="status-details">
+                <span>Порт <strong id="status-port">:8080</strong></span>
+                <span id="status-counter">active: 0</span>
+              </div>
+            </div>
+
+            <!-- Control Deck (Embedded in Server tab for diagnostic inputs) -->
+            <div id="control-deck" class="zone">
+              <h2>MANUAL DISPATCHER</h2>
+              <div class="deck-inputs">
+                <div class="input-group">
+                  <label for="input-a">VAL A</label>
+                  <input type="number" id="input-a" value="5" min="0" />
+                </div>
+                <div class="input-group">
+                  <label for="input-b">VAL B</label>
+                  <input type="number" id="input-b" value="10" min="0" />
+                </div>
+              </div>
+              <button id="dispatch-btn">DISPATCH TRANSACTION</button>
+              <div class="monitor-display">
+                <label>MONITOR OUT:</label>
+                <span id="monitor-result">READY</span>
+              </div>
+            </div>
+
+            <!-- Horizontal pipeline nodes -->
+            <div class="pipeline-section">
+              <h2>COMPUTATION PIPELINE</h2>
+              <div id="pipeline-lanes">
+                <div class="lane-col">
+                  <span class="lane-title">INBOUND</span>
+                  <div id="inbound" class="zone"></div>
+                </div>
+                <div class="lane-col">
+                  <span class="lane-title">ALU</span>
+                  <div id="alu-lane" class="zone"></div>
+                </div>
+                <div class="lane-col">
+                  <span class="lane-title">DB WRITE</span>
+                  <div id="db-write-queue" class="zone"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Trace Log panel -->
+            <div id="log-panel" class="zone">
+              <h2>TRACE LOG</h2>
+              <div id="log-list" class="scrollbar-custom"></div>
+            </div>
+          </div>
+        </div>
+      </aside>
+    </div>
+    <!-- Toast notification container -->
+    <div id="toast-container"></div>
+    <script type="module" src="/modes/scientific.js" defer></script>
+    <script type="module" src="/modes/programmer.js" defer></script>
+    <script type="module" src="/modes/graphing.js" defer></script>
+    <script type="module" src="/modes/date.js" defer></script>
+    <script type="module" src="/modes/converters.js" defer></script>
+  </body>
+</html>

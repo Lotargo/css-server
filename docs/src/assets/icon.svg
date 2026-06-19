@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <!-- Windows 11 Calculator Blue Gradient -->
+    <linearGradient id="winBlue" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#4fc3f7" />
+      <stop offset="100%" stop-color="#0288d1" />
+    </linearGradient>
+  </defs>
+
+  <!-- App Rounded Base -->
+  <rect x="48" y="48" width="416" height="416" rx="80" fill="url(#winBlue)"/>
+
+  <!-- Upper half display bar -->
+  <rect x="96" y="112" width="320" height="80" rx="12" fill="#ffffff" fill-opacity="0.95"/>
+  
+  <!-- Display line inside the screen -->
+  <line x1="128" y1="152" x2="384" y2="152" stroke="#0288d1" stroke-width="12" stroke-linecap="round"/>
+
+  <!-- Lower half keyboard grid -->
+  <!-- Top row: 3 keys -->
+  <rect x="96" y="240" width="88" height="64" rx="10" fill="#ffffff" fill-opacity="0.3"/>
+  <rect x="212" y="240" width="88" height="64" rx="10" fill="#ffffff" fill-opacity="0.3"/>
+  <rect x="328" y="240" width="88" height="64" rx="10" fill="#ffffff" fill-opacity="0.3"/>
+
+  <!-- Bottom row: 3 keys -->
+  <rect x="96" y="336" width="88" height="64" rx="10" fill="#ffffff" fill-opacity="0.3"/>
+  <rect x="212" y="336" width="88" height="64" rx="10" fill="#ffffff" fill-opacity="0.3"/>
+  
+  <!-- Highlighted Equals key -->
+  <rect x="328" y="336" width="88" height="64" rx="10" fill="#ffffff" fill-opacity="0.9"/>
+</svg>
