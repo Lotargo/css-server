@@ -119,11 +119,34 @@ This does not make GitHub Pages an inbound backend. It makes the browser runtime
 
 **Goal:** Make the app run cleanly as a static browser site without Tauri.
 
-- [ ] Identify and isolate Tauri-only code paths.
-- [ ] Add a static runtime mode that does not require Rust, Tauri, SQLite, or local HTTP server.
-- [ ] Ensure `file`/static server execution works without Tauri globals.
-- [ ] Preserve the CSS computation pipeline.
-- [ ] Document which features are local-only vs static-compatible.
+- [x] Identify and isolate Tauri-only code paths.
+- [x] Add a static runtime mode that does not require Rust, Tauri, SQLite, or local HTTP server.
+- [x] Ensure `file`/static server execution works without Tauri globals.
+- [x] Preserve the CSS computation pipeline.
+- [x] Document which features are local-only vs static-compatible.
+
+### Static Profile Notes
+
+The GitHub Pages site is self-contained in `docs/`. This directory is the Pages source, not a generated mirror of `src/`.
+
+Included:
+
+- `docs/index.html`;
+- `docs/main.js`;
+- `docs/styles.css`;
+- site-facing notes under `docs/notes`;
+- a small live CSS computation proof.
+
+Excluded:
+
+- calculator app source under `src/`;
+- `src-tauri`;
+- Rust local HTTP server;
+- SQLite bridge;
+- development watcher scripts;
+- SCSS source modules from the calculator app.
+
+This preserves a clean boundary: the calculator remains a proof module in the repository, while the public GitHub Pages site evolves independently under `docs/`.
 
 ---
 
@@ -131,11 +154,23 @@ This does not make GitHub Pages an inbound backend. It makes the browser runtime
 
 **Goal:** Prepare a Pages-compatible build/deploy path.
 
-- [ ] Decide whether the Pages app is served from `/`, `/css-server/`, or a dedicated `docs/` output.
-- [ ] Add a static build command.
-- [ ] Ensure asset paths work under a GitHub Pages project path.
-- [ ] Add deployment notes.
+- [x] Decide whether the Pages app is served from `/`, `/css-server/`, or a dedicated `docs/` output.
+- [x] Keep all Pages site assets inside `docs/`.
+- [x] Ensure asset paths work under a GitHub Pages project path.
+- [x] Add deployment notes inside `docs/notes`.
 - [ ] Optionally add GitHub Actions deployment after manual static validation.
+
+### Pages Build Notes
+
+The first deployment target is a GitHub Pages project site under `/css-server/`.
+
+Manual deployment source:
+
+- Pages source: `docs/`;
+- entrypoint: `docs/index.html`;
+- deployment notes: `docs/notes/deployment.html`.
+
+GitHub Actions deployment remains deferred until the static runtime is manually validated and Network Lab has a stable initial shape.
 
 ---
 
@@ -143,11 +178,11 @@ This does not make GitHub Pages an inbound backend. It makes the browser runtime
 
 **Goal:** Turn the first screen into a live explanation of the project.
 
-- [ ] Replace calculator-first framing with runtime-first framing.
-- [ ] Add concise project thesis.
-- [ ] Add live CSS task demo in the first viewport.
-- [ ] Keep calculator available as proof module.
-- [ ] Link to manifest, disclaimer, and GitHub Pages runtime notes.
+- [x] Replace calculator-first framing with runtime-first framing.
+- [x] Add concise project thesis.
+- [x] Add live CSS task demo in the first viewport.
+- [x] Keep calculator available as proof module.
+- [x] Link to manifest, disclaimer, and GitHub Pages runtime notes.
 
 ---
 
@@ -212,4 +247,3 @@ This does not make GitHub Pages an inbound backend. It makes the browser runtime
 5. [ ] Phase E: CSS Response Processing.
 6. [ ] Phase F: Positioning.
 7. [ ] Phase G: Verification.
-

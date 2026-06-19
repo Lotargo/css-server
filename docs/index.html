@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CSS-Server — Static Runtime</title>
+    <link rel="stylesheet" href="./styles.css" />
+    <script type="module" src="./main.js" defer></script>
+  </head>
+  <body>
+    <main class="site-shell">
+      <section class="hero" aria-labelledby="hero-title">
+        <div class="hero-copy">
+          <p class="kicker">GitHub Pages compatible runtime</p>
+          <h1 id="hero-title">Backend-like computation without a backend.</h1>
+          <p class="lead">CSS-Server is a static browser runtime experiment: GitHub Pages serves files, the browser owns execution, DOM nodes carry task state, and CSS resolves computation visibly.</p>
+          <div class="hero-actions">
+            <a class="primary-link" href="#runtime-proof">Run CSS proof</a>
+            <a class="secondary-link" href="./notes/deployment.html">Deployment boundary</a>
+          </div>
+        </div>
+
+        <section class="runtime-proof" id="runtime-proof" aria-label="Live CSS computation proof">
+          <header class="proof-header">
+            <span>Live CSS task</span>
+            <button id="run-proof" type="button">Run</button>
+          </header>
+          <div class="proof-grid">
+            <div class="proof-cell">
+              <span class="cell-label">DOM task</span>
+              <code id="proof-input">data-a="21" data-b="2" data-op="mul"</code>
+            </div>
+            <div class="proof-cell">
+              <span class="cell-label">CSS ALU</span>
+              <div id="proof-task" class="proof-task" data-a="21" data-b="2" data-op="mul" data-op-symbol="x"></div>
+            </div>
+            <div class="proof-cell proof-result">
+              <span class="cell-label">computedStyle(--result)</span>
+              <strong id="proof-result">42</strong>
+            </div>
+          </div>
+        </section>
+      </section>
+
+      <section class="boundary-grid" aria-label="Runtime boundary">
+        <article>
+          <span>Static host</span>
+          <h2>GitHub Pages serves files only</h2>
+          <p>No inbound server, no hidden Node process, no backend runtime on GitHub infrastructure.</p>
+        </article>
+        <article>
+          <span>Computation</span>
+          <h2>CSS and HTML run locally</h2>
+          <p>The browser resolves typed attributes, custom properties, `calc()`, and selector-driven state.</p>
+        </article>
+        <article>
+          <span>Transport</span>
+          <h2>Outbound Web APIs come next</h2>
+          <p>Network Lab will attach transparent `fetch` transport without SDKs or bundled secrets.</p>
+        </article>
+      </section>
+
+      <section class="proof-modules" aria-label="Proof modules">
+        <div>
+          <p class="kicker">Why calculator first?</p>
+          <h2>The calculator is the proof module, not the product ceiling.</h2>
+          <p>Arithmetic, conversion, graphing, and settings proved that the CSS/HTML substrate can hold real deterministic behavior. The Pages site is the next shell around that idea.</p>
+        </div>
+        <nav class="doc-links" aria-label="Project notes">
+          <a href="./notes/manifest.html">Runtime Manifest</a>
+          <a href="./notes/deployment.html">Pages Deployment</a>
+          <a href="./notes/safety.html">Safety Boundary</a>
+        </nav>
+      </section>
+    </main>
+  </body>
+</html>

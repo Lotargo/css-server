@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CSS-Server — Deployment Boundary</title>
+    <link rel="stylesheet" href="../styles.css" />
+  </head>
+  <body>
+    <main class="site-shell">
+      <section class="proof-modules">
+        <div>
+          <p class="kicker">Deployment boundary</p>
+          <h1>GitHub Pages serves static files only.</h1>
+          <p>CSS-Server does not claim that GitHub runs backend code. The static site is delivered by Pages, then the browser runs the DOM/CSS computation substrate locally.</p>
+          <p>Allowed: browser-local computation, user-triggered outbound Web APIs, and transparent runtime diagnostics. Not allowed: bundled shared secrets, hidden traffic, inbound server claims, mining, spam, scraping at scale, or abusive automation.</p>
+        </div>
+        <nav class="doc-links">
+          <a href="../index.html">Back to runtime</a>
+          <a href="./manifest.html">Manifest</a>
+          <a href="./safety.html">Safety</a>
+        </nav>
+      </section>
+    </main>
+  </body>
+</html>
