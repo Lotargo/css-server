@@ -355,18 +355,133 @@
 
         <!-- Graphing Mode -->
         <div class="mode-section mode-graphing" id="graph-container">
-          <div id="graph-canvas"></div>
-          <div id="graph-controls">
-            <div id="function-list">
-              <div class="function-entry">
-                <input type="text" class="func-input" value="sin(x)" />
-                <button class="func-color" style="background:#8553f4;"></button>
+          <!-- Graph Toolbar Header -->
+          <div id="graph-toolbar">
+            <span class="graph-toolbar-title">Построение графиков</span>
+            <div class="graph-toolbar-actions">
+              <button id="graph-view-toggle" class="toolbar-btn active" title="Показать график и функции">
+                <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><path d="M3 3v18h18M18.7 8l-5.1 5.2-2.8-2.7L7 14.3"/></svg>
+              </button>
+              <button id="graph-settings-toggle" class="toolbar-btn" title="Параметры графика">
+                <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- Split Workspace Layout -->
+          <div id="graph-workspace">
+            <!-- Left Side: Canvas View -->
+            <div id="graph-viewport">
+              <canvas id="graph-canvas"></canvas>
+              
+              <!-- Floating Zoom Controls -->
+              <div id="graph-zoom-overlay">
+                <button class="zoom-btn" id="zoom-in" title="Приблизить">+</button>
+                <button class="zoom-btn" id="zoom-out" title="Отдалить">-</button>
+                <button class="zoom-btn" id="zoom-fit" title="Сбросить масштаб">Fit</button>
               </div>
             </div>
-            <div id="graph-zoom">
-              <button class="zoom-btn" id="zoom-in">+</button>
-              <button class="zoom-btn" id="zoom-out">-</button>
-              <button class="zoom-btn" id="zoom-fit">Fit</button>
+
+            <!-- Right Side: Equations & Keyboard Panel -->
+            <div id="graph-side-panel">
+              <!-- Equations List -->
+              <div id="graph-equations-section">
+                <h3>Функции</h3>
+                <div id="graph-equations-list" class="scrollbar-custom">
+                  <!-- Generated dynamically in JS -->
+                </div>
+                <button id="add-equation-btn">+ Добавить выражение</button>
+              </div>
+
+              <!-- Math Keyboard for Graphing -->
+              <div id="graph-keyboard">
+                <div class="keyboard-row">
+                  <button class="kb-btn" data-key="2nd">2<sup>nd</sup></button>
+                  <button class="kb-btn" data-key="pi">π</button>
+                  <button class="kb-btn" data-key="e">e</button>
+                  <button class="kb-btn btn-danger" data-key="clear">C</button>
+                  <button class="kb-btn" data-key="backspace">⌫</button>
+                </div>
+                <div class="keyboard-row">
+                  <button class="kb-btn" data-key="x^2">x²</button>
+                  <button class="kb-btn" data-key="1/x">1/x</button>
+                  <button class="kb-btn" data-key="abs">|x|</button>
+                  <button class="kb-btn btn-accent" data-key="x">x</button>
+                  <button class="kb-btn btn-accent" data-key="y">y</button>
+                </div>
+                <div class="keyboard-row">
+                  <button class="kb-btn" data-key="sqrt">²√x</button>
+                  <button class="kb-btn" data-key="(">(</button>
+                  <button class="kb-btn" data-key=")">)</button>
+                  <button class="kb-btn" data-key="=">=</button>
+                  <button class="kb-btn" data-key="/">÷</button>
+                </div>
+                <div class="keyboard-row">
+                  <button class="kb-btn" data-key="x^y">x<sup>y</sup></button>
+                  <button class="kb-btn btn-num" data-key="7">7</button>
+                  <button class="kb-btn btn-num" data-key="8">8</button>
+                  <button class="kb-btn btn-num" data-key="9">9</button>
+                  <button class="kb-btn" data-key="*">×</button>
+                </div>
+                <div class="keyboard-row">
+                  <button class="kb-btn" data-key="10^x">10<sup>x</sup></button>
+                  <button class="kb-btn btn-num" data-key="4">4</button>
+                  <button class="kb-btn btn-num" data-key="5">5</button>
+                  <button class="kb-btn btn-num" data-key="6">6</button>
+                  <button class="kb-btn" data-key="-">−</button>
+                </div>
+                <div class="keyboard-row">
+                  <button class="kb-btn" data-key="log">log</button>
+                  <button class="kb-btn btn-num" data-key="1">1</button>
+                  <button class="kb-btn btn-num" data-key="2">2</button>
+                  <button class="kb-btn btn-num" data-key="3">3</button>
+                  <button class="kb-btn" data-key="+">+</button>
+                </div>
+                <div class="keyboard-row">
+                  <button class="kb-btn" data-key="ln">ln</button>
+                  <button class="kb-btn" data-key="neg">+/-</button>
+                  <button class="kb-btn btn-num" data-key="0">0</button>
+                  <button class="kb-btn" data-key=",">,</button>
+                  <button class="kb-btn btn-enter" data-key="enter">↵</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Settings modal / popover ("Параметры графика") -->
+          <div id="graph-settings-popup">
+            <div class="settings-header">
+              <h4>Параметры графика</h4>
+              <button id="close-settings-btn">✕</button>
+            </div>
+            <div class="settings-content">
+              <div class="settings-section-title">Окно</div>
+              <div class="settings-grid">
+                <div class="settings-input-group">
+                  <label for="settings-xmin">Мин. X</label>
+                  <input type="number" id="settings-xmin" step="any" value="-10" />
+                </div>
+                <div class="settings-input-group">
+                  <label for="settings-xmax">Макс. X</label>
+                  <input type="number" id="settings-xmax" step="any" value="10" />
+                </div>
+                <div class="settings-input-group">
+                  <label for="settings-ymin">Мин. Y</label>
+                  <input type="number" id="settings-ymin" step="any" value="-10" />
+                </div>
+                <div class="settings-input-group">
+                  <label for="settings-ymax">Макс. Y</label>
+                  <input type="number" id="settings-ymax" step="any" value="10" />
+                </div>
+              </div>
+
+              <div class="settings-section-title">Единицы</div>
+              <div class="settings-units-toggle">
+                <button class="unit-toggle-btn active" data-unit="rad">Радианы</button>
+                <button class="unit-toggle-btn" data-unit="deg">Градусы</button>
+              </div>
+
+              <button id="settings-reset-btn">Сбросить представление</button>
             </div>
           </div>
         </div>

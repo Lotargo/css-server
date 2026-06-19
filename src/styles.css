@@ -1395,16 +1395,49 @@ body {
   inherits: false;
   initial-value: 0;
 }
-@property --graph-func {
-  syntax: "<custom-ident>";
+@property --graph-scale-y {
+  syntax: "<number>";
   inherits: false;
-  initial-value: sin;
+  initial-value: 1;
+}
+@property --graph-scale-x {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 1;
+}
+@property --graph-shift-x {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 0;
+}
+@property --graph-shift-y {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 0;
+}
+@property --graph-val-angle-scaled {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 0;
 }
 /* Function evaluation routing */
 .graph-task {
   --graph-x: attr(data-x type(<number>), 0);
   --graph-func: attr(data-func type(<custom-ident>), sin);
-  --graph-result: if(style(--graph-func: sin): sin(var(--graph-x)); style(--graph-func: cos): cos(var(--graph-x)); style(--graph-func: tan): tan(var(--graph-x)); style(--graph-func: log): log10(var(--graph-x)); style(--graph-func: ln): ln(var(--graph-x)); style(--graph-func: sqrt): sqrt(var(--graph-x)); style(--graph-func: abs): abs(var(--graph-x)); style(--graph-func: x2): calc(var(--graph-x) * var(--graph-x)); style(--graph-func: x3): calc(var(--graph-x) * var(--graph-x) * var(--graph-x)); style(--graph-func: exp): exp(var(--graph-x)); else: var(--graph-x));
+  --graph-scale-y: attr(data-scale-y type(<number>), 1);
+  --graph-scale-x: attr(data-scale-x type(<number>), 1);
+  --graph-shift-x: attr(data-shift-x type(<number>), 0);
+  --graph-shift-y: attr(data-shift-y type(<number>), 0);
+  --graph-val-angle-scaled: var(--graph-val-transformed);
+  --graph-result: calc(var(--graph-scale-y) * (if(style(--graph-func: sin): sin(var(--graph-val-angle-scaled)); style(--graph-func: cos): cos(var(--graph-val-angle-scaled)); style(--graph-func: tan): tan(var(--graph-val-angle-scaled)); style(--graph-func: log): log10(calc(var(--graph-scale-x) * var(--graph-x) + var(--graph-shift-x))); style(--graph-func: ln): ln(calc(var(--graph-scale-x) * var(--graph-x) + var(--graph-shift-x))); style(--graph-func: sqrt): sqrt(calc(var(--graph-scale-x) * var(--graph-x) + var(--graph-shift-x))); style(--graph-func: abs): abs(calc(var(--graph-scale-x) * var(--graph-x) + var(--graph-shift-x))); style(--graph-func: x2): calc((calc(var(--graph-scale-x) * var(--graph-x) + var(--graph-shift-x))) * (calc(var(--graph-scale-x) * var(--graph-x) + var(--graph-shift-x)))); style(--graph-func: x3): calc((calc(var(--graph-scale-x) * var(--graph-x) + var(--graph-shift-x))) * (calc(var(--graph-scale-x) * var(--graph-x) + var(--graph-shift-x))) * (calc(var(--graph-scale-x) * var(--graph-x) + var(--graph-shift-x)))); style(--graph-func: exp): exp(calc(var(--graph-scale-x) * var(--graph-x) + var(--graph-shift-x))); else: calc(var(--graph-scale-x) * var(--graph-x) + var(--graph-shift-x)))) + var(--graph-shift-y));
+}
+
+#calculator-app[data-angle-mode=deg] .graph-task {
+  --graph-val-angle-scaled: calc(var(--graph-val-transformed) * 3.14159265358979 / 180);
+}
+
+#calculator-app[data-angle-mode=rad] .graph-task {
+  --graph-val-angle-scaled: var(--graph-val-transformed);
 }
 
 /* Graph container */
@@ -1412,95 +1445,420 @@ body {
   display: flex;
   flex-direction: column;
   height: 100%;
-  padding: 16px;
-}
-#graph-container #graph-canvas {
-  flex: 1;
-  background-color: #0a0a0a;
-  border: 1px solid var(--border-subtle);
-  border-radius: 8px;
+  padding: 14px;
   position: relative;
   overflow: hidden;
-  min-height: 250px;
 }
-#graph-container #graph-canvas::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 50%;
-  width: 1px;
-  height: 100%;
-  background: rgba(255, 255, 255, 0.1);
-}
-#graph-container #graph-canvas::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 50%;
-  width: 100%;
-  height: 1px;
-  background: rgba(255, 255, 255, 0.1);
-}
-#graph-container #graph-controls {
+#graph-container #graph-toolbar {
   display: flex;
-  gap: 16px;
-  margin-top: 12px;
-  align-items: flex-start;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border-subtle);
+  margin-bottom: 12px;
 }
-#graph-container #graph-controls #function-list {
+#graph-container #graph-toolbar .graph-toolbar-title {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: var(--text-main);
+}
+#graph-container #graph-toolbar .graph-toolbar-actions {
+  display: flex;
+  gap: 6px;
+}
+#graph-container #graph-toolbar .graph-toolbar-actions .toolbar-btn {
+  background: none;
+  border: 1px solid var(--border-subtle);
+  color: var(--text-sub);
+  width: 32px;
+  height: 32px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+#graph-container #graph-toolbar .graph-toolbar-actions .toolbar-btn:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+  color: var(--text-main);
+}
+#graph-container #graph-toolbar .graph-toolbar-actions .toolbar-btn.active {
+  background-color: var(--bg-accent);
+  color: var(--text-main);
+  border-color: var(--bg-accent);
+}
+#graph-container #graph-workspace {
+  display: flex;
+  flex: 1;
+  gap: 16px;
+  height: calc(100% - 46px);
+}
+#graph-container #graph-workspace #graph-viewport {
+  position: relative;
+  flex: 1.4;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  overflow: hidden;
+  background-color: #0c0c0c;
+}
+#graph-container #graph-workspace #graph-viewport #graph-canvas {
+  flex: 1;
+  width: 100%;
+  height: 100%;
+}
+#graph-container #graph-workspace #graph-viewport #graph-zoom-overlay {
+  position: absolute;
+  right: 12px;
+  bottom: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  z-index: 10;
+}
+#graph-container #graph-workspace #graph-viewport #graph-zoom-overlay .zoom-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(30, 30, 30, 0.8);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-main);
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(8px);
+  transition: all 0.2s;
+}
+#graph-container #graph-workspace #graph-viewport #graph-zoom-overlay .zoom-btn:hover {
+  background: var(--bg-accent);
+  border-color: var(--bg-accent);
+  transform: scale(1.05);
+}
+#graph-container #graph-workspace #graph-viewport #graph-zoom-overlay .zoom-btn:active {
+  transform: scale(0.95);
+}
+#graph-container #graph-workspace #graph-side-panel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+#graph-container #graph-workspace #graph-side-panel #graph-equations-section {
   flex: 1;
   display: flex;
   flex-direction: column;
   gap: 8px;
+  min-height: 120px;
 }
-#graph-container #graph-controls #function-list .function-entry {
-  display: flex;
-  gap: 8px;
-  align-items: center;
+#graph-container #graph-workspace #graph-side-panel #graph-equations-section h3 {
+  font-size: 0.9rem;
+  color: var(--text-sub);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 2px;
 }
-#graph-container #graph-controls #function-list .function-entry .func-input {
+#graph-container #graph-workspace #graph-side-panel #graph-equations-section #graph-equations-list {
   flex: 1;
-  background-color: rgba(0, 0, 0, 0.3);
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-right: 4px;
+}
+#graph-container #graph-workspace #graph-side-panel #graph-equations-section #graph-equations-list .equation-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+#graph-container #graph-workspace #graph-side-panel #graph-equations-section #graph-equations-list .equation-item .eq-color-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.15s;
+}
+#graph-container #graph-workspace #graph-side-panel #graph-equations-section #graph-equations-list .equation-item .eq-color-dot:hover {
+  transform: scale(1.15);
+}
+#graph-container #graph-workspace #graph-side-panel #graph-equations-section #graph-equations-list .equation-item .eq-input-field {
+  flex: 1;
+  background-color: rgba(0, 0, 0, 0.25);
   border: 1px solid var(--border-subtle);
   border-radius: 4px;
   color: var(--text-main);
   font-family: "Fira Code", monospace;
   font-size: 0.9rem;
-  padding: 8px 12px;
+  padding: 8px 10px;
   outline: none;
+  transition: border-color 0.2s;
 }
-#graph-container #graph-controls #function-list .function-entry .func-input:focus {
+#graph-container #graph-workspace #graph-side-panel #graph-equations-section #graph-equations-list .equation-item .eq-input-field:focus {
   border-color: var(--bg-accent);
+  background-color: rgba(0, 0, 0, 0.4);
 }
-#graph-container #graph-controls #function-list .function-entry .func-color {
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
+#graph-container #graph-workspace #graph-side-panel #graph-equations-section #graph-equations-list .equation-item .eq-delete-btn {
+  background: none;
   border: none;
+  color: var(--text-sub);
   cursor: pointer;
-}
-#graph-container #graph-controls #graph-zoom {
+  padding: 6px;
+  border-radius: 4px;
   display: flex;
-  gap: 4px;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
 }
-#graph-container #graph-controls #graph-zoom .zoom-btn {
-  width: 32px;
-  height: 32px;
+#graph-container #graph-workspace #graph-side-panel #graph-equations-section #graph-equations-list .equation-item .eq-delete-btn:hover {
+  color: #ff453a;
+  background-color: rgba(255, 69, 58, 0.1);
+}
+#graph-container #graph-workspace #graph-side-panel #graph-equations-section #add-equation-btn {
+  background: none;
+  border: 1px dashed var(--border-subtle);
+  color: var(--text-sub);
+  padding: 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+#graph-container #graph-workspace #graph-side-panel #graph-equations-section #add-equation-btn:hover {
+  border-color: var(--bg-accent);
+  color: var(--text-main);
+  background-color: rgba(255, 255, 255, 0.02);
+}
+#graph-container #graph-workspace #graph-side-panel #graph-keyboard {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin-top: auto;
+}
+#graph-container #graph-workspace #graph-side-panel #graph-keyboard .keyboard-row {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 3px;
+}
+#graph-container #graph-workspace #graph-side-panel #graph-keyboard .keyboard-row .kb-btn {
   background-color: var(--bg-op);
   border: 1px solid var(--border-subtle);
-  border-radius: 4px;
   color: var(--text-main);
-  font-size: 1.1rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  padding: 9px 0;
+  border-radius: 4px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background-color 0.2s;
+  transition: all 0.15s;
+  outline: none;
 }
-#graph-container #graph-controls #graph-zoom .zoom-btn:hover {
+#graph-container #graph-workspace #graph-side-panel #graph-keyboard .keyboard-row .kb-btn sup {
+  font-size: 0.6rem;
+  margin-left: 1px;
+}
+#graph-container #graph-workspace #graph-side-panel #graph-keyboard .keyboard-row .kb-btn:hover {
   background-color: var(--bg-op-hover);
 }
+#graph-container #graph-workspace #graph-side-panel #graph-keyboard .keyboard-row .kb-btn:active {
+  transform: scale(0.96);
+}
+#graph-container #graph-workspace #graph-side-panel #graph-keyboard .keyboard-row .kb-btn.btn-num {
+  background-color: var(--bg-num);
+}
+#graph-container #graph-workspace #graph-side-panel #graph-keyboard .keyboard-row .kb-btn.btn-num:hover {
+  background-color: var(--bg-num-hover);
+}
+#graph-container #graph-workspace #graph-side-panel #graph-keyboard .keyboard-row .kb-btn.btn-accent {
+  background-color: rgba(133, 83, 244, 0.15);
+  color: #a88df8;
+  border-color: rgba(133, 83, 244, 0.3);
+  font-weight: 600;
+}
+#graph-container #graph-workspace #graph-side-panel #graph-keyboard .keyboard-row .kb-btn.btn-accent:hover {
+  background-color: rgba(133, 83, 244, 0.25);
+}
+#graph-container #graph-workspace #graph-side-panel #graph-keyboard .keyboard-row .kb-btn.btn-danger {
+  color: #ff453a;
+  background-color: rgba(255, 69, 58, 0.1);
+  border-color: rgba(255, 69, 58, 0.2);
+}
+#graph-container #graph-workspace #graph-side-panel #graph-keyboard .keyboard-row .kb-btn.btn-danger:hover {
+  background-color: rgba(255, 69, 58, 0.2);
+}
+#graph-container #graph-workspace #graph-side-panel #graph-keyboard .keyboard-row .kb-btn.btn-enter {
+  background-color: var(--bg-accent);
+  border-color: var(--bg-accent);
+  font-size: 1.1rem;
+}
+#graph-container #graph-workspace #graph-side-panel #graph-keyboard .keyboard-row .kb-btn.btn-enter:hover {
+  background-color: var(--bg-accent-hover);
+}
+#graph-container {
+  /* Settings Popover */
+}
+#graph-container #graph-settings-popup {
+  display: none;
+  position: absolute;
+  top: 60px;
+  right: 18px;
+  width: 290px;
+  background: rgba(30, 30, 30, 0.85);
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  padding: 16px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
+  z-index: 100;
+  backdrop-filter: blur(16px);
+  flex-direction: column;
+  gap: 12px;
+  animation: popupFade 0.2s cubic-bezier(0.1, 0.9, 0.2, 1);
+}
+#graph-container #graph-settings-popup.open {
+  display: flex;
+}
+#graph-container #graph-settings-popup .settings-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 8px;
+}
+#graph-container #graph-settings-popup .settings-header h4 {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-main);
+}
+#graph-container #graph-settings-popup .settings-header #close-settings-btn {
+  background: none;
+  border: none;
+  color: var(--text-sub);
+  font-size: 0.85rem;
+  cursor: pointer;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+#graph-container #graph-settings-popup .settings-header #close-settings-btn:hover {
+  background-color: rgba(255, 255, 255, 0.08);
+  color: var(--text-main);
+}
+#graph-container #graph-settings-popup .settings-content {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+#graph-container #graph-settings-popup .settings-content .settings-section-title {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-sub);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+#graph-container #graph-settings-popup .settings-content .settings-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+#graph-container #graph-settings-popup .settings-content .settings-grid .settings-input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+#graph-container #graph-settings-popup .settings-content .settings-grid .settings-input-group label {
+  font-size: 0.75rem;
+  color: var(--text-sub);
+}
+#graph-container #graph-settings-popup .settings-content .settings-grid .settings-input-group input {
+  background-color: rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--border-subtle);
+  border-radius: 4px;
+  color: var(--text-main);
+  padding: 6px 8px;
+  font-size: 0.85rem;
+  font-family: monospace;
+  outline: none;
+}
+#graph-container #graph-settings-popup .settings-content .settings-grid .settings-input-group input:focus {
+  border-color: var(--bg-accent);
+}
+#graph-container #graph-settings-popup .settings-content .settings-units-toggle {
+  display: flex;
+  gap: 6px;
+}
+#graph-container #graph-settings-popup .settings-content .settings-units-toggle .unit-toggle-btn {
+  flex: 1;
+  background: none;
+  border: 1px solid var(--border-subtle);
+  color: var(--text-sub);
+  padding: 6px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+#graph-container #graph-settings-popup .settings-content .settings-units-toggle .unit-toggle-btn:hover {
+  background-color: rgba(255, 255, 255, 0.04);
+  color: var(--text-main);
+}
+#graph-container #graph-settings-popup .settings-content .settings-units-toggle .unit-toggle-btn.active {
+  background-color: var(--bg-accent);
+  color: var(--text-main);
+  border-color: var(--bg-accent);
+}
+#graph-container #graph-settings-popup .settings-content #settings-reset-btn {
+  background: none;
+  border: 1px solid var(--border-subtle);
+  color: var(--text-main);
+  padding: 8px;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-top: 4px;
+}
+#graph-container #graph-settings-popup .settings-content #settings-reset-btn:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+  border-color: var(--text-sub);
+}
 
+@keyframes popupFade {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+/* Responsive layout for smaller sizes */
+@media (max-width: 650px) {
+  #graph-container #graph-workspace {
+    flex-direction: column;
+  }
+  #graph-container #graph-workspace #graph-viewport {
+    flex: 1;
+    min-height: 200px;
+  }
+  #graph-container #graph-workspace #graph-side-panel {
+    flex: 1.2;
+  }
+}
 /* Date Calculation ALU */
 @property --date-from {
   syntax: "<number>";
