@@ -3,6 +3,36 @@
 
 import { log } from '../main.js';
 
+function injectStandaloneScrollFix() {
+  if (document.getElementById("standalone-settings-scroll-fix")) return;
+
+  const style = document.createElement("style");
+  style.id = "standalone-settings-scroll-fix";
+  style.textContent = `
+    #calculator-app[data-active-mode="settings"] #calculator-pane {
+      min-height: 0;
+      overflow: hidden;
+    }
+
+    #calculator-app[data-active-mode="settings"] .mode-settings {
+      flex: 1 1 auto;
+      min-height: 0;
+      height: auto;
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      -webkit-overflow-scrolling: touch;
+      padding-bottom: clamp(24px, 4vh, 40px);
+    }
+
+    #calculator-app[data-active-mode="settings"] .settings-panel {
+      flex: 0 0 auto;
+    }
+  `;
+  document.head.appendChild(style);
+}
+
+injectStandaloneScrollFix();
+
 const converterConfigs = {
   currency: {
     fromSelect: "#currency-from", toSelect: "#currency-to",
