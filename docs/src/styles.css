@@ -136,13 +136,11 @@ body.public-calculator #programmer-grid button {
     grid-template-columns: minmax(520px, 1.05fr) minmax(320px, 0.72fr);
   }
 }
-
 @media (max-width: 768px) {
   body.public-calculator {
     display: block;
     padding: 0;
   }
-
   body.public-calculator #calculator-app {
     width: 100%;
     height: 100vh;
@@ -2640,11 +2638,9 @@ body.public-calculator #programmer-grid button {
 }
 
 .mode-settings {
-  flex: 1 1 auto !important;
-  height: calc(100vh - 52px) !important;
-  height: calc(100dvh - 52px) !important;
-  max-height: calc(100vh - 52px);
-  max-height: calc(100dvh - 52px);
+  flex: 1 1 0 !important;
+  height: auto !important;
+  max-height: none;
   min-height: 0;
   overflow: hidden;
 }

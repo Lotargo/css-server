@@ -1,9 +1,7 @@
 .mode-settings {
-  flex: 1 1 auto !important;
-  height: calc(100vh - 52px) !important;
-  height: calc(100dvh - 52px) !important;
-  max-height: calc(100vh - 52px);
-  max-height: calc(100dvh - 52px);
+  flex: 1 1 0 !important;
+  height: auto !important;
+  max-height: none;
   min-height: 0;
   overflow: hidden;
 }
