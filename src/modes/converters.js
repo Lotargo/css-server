@@ -3,32 +3,96 @@
 
 import { log } from '../main.js';
 
+function setImportantStyle(element, property, value) {
+  if (!element) return;
+  element.style.setProperty(property, value, "important");
+}
+
+function applyStandaloneSettingsScrollFix() {
+  const app = document.getElementById("calculator-app");
+  const calculatorPane = document.getElementById("calculator-pane");
+  const settingsMode = document.querySelector(".mode-settings");
+  const settingsPanel = document.querySelector(".settings-panel");
+  const aboutCard = document.querySelector(".settings-about-card");
+
+  if (!app || !calculatorPane || !settingsMode || !settingsPanel) return false;
+
+  setImportantStyle(calculatorPane, "min-height", "0");
+  setImportantStyle(calculatorPane, "overflow", "hidden");
+
+  setImportantStyle(settingsMode, "flex", "1 1 auto");
+  setImportantStyle(settingsMode, "min-height", "0");
+  setImportantStyle(settingsMode, "height", "auto");
+  setImportantStyle(settingsMode, "max-height", "none");
+  setImportantStyle(settingsMode, "overflow-x", "hidden");
+  setImportantStyle(settingsMode, "overflow-y", "auto");
+  settingsMode.style.setProperty("overscroll-behavior", "contain");
+  settingsMode.style.setProperty("-webkit-overflow-scrolling", "touch");
+
+  setImportantStyle(settingsPanel, "flex", "0 0 auto");
+  setImportantStyle(settingsPanel, "height", "auto");
+  setImportantStyle(settingsPanel, "max-height", "none");
+  setImportantStyle(settingsPanel, "overflow", "visible");
+  setImportantStyle(settingsPanel, "padding-bottom", "calc(clamp(16px, 3vw, 26px) + max(28px, env(safe-area-inset-bottom)))");
+
+  if (aboutCard) {
+    setImportantStyle(aboutCard, "overflow", "visible");
+    setImportantStyle(aboutCard, "margin-bottom", "28px");
+  }
+
+  return true;
+}
+
 function injectStandaloneScrollFix() {
-  if (document.getElementById("standalone-settings-scroll-fix")) return;
+  if (!document.getElementById("standalone-settings-scroll-fix")) {
+    const style = document.createElement("style");
+    style.id = "standalone-settings-scroll-fix";
+    style.textContent = `
+      #calculator-app[data-active-mode="settings"] #calculator-pane {
+        min-height: 0 !important;
+        overflow: hidden !important;
+      }
 
-  const style = document.createElement("style");
-  style.id = "standalone-settings-scroll-fix";
-  style.textContent = `
-    #calculator-app[data-active-mode="settings"] #calculator-pane {
-      min-height: 0;
-      overflow: hidden;
-    }
+      #calculator-app[data-active-mode="settings"] .mode-settings {
+        flex: 1 1 auto !important;
+        min-height: 0 !important;
+        height: auto !important;
+        max-height: none !important;
+        overflow-x: hidden !important;
+        overflow-y: auto !important;
+        overscroll-behavior: contain;
+        -webkit-overflow-scrolling: touch;
+      }
 
-    #calculator-app[data-active-mode="settings"] .mode-settings {
-      flex: 1 1 auto;
-      min-height: 0;
-      height: auto;
-      overflow-y: auto;
-      overscroll-behavior: contain;
-      -webkit-overflow-scrolling: touch;
-      padding-bottom: clamp(24px, 4vh, 40px);
-    }
+      #calculator-app[data-active-mode="settings"] .settings-panel {
+        flex: 0 0 auto !important;
+        height: auto !important;
+        max-height: none !important;
+        overflow: visible !important;
+        padding-bottom: calc(clamp(16px, 3vw, 26px) + max(28px, env(safe-area-inset-bottom))) !important;
+      }
 
-    #calculator-app[data-active-mode="settings"] .settings-panel {
-      flex: 0 0 auto;
-    }
-  `;
-  document.head.appendChild(style);
+      #calculator-app[data-active-mode="settings"] .settings-about-card {
+        overflow: visible !important;
+        margin-bottom: 28px !important;
+      }
+    `;
+    document.head.appendChild(style);
+  }
+
+  if (applyStandaloneSettingsScrollFix()) {
+    log("INFO", "settings", "standalone settings scroll fix applied");
+  }
+
+  requestAnimationFrame(() => applyStandaloneSettingsScrollFix());
+  window.addEventListener("load", () => applyStandaloneSettingsScrollFix(), { once: true });
+
+  const app = document.getElementById("calculator-app");
+  if (app && !app.dataset.scrollFixObserverAttached) {
+    const observer = new MutationObserver(() => applyStandaloneSettingsScrollFix());
+    observer.observe(app, { attributes: true, attributeFilter: ["data-active-mode", "class"] });
+    app.dataset.scrollFixObserverAttached = "true";
+  }
 }
 
 injectStandaloneScrollFix();
